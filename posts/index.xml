@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>博客 on Luckywinds</title>
+    <link>https://luckywinds.github.io/posts/</link>
+    <description>Recent content in 博客 on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 08 Mar 2020 20:07:32 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Istio Sidecar简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/istio-sidecar/</link>
+      <pubDate>Sun, 08 Mar 2020 20:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/istio-sidecar/</guid>
+      <description>Sidecar  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  注入内容 Istio sidecar向应用pod中注入2个容器：
+ init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，实现流量多样化配置  Init 容器  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
+  将应用容器的所有流量都转发到 Envoy 的 15001 端口。 使用 istio-proxy 用户身份运行， UID 为 1337，即 Envoy 所处的用户空间，这也是 istio-proxy 容器默认使用的用户。 使用默认的 REDIRECT 模式来重定向流量。 将所有出站流量都重定向到 Envoy 代理。 将所有访问应用容器端口的流量重定向到 Envoy 代理。  参考
+ Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  </description>
+    </item>
+    
+    <item>
+      <title>Dockerfile简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/dockerfile/</link>
+      <pubDate>Sun, 08 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/dockerfile/</guid>
+      <description>&lt;h2 id=&#34;linux文件系统&#34;&gt;Linux文件系统&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/opensource/dockerfile-os-fs.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;典型的Linux文件系统由bootfs和rootfs两部分组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;bootfs(boot file system)，只读层，主要包含bootloader和kernel，bootloader主要是引导加载kernel，当kernel被加载到内存中后bootfs就被umount了。&lt;/li&gt;
+&lt;li&gt;rootfs(root file system)，读写层，包含的就是典型的/dev，/proc，/bin，/etc等标准目录和文件。&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Istio简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/istio/</link>
+      <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/istio/</guid>
+      <description>&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Istio是service mesh的一种&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;核心特性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;流量管理：熔断、超时、重试等&lt;/li&gt;
+&lt;li&gt;安全：认证、授权、加密等&lt;/li&gt;
+&lt;li&gt;策略：限流、访问控制、Header重写等&lt;/li&gt;
+&lt;li&gt;监测：跟踪、监控、日志等&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes网络</title>
+      <link>https://luckywinds.github.io/posts/opensource/kubernetes-network/</link>
+      <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/kubernetes-network/</guid>
+      <description>&lt;h2 id=&#34;规则&#34;&gt;规则&lt;/h2&gt;
+&lt;p&gt;Kubernetes规定网络需要满足以下条件：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;所有Pod之间可以互通，不能通过NAT&lt;/li&gt;
+&lt;li&gt;所有Node和Pod之间可以互通，不能通过NAT&lt;/li&gt;
+&lt;li&gt;每个Pod拥有唯一的IP&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/kubernetes/</link>
+      <pubDate>Sun, 01 Mar 2020 16:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/kubernetes/</guid>
+      <description>&lt;h2 id=&#34;环境准备&#34;&gt;环境准备&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://labs.play-with-k8s.com/&#34;&gt;https://labs.play-with-k8s.com/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables简介</title>
+      <link>https://luckywinds.github.io/posts/tips/iptables/</link>
+      <pubDate>Sun, 01 Mar 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/tips/iptables/</guid>
+      <description>&lt;h2 id=&#34;工作流&#34;&gt;工作流&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/tips/iptables-tables-traverse.jpg&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;Iptables由表、链和规则组成，从任何网络端口进来的每一个IP数据包都要从上到下的穿过这张图，在大多数使用情况下都不会用到raw和mangle表&lt;/p&gt;
+&lt;p&gt;表包含链，链包含规则。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tomcat简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/tomcat/</link>
+      <pubDate>Sun, 01 Mar 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/tomcat/</guid>
+      <description>&lt;h2 id=&#34;整体架构&#34;&gt;整体架构&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/opensource/tomcat-overview.PNG&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Server：代表整个Tomcat，控制Tomcat自身的生命周期&lt;/li&gt;
+&lt;li&gt;Service：对外提供的服务，由多个Connector和一个Container组成&lt;/li&gt;
+&lt;li&gt;Connector：服务的入口，用于处理连接相关的事情，并提供Socket与Request和Response相关的转化&lt;/li&gt;
+&lt;li&gt;Container：提供实际的服务能力，用于封装和管理Servlet，以及具体处理Request请求&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>OS问题定位技巧</title>
+      <link>https://luckywinds.github.io/posts/debug/os_problem/</link>
+      <pubDate>Sun, 23 Feb 2020 14:09:21 +0900</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/debug/os_problem/</guid>
+      <description>&lt;h2 id=&#34;cpu&#34;&gt;CPU&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;top&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/debug/os-problem-top.PNG&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;关键点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;键入M，按进程内存占用大小排序&lt;/li&gt;
+&lt;li&gt;键入P，按进程CPU占用大小排序&lt;/li&gt;
+&lt;li&gt;观察Cpu(s)：id值，空闲CPU时间百分比，值过低，表明系统CPU存在瓶颈&lt;/li&gt;
+&lt;li&gt;观察Cpu(s)：wa值，等待I/O的CPU时间百分比，值过高，表明IO存在瓶颈&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java：双重检查锁定模式</title>
+      <link>https://luckywinds.github.io/posts/tips/java-double-checked-locking/</link>
+      <pubDate>Sun, 23 Feb 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/tips/java-double-checked-locking/</guid>
+      <description>&lt;p&gt;首先验证锁定条件(第一次检查)，只有通过锁定条件验证才真正的进行加锁逻辑并再次验证条件(第二次检查)&lt;/p&gt;
+&lt;p&gt;用来减少并发系统中竞争和同步的开销&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

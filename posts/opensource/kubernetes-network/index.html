@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kubernetes网络"><meta property="og:title" content="Kubernetes网络" />
+<meta property="og:description" content="规则
+Kubernetes规定网络需要满足以下条件：
+
+所有Pod之间可以互通，不能通过NAT
+所有Node和Pod之间可以互通，不能通过NAT
+每个Pod拥有唯一的IP
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/posts/opensource/kubernetes-network/" />
+<meta property="article:published_time" content="2020-03-01T18:07:32+08:00" />
+<meta property="article:modified_time" content="2020-03-01T18:07:32+08:00" />
+<title>Kubernetes网络 | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Kubernetes网络</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#规则">规则</a></li>
+        <li><a href="#数据流">数据流</a>
+          <ul>
+            <li><a href="#container-to-container">Container-to-Container</a></li>
+            <li><a href="#pod-to-pod">Pod-to-Pod</a></li>
+            <li><a href="#pod-service">Pod&lt;-&gt;Service</a></li>
+            <li><a href="#internet-service">Internet&lt;-&gt;Service</a></li>
+          </ul>
+        </li>
+        <li><a href="#service访问方式">Service访问方式</a>
+          <ul>
+            <li><a href="#clusterip">ClusterIP</a></li>
+            <li><a href="#nodeport">NodePort</a></li>
+            <li><a href="#loadbalancer">LoadBalancer</a></li>
+            <li><a href="#ingress">Ingress</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown">
+  <h1>
+    <a href="/posts/opensource/kubernetes-network/">Kubernetes网络</a>
+  </h1>
+  
+
+  <h5>2020-03-01</h5>
+
+
+
+  
+  <div>
+    
+        <a href="/categories/opensource/">opensource</a>
+  </div>
+  
+
+  
+  <div>
+    
+        <a href="/tags/kubernetes/">kubernetes</a>
+  </div>
+  
+
+
+  <p><h2 id="规则">规则</h2>
+<p>Kubernetes规定网络需要满足以下条件：</p>
+<ul>
+<li>所有Pod之间可以互通，不能通过NAT</li>
+<li>所有Node和Pod之间可以互通，不能通过NAT</li>
+<li>每个Pod拥有唯一的IP</li>
+</ul>
+<h2 id="数据流">数据流</h2>
+<h3 id="container-to-container">Container-to-Container</h3>
+<p><img src="/images/posts/opensource/kubernetes-network-pod-namespace.png" alt="alt" />
+</p>
+<p>Linux中，每个进程都在network namespace和其他进程通信，共享路由、防火墙、网络设备等。默认均被分配在root network namespace中和外界通信。</p>
+<p>Kubernetes中，每个Pod都在独立的network namespace中，Pod内部容器ctr*共享Pod的network namespace。</p>
+<p>所以，Pod内的容器之间，可以直接通过localhost进行通信。</p>
+<h3 id="pod-to-pod">Pod-to-Pod</h3>
+<p><img src="/images/posts/opensource/kubernetes-network-pods-connected-by-bridge.png" alt="alt" />
+</p>
+<p>network namespace可以通过虚拟网络设备veth连接，从而实现Pod namespace和root namespace之间通信</p>
+<p>veth可以通过网桥cbr连接，通过root namespace的网桥cbr，可以实现Pod namespace之间的通信</p>
+<p>跨vm的pod之间通信，原理类似，通过一个vm的eth0出，到另一个vm的eth0进，完成跨节点通信</p>
+<h3 id="pod-service">Pod&lt;-&gt;Service</h3>
+<p>Service是一个逻辑概念，包含所有pod的当前状态，通过iptables等路由规则，完成pod和service之间网络的路由</p>
+<h3 id="internet-service">Internet&lt;-&gt;Service</h3>
+<ul>
+<li>Egress，流量出到Internet，通常在VPC外包一层Gateway实现</li>
+<li>Ingress，流量从Internet来，L4通过LoadBalancer实现，L7通过Ingress Controller实现</li>
+</ul>
+<p><img src="/images/posts/opensource/kubernetes-network-ingress-controller-design.png" alt="alt" />
+</p>
+<ul>
+<li>Ingress Controller检测并创建Ingress资源</li>
+<li>Ingress配置LB和Service对应关系</li>
+<li>Service寻址Pod</li>
+</ul>
+<h2 id="service访问方式">Service访问方式</h2>
+<h3 id="clusterip">ClusterIP</h3>
+<blockquote>
+<p>kubernetes默认值，尽允许集群内部访问</p>
+</blockquote>
+<p><img src="/images/posts/opensource/kubernetes-network-svc-clusterip.png" alt="alt" />
+</p>
+<p>外部访问，需要通过Proxy访问</p>
+<h3 id="nodeport">NodePort</h3>
+<p><img src="/images/posts/opensource/kubernetes-network-svc-nodeport.png" alt="alt" />
+</p>
+<p>通过节点上指定的port，转发到对应的service上</p>
+<h3 id="loadbalancer">LoadBalancer</h3>
+<p><img src="/images/posts/opensource/kubernetes-network-svc-lb.png" alt="alt" />
+</p>
+<p>通过云服务提供商LB服务实现</p>
+<h3 id="ingress">Ingress</h3>
+<p><img src="/images/posts/opensource/kubernetes-network-svc-ingress.png" alt="alt" />
+</p>
+<p>通过Ingress资源实现反向代理，访问service</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://sookocheff.com/post/kubernetes/understanding-kubernetes-networking-model/">A Guide to the Kubernetes Networking Model</a></li>
+<li><a href="https://itnext.io/an-illustrated-guide-to-kubernetes-networking-part-1-d1ede3322727">An illustrated guide to Kubernetes Networking</a></li>
+</ul></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#规则">规则</a></li>
+        <li><a href="#数据流">数据流</a>
+          <ul>
+            <li><a href="#container-to-container">Container-to-Container</a></li>
+            <li><a href="#pod-to-pod">Pod-to-Pod</a></li>
+            <li><a href="#pod-service">Pod&lt;-&gt;Service</a></li>
+            <li><a href="#internet-service">Internet&lt;-&gt;Service</a></li>
+          </ul>
+        </li>
+        <li><a href="#service访问方式">Service访问方式</a>
+          <ul>
+            <li><a href="#clusterip">ClusterIP</a></li>
+            <li><a href="#nodeport">NodePort</a></li>
+            <li><a href="#loadbalancer">LoadBalancer</a></li>
+            <li><a href="#ingress">Ingress</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

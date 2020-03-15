@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kubernetes简介"><meta property="og:title" content="Kubernetes简介" />
+<meta property="og:description" content="环境准备
+
+https://labs.play-with-k8s.com/
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/posts/opensource/kubernetes/" />
+<meta property="article:published_time" content="2020-03-01T16:07:32+08:00" />
+<meta property="article:modified_time" content="2020-03-01T16:07:32+08:00" />
+<title>Kubernetes简介 | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Kubernetes简介</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#环境准备">环境准备</a></li>
+        <li><a href="#系统架构">系统架构</a></li>
+        <li><a href="#组件说明">组件说明</a></li>
+        <li><a href="#kubectl">Kubectl</a>
+          <ul>
+            <li><a href="#语法">语法</a></li>
+            <li><a href="#常用操作">常用操作</a></li>
+            <li><a href="#输出样式">输出样式</a></li>
+          </ul>
+        </li>
+        <li><a href="#应用管理">应用管理</a>
+          <ul>
+            <li><a href="#对象">对象</a></li>
+            <li><a href="#机制">机制</a></li>
+            <li><a href="#部署">部署</a></li>
+            <li><a href="#升级">升级</a></li>
+            <li><a href="#伸缩">伸缩</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown">
+  <h1>
+    <a href="/posts/opensource/kubernetes/">Kubernetes简介</a>
+  </h1>
+  
+
+  <h5>2020-03-01</h5>
+
+
+
+  
+  <div>
+    
+        <a href="/categories/opensource/">opensource</a>
+  </div>
+  
+
+  
+  <div>
+    
+        <a href="/tags/kubernetes/">kubernetes</a>
+  </div>
+  
+
+
+  <p><h2 id="环境准备">环境准备</h2>
+<blockquote>
+<p><a href="https://labs.play-with-k8s.com/">https://labs.play-with-k8s.com/</a></p>
+</blockquote>
+<p>添加管理节点：<code>+ ADD NEW INSTANCE</code></p>
+<pre><code>You can bootstrap a cluster as follows:
+
+ 1. Initializes cluster master node:
+
+ kubeadm init --apiserver-advertise-address $(hostname -i)
+
+
+ 2. Initialize cluster networking:
+
+ kubectl apply -n kube-system -f \
+    &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 |tr -d '\n')&quot;
+</code></pre><pre><code>Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.0.18:6443 --token fq6j4j.j7fwcjgd9nxb0uyv \
+    --discovery-token-ca-cert-hash sha256:ea8303472a0ee1c3d13c31ea3defa4e4d129ba8548491c794901f8639c573f80
+</code></pre><p>添加数据节点：<code>+ ADD NEW INSTANCE</code></p>
+<pre><code>kubeadm join 192.168.0.18:6443 --token fq6j4j.j7fwcjgd9nxb0uyv \
+    --discovery-token-ca-cert-hash sha256:ea8303472a0ee1c3d13c31ea3defa4e4d129ba8548491c794901f8639c573f80
+</code></pre><p>添加数据节点：<code>+ ADD NEW INSTANCE</code></p>
+<pre><code>kubeadm join 192.168.0.18:6443 --token fq6j4j.j7fwcjgd9nxb0uyv \
+    --discovery-token-ca-cert-hash sha256:ea8303472a0ee1c3d13c31ea3defa4e4d129ba8548491c794901f8639c573f80
+</code></pre><h2 id="系统架构">系统架构</h2>
+<p><img src="/images/posts/opensource/kubernetes-architecture.PNG" alt="alt" />
+</p>
+<p>Kubernetes以集群为单位提供容器化管理平台</p>
+<pre><code>[node1 ~]$ kubectl get nodes
+NAME    STATUS   ROLES    AGE     VERSION
+node1   Ready    master   4m37s   v1.14.9
+node2   Ready    &lt;none&gt;   90s     v1.14.9
+node3   Ready    &lt;none&gt;   40s     v1.14.9
+</code></pre><blockquote>
+<p>同一个节点既可以做为Master也可以做为Workder</p>
+</blockquote>
+<p>集群包含两种角色的节点集合，Master和Worker</p>
+<ul>
+<li>Master做为集群的控制面，负责管理整个容器化平台并对外提供服务。</li>
+<li>Worker节点做为集群的计算面，负责集群资源的实际运行载体。</li>
+</ul>
+<pre><code>[node1 ~]$ kubectl get pods --all-namespaces
+NAMESPACE     NAME                            READY   STATUS    RESTARTS   AGE
+kube-system   coredns-6dcc67dcbc-gv77k        1/1     Running   0          5m32s
+kube-system   coredns-6dcc67dcbc-k5926        1/1     Running   0          5m32s
+kube-system   etcd-node1                      1/1     Running   0          4m30s
+kube-system   kube-apiserver-node1            1/1     Running   0          4m48s
+kube-system   kube-controller-manager-node1   1/1     Running   0          4m37s
+kube-system   kube-proxy-h2vtz                1/1     Running   0          2m45s
+kube-system   kube-proxy-j59hl                1/1     Running   0          5m32s
+kube-system   kube-proxy-tsq8v                1/1     Running   0          115s
+kube-system   kube-scheduler-node1            1/1     Running   0          4m51s
+kube-system   weave-net-8l2bq                 2/2     Running   0          5m6s
+kube-system   weave-net-d6299                 2/2     Running   1          115s
+kube-system   weave-net-hmw2k                 2/2     Running   0          2m45s
+</code></pre><p>Master节点主要运行组件：</p>
+<ul>
+<li>kube-apiserver，消息总线，负责集群消息通信中心，对外提供REST API服务。</li>
+<li>kube-controller-manager，系统核心，负责管理集群各种资源。</li>
+<li>kube-scheduler，调度器，负责POD资源调度策略。</li>
+<li>etcd，存储中心，负责存储集群各种资源状态信息。</li>
+</ul>
+<p>Worker节点主要运行组件：</p>
+<ul>
+<li>kube-proxy，负责节点网络管理。</li>
+<li>Kubelet，节点代理，负责节点上任务调度。</li>
+<li>Container Runtime，容器运行时，支持Docker、rkt等</li>
+</ul>
+<p>Addons：</p>
+<ul>
+<li>coredns，集群DNS服务器，负责各种服务地址解析。</li>
+<li>weave-net，容器网络插件，支持weave、flannel、canal等</li>
+</ul>
+<h2 id="组件说明">组件说明</h2>
+<p><img src="/images/posts/opensource/kubernetes-object.PNG" alt="alt" />
+</p>
+<p>Kubernetes通过对集群内各种资源的调度管理实现应用在集群内的运行管理。</p>
+<ul>
+<li>Pod，Kubernetes集群最小调度单元，包含单个或多个容器。</li>
+<li>Label，通过给资源打标签Label方式实现资源的分类。</li>
+<li>Label Selector，通过选择Label方式实现对资源的分组。</li>
+<li>Deployment，管理应用的实例，实现应用的快速伸缩。</li>
+<li>Service，将应用以服务的方式在集群内提供功能。</li>
+<li>Ingress，将集群内的服务暴露到集群外提供功能。</li>
+<li>ConfigMap，管理应用的普通配置信息。</li>
+<li>Secret，管理应用的敏感配置信息。</li>
+<li>PVC，对应用提供外部存储连接。</li>
+<li>PV，提供存储实体。</li>
+</ul>
+<h2 id="kubectl">Kubectl</h2>
+<p>Kubectl是Kubernetes集群的命令行管理工具。</p>
+<h3 id="语法">语法</h3>
+<pre><code>kubectl [command] [TYPE] [NAME] [flags]
+</code></pre><ul>
+<li>command，对目标资源的操作动作，包括增删改查，例如create, get, describe, delete，其他apply涵盖create和udpate功能。</li>
+<li>TYPE，目标资源的类型，主要类型及其缩写如下：</li>
+</ul>
+<pre><code>    * all
+    * clusterrolebindings
+    * clusterroles
+    * clusters (valid only for federation apiservers)
+    * componentstatuses (aka 'cs')
+    * configmaps (aka 'cm')
+    * cronjobs
+    * daemonsets (aka 'ds')
+    * deployments (aka 'deploy')
+    * endpoints (aka 'ep')
+    * events (aka 'ev')
+    * ingresses (aka 'ing')
+    * jobs
+    * namespaces (aka 'ns')
+    * nodes (aka 'no')
+    * persistentvolumeclaims (aka 'pvc')
+    * persistentvolumes (aka 'pv')
+    * pods (aka 'po')
+    * rolebindings
+    * roles
+    * secrets
+    * serviceaccounts (aka 'sa')
+    * services (aka 'svc')
+    * statefulsets
+    * storageclasses
+</code></pre><ul>
+<li>NAME，资源实例名称</li>
+<li>flags，特殊标识，提供扩展功能。</li>
+</ul>
+<h3 id="常用操作">常用操作</h3>
+<pre><code>Operation
+    Syntax
+    Description
+annotate
+    kubectl annotate (-f FILENAME \| TYPE NAME \| TYPE/NAME) KEY_1=VAL_1 ... KEY_N=VAL_N [--overwrite] [--all] [--resource-version=version] [flags]
+    Add or update the annotations of one or more resources.
+apply
+    kubectl apply -f FILENAME [flags]
+    Apply a configuration change to a resource from a file or stdin.
+create
+    kubectl create -f FILENAME [flags]
+    Create one or more resources from a file or stdin.
+delete
+    kubectl delete (-f FILENAME \| TYPE [NAME \| /NAME \| -l label \| --all]) [flags]
+    Delete resources either from a file, stdin, or specifying label selectors, names, resource selectors, or resources.
+describe
+    kubectl describe (-f FILENAME \| TYPE [NAME_PREFIX \| /NAME \| -l label]) [flags]
+    Display the detailed state of one or more resources.
+edit
+    kubectl edit (-f FILENAME \| TYPE NAME \| TYPE/NAME) [flags]
+    Edit and update the definition of one or more resources on the server by using the default editor.
+exec
+    kubectl exec POD [-c CONTAINER] [-i] [-t] [flags] [-- COMMAND [args...]]
+    Execute a command against a container in a pod,
+explain
+    kubectl explain [--include-extended-apis=true] [--recursive=false] [flags]
+    Get documentation of various resources. For instance pods, nodes, services, etc.
+get
+    kubectl get (-f FILENAME \| TYPE [NAME \| /NAME \| -l label]) [--watch] [--sort-by=FIELD] [[-o \| --output]=OUTPUT_FORMAT] [flags]
+    List one or more resources.
+logs
+    kubectl logs POD [-c CONTAINER] [--follow] [flags]
+    Print the logs for a container in a pod.
+replace
+    kubectl replace -f FILENAME
+    Replace a resource from a file or stdin.
+run
+    kubectl run NAME --image=image [--env=&quot;key=value&quot;] [--port=port] [--replicas=replicas] [--dry-run=bool] [--overrides=inline-json] [flags]
+    Run a specified image on the cluster.
+</code></pre><h3 id="输出样式">输出样式</h3>
+<p>Kubectl默认已文本方法返回，可以通过指定flag改变输出样式</p>
+<pre><code>kubectl [command] [TYPE] [NAME] -o=&lt;output_format&gt;
+</code></pre><p>output_format支持以下选项：</p>
+<pre><code>Output format
+    Description
+-o=custom-columns=&lt;spec&gt;
+    Print a table using a comma separated list of custom columns.
+-o=custom-columns-file=&lt;filename&gt;
+    Print a table using the custom columns template in the &lt;filename&gt; file.
+-o=json
+    Output a JSON formatted API object.
+-o=jsonpath=&lt;template&gt;
+    Print the fields defined in a jsonpath expression.
+-o=jsonpath-file=&lt;filename&gt;
+    Print the fields defined by the jsonpath expression in the &lt;filename&gt; file.
+-o=name
+    Print only the resource name and nothing else.
+-o=wide
+    Output in the plain-text format with any additional information. For pods, the node name is included.
+-o=yaml
+    Output a YAML formatted API object
+</code></pre><h2 id="应用管理">应用管理</h2>
+<h3 id="对象">对象</h3>
+<p>Kubernetes系统中所有内容均通过对象标识，通过对象对外体现系统状态。</p>
+<p>对象包含Spec和Status两部分。</p>
+<ul>
+<li>Spec，对象的期望状态，由外部输入，对对象进行配置管理。</li>
+<li>Status，对象的当前状态，由Kubernetes系统返回。</li>
+</ul>
+<p>Kubernetes通过循环比较对象的期望状态和当前状态，不停修正对象的当前状态直到其达到预期状态或者失败，完成对象的管理。</p>
+<p>Kubernetes采用YAML方式标识对象，包含以下主要组成部分：</p>
+<ul>
+<li>apiVersion，采用的Kubernetes API版本</li>
+<li>kind，资源的类型</li>
+<li>metadata，资源的元数据描述</li>
+<li>spec，资源的配置信息</li>
+</ul>
+<p>spec根据具体资源的类型具有不同的配置规则，参考：https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.14/</p>
+<p>例如：</p>
+<pre><code>kind: Service
+apiVersion: v1
+metadata:
+  # Unique key of the Service instance
+  name: service-example
+spec:
+  ports:
+    # Accept traffic sent to port 80
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    # Loadbalance traffic across Pods matching
+    # this label selector
+    app: nginx
+  # Create an HA proxy in the cloud provider
+  # with an External IP address - *Only supported
+  # by some cloud providers*
+  type: LoadBalancer
+</code></pre><h3 id="机制">机制</h3>
+<p><img src="/images/posts/opensource/kubernetes-list-watch.png" alt="alt" />
+</p>
+<p>Kubernetes以API server为消息总线，以发布订阅的方式完成消息的传递。</p>
+<ul>
+<li>Kubectl客户端发送部署请求到API Server。</li>
+<li>API Server通知Controller Manager创建资源。</li>
+<li>Schedule执行调度任务，讲Pod分发到合适的node上。</li>
+<li>Node上的kubelet在节点上创建并运行Pod。</li>
+</ul>
+<blockquote>
+<p>应用的配置和当前状态信息保存在etcd中</p>
+</blockquote>
+<blockquote>
+<p>网络插件weave为每个Pod分配IP</p>
+</blockquote>
+<blockquote>
+<p>kube-proxy为Service配置相应的iptables规则</p>
+</blockquote>
+<blockquote>
+<p>kube-dns位Service提供集群内域名解析</p>
+</blockquote>
+<blockquote>
+<p>Docker等容器运行时为Pod中容器提供运行平台</p>
+</blockquote>
+<h3 id="部署">部署</h3>
+<pre><code>[node1 ~]$ cat nginx-app.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+</code></pre><pre><code>[node1 ~]$ kubectl apply -f nginx-app.yaml
+service &quot;my-nginx-svc&quot; created
+deployment &quot;my-nginx&quot; created
+</code></pre><pre><code>[node1 ~]$ kubectl get svc -l app=nginx
+NAME           TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+my-nginx-svc   LoadBalancer   10.108.164.23   &lt;pending&gt;     80:30721/TCP   1m
+[node1 ~]$ kubectl get deploy -l app=nginx
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+my-nginx   3         3         3            3           2m
+</code></pre><blockquote>
+<p>通过LoadBalancer IP:30721即可访问部署的Nginx应用</p>
+</blockquote>
+<h3 id="升级">升级</h3>
+<p>升级前：</p>
+<pre><code>[node1 ~]$ kubectl get deploy -l app=nginx -o wide
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       CONTAINERS   IMAGES        SELECTOR
+my-nginx   3         3         3            3           8m        nginx        nginx:1.7.9   app=nginx
+</code></pre><p>升级：</p>
+<pre><code>[node1 ~]$ cat nginx-app.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.8
+        ports:
+        - containerPort: 80
+</code></pre><pre><code>[node1 ~]$ kubectl apply -f nginx-app.yaml
+service &quot;my-nginx-svc&quot; unchanged
+deployment &quot;my-nginx&quot; configured
+</code></pre><p>升级后：</p>
+<pre><code>[node1 ~]$ kubectl get deploy -l app=nginx -o wide
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       CONTAINERS   IMAGES      SELECTOR
+my-nginx   3         3         3            3           11m       nginx        nginx:1.8   app=nginx
+</code></pre><blockquote>
+<p>nginx版本升级至1.8</p>
+</blockquote>
+<h3 id="伸缩">伸缩</h3>
+<p>伸缩前：</p>
+<pre><code>[node1 ~]$ kubectl get deploy -l app=nginx -o wide
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       CONTAINERS   IMAGES      SELECTOR
+my-nginx   3         3         3            3           12m       nginx        nginx:1.8   app=nginx
+</code></pre><p>伸缩：（3-&gt;5）</p>
+<pre><code>[node1 ~]$ cat nginx-app.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.8
+        ports:
+        - containerPort: 80
+</code></pre><pre><code>[node1 ~]$ kubectl apply -f nginx-app.yaml
+service &quot;my-nginx-svc&quot; unchanged
+deployment &quot;my-nginx&quot; configured
+</code></pre><p>伸缩后：</p>
+<pre><code>[node1 ~]$ kubectl get deploy -l app=nginx -o wide
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       CONTAINERS   IMAGES      SELECTOR
+my-nginx   5         5         5            5           14m       nginx        nginx:1.8   app=nginx
+</code></pre><blockquote>
+<p>nginx实例数扩容至5</p>
+</blockquote></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#环境准备">环境准备</a></li>
+        <li><a href="#系统架构">系统架构</a></li>
+        <li><a href="#组件说明">组件说明</a></li>
+        <li><a href="#kubectl">Kubectl</a>
+          <ul>
+            <li><a href="#语法">语法</a></li>
+            <li><a href="#常用操作">常用操作</a></li>
+            <li><a href="#输出样式">输出样式</a></li>
+          </ul>
+        </li>
+        <li><a href="#应用管理">应用管理</a>
+          <ul>
+            <li><a href="#对象">对象</a></li>
+            <li><a href="#机制">机制</a></li>
+            <li><a href="#部署">部署</a></li>
+            <li><a href="#升级">升级</a></li>
+            <li><a href="#伸缩">伸缩</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

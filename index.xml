@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Luckywinds</title>
+    <link>https://luckywinds.github.io/</link>
+    <description>Recent content on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 08 Mar 2020 20:07:32 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Istio Sidecar简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/istio-sidecar/</link>
+      <pubDate>Sun, 08 Mar 2020 20:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/istio-sidecar/</guid>
+      <description>Sidecar  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  注入内容 Istio sidecar向应用pod中注入2个容器：
+ init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，实现流量多样化配置  Init 容器  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
+  将应用容器的所有流量都转发到 Envoy 的 15001 端口。 使用 istio-proxy 用户身份运行， UID 为 1337，即 Envoy 所处的用户空间，这也是 istio-proxy 容器默认使用的用户。 使用默认的 REDIRECT 模式来重定向流量。 将所有出站流量都重定向到 Envoy 代理。 将所有访问应用容器端口的流量重定向到 Envoy 代理。  参考
+ Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  </description>
+    </item>
+    
+    <item>
+      <title>Dockerfile简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/dockerfile/</link>
+      <pubDate>Sun, 08 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/dockerfile/</guid>
+      <description>&lt;h2 id=&#34;linux文件系统&#34;&gt;Linux文件系统&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/opensource/dockerfile-os-fs.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;典型的Linux文件系统由bootfs和rootfs两部分组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;bootfs(boot file system)，只读层，主要包含bootloader和kernel，bootloader主要是引导加载kernel，当kernel被加载到内存中后bootfs就被umount了。&lt;/li&gt;
+&lt;li&gt;rootfs(root file system)，读写层，包含的就是典型的/dev，/proc，/bin，/etc等标准目录和文件。&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Istio简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/istio/</link>
+      <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/istio/</guid>
+      <description>&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Istio是service mesh的一种&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;核心特性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;流量管理：熔断、超时、重试等&lt;/li&gt;
+&lt;li&gt;安全：认证、授权、加密等&lt;/li&gt;
+&lt;li&gt;策略：限流、访问控制、Header重写等&lt;/li&gt;
+&lt;li&gt;监测：跟踪、监控、日志等&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes网络</title>
+      <link>https://luckywinds.github.io/posts/opensource/kubernetes-network/</link>
+      <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/kubernetes-network/</guid>
+      <description>&lt;h2 id=&#34;规则&#34;&gt;规则&lt;/h2&gt;
+&lt;p&gt;Kubernetes规定网络需要满足以下条件：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;所有Pod之间可以互通，不能通过NAT&lt;/li&gt;
+&lt;li&gt;所有Node和Pod之间可以互通，不能通过NAT&lt;/li&gt;
+&lt;li&gt;每个Pod拥有唯一的IP&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/kubernetes/</link>
+      <pubDate>Sun, 01 Mar 2020 16:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/kubernetes/</guid>
+      <description>&lt;h2 id=&#34;环境准备&#34;&gt;环境准备&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://labs.play-with-k8s.com/&#34;&gt;https://labs.play-with-k8s.com/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>Iptables简介</title>
+      <link>https://luckywinds.github.io/posts/tips/iptables/</link>
+      <pubDate>Sun, 01 Mar 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/tips/iptables/</guid>
+      <description>&lt;h2 id=&#34;工作流&#34;&gt;工作流&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/tips/iptables-tables-traverse.jpg&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;Iptables由表、链和规则组成，从任何网络端口进来的每一个IP数据包都要从上到下的穿过这张图，在大多数使用情况下都不会用到raw和mangle表&lt;/p&gt;
+&lt;p&gt;表包含链，链包含规则。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Tomcat简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/tomcat/</link>
+      <pubDate>Sun, 01 Mar 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/tomcat/</guid>
+      <description>&lt;h2 id=&#34;整体架构&#34;&gt;整体架构&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/opensource/tomcat-overview.PNG&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Server：代表整个Tomcat，控制Tomcat自身的生命周期&lt;/li&gt;
+&lt;li&gt;Service：对外提供的服务，由多个Connector和一个Container组成&lt;/li&gt;
+&lt;li&gt;Connector：服务的入口，用于处理连接相关的事情，并提供Socket与Request和Response相关的转化&lt;/li&gt;
+&lt;li&gt;Container：提供实际的服务能力，用于封装和管理Servlet，以及具体处理Request请求&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>OS问题定位技巧</title>
+      <link>https://luckywinds.github.io/posts/debug/os_problem/</link>
+      <pubDate>Sun, 23 Feb 2020 14:09:21 +0900</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/debug/os_problem/</guid>
+      <description>&lt;h2 id=&#34;cpu&#34;&gt;CPU&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;top&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/debug/os-problem-top.PNG&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;关键点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;键入M，按进程内存占用大小排序&lt;/li&gt;
+&lt;li&gt;键入P，按进程CPU占用大小排序&lt;/li&gt;
+&lt;li&gt;观察Cpu(s)：id值，空闲CPU时间百分比，值过低，表明系统CPU存在瓶颈&lt;/li&gt;
+&lt;li&gt;观察Cpu(s)：wa值，等待I/O的CPU时间百分比，值过高，表明IO存在瓶颈&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java：双重检查锁定模式</title>
+      <link>https://luckywinds.github.io/posts/tips/java-double-checked-locking/</link>
+      <pubDate>Sun, 23 Feb 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/tips/java-double-checked-locking/</guid>
+      <description>&lt;p&gt;首先验证锁定条件(第一次检查)，只有通过锁定条件验证才真正的进行加锁逻辑并再次验证条件(第二次检查)&lt;/p&gt;
+&lt;p&gt;用来减少并发系统中竞争和同步的开销&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/priorityqueues/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/priorityqueues/</guid>
+      <description>优先级队列 应用场景  数据流中最大/小N元素判断 图搜索 &amp;hellip;  Code class MaxPQ:def __init__(self):self.key = [0]self.len = 0def empty(self):return self.len == 0def insert(self, k):self.key.append(k)self.len += 1self.swim(self.len)def del_max(self):m = self.key[1]self.swap(1, self.len)del self.key[self.len]self.len -= 1self.sink(1)return mdef swim(self, k):while k &amp;gt; 1 and self.less(int(k / 2), k):self.swap(k, int(k / 2))k = int(k / 2)def sink(self, k):while 2 * k &amp;lt;= self.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/recursion/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/recursion/</guid>
+      <description>递归 思路 某个函数直接或者间接地调用自己，把原问题的求解转换为许多性质相同但是规模更小的子问题。
+重点关注如何把原问题划分成符合条件的子问题，以及最简问题的求解。
+套路 int func(问题规模) {if (终止条件) {return 最小子问题解;}return func(缩小规模);} 问题规模通常包含数据和其当前状态
+ 优化  所谓的剪枝，即提前判断当前状态是否有必要继续分解下去而提前结束
+ 备忘录 int memo[MAX]int func(问题规模) {if (memo[当前状态]) {return 当前问题解}if (终止条件) {return 最小子问题解;}return func(缩小规模);} 定义备忘录，记录问题状态和其对应的解 判断当前状态是否在备忘录中，提前返回解（有解和无解）  最优化 int ans；//当前最差状态int func(问题规模) {if (当前状态 比 ans 更差) {return 无解}if (终止条件) {return 最小子问题解;}return func(缩小规模);} 定义临时状态，记录当前最差状态 判断当前状态是否比最差状态还差或者直接不可用，提前返回解（无解）  示例 力扣1137.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/unionfind/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/unionfind/</guid>
+      <description>并查集 应用场景  照片中的像素 网络中的计算机 社交网络的朋友 等  Code class UnionFind:def __init__(self, n):self.id = [i for i in range(n)]self.size = [1] * ndef root(self, i):while i != self.id[i]:self.id[i] = self.id[self.id[i]]i = self.id[i]return idef connected(self, p, q):return self.root(p) == self.root(q)def union(self, p, q):i = self.root(p)j = self.root(q)if i == j:returnif self.size[i] &amp;lt; self.size[j]:self.id[i] = jself.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/go-goroutine/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/go-goroutine/</guid>
+      <description>Go 并发 Goroutine  协程，轻量级线程，包括匿名协程和命名协程
+ func main() {go test1()go func() {fmt.Println(&amp;#34;Hello&amp;#34;)}()}func test1() {fmt.Println(&amp;#34;Hello&amp;#34;)} 无法获取协程结束标识
+ 互斥  协程之间通过Channel进行通信
+ 单任务 func test2() {done := make(chan bool)go func(){fmt.Println(&amp;#34;Hello&amp;#34;)done &amp;lt;- true}()&amp;lt;-done} 无缓冲Channel，接收动完成生在对Channel的发送完成之前。
+ 多任务 Channel func test3() {done := make(chan bool, 3)for i := 0; i &amp;lt; cap(done); i++ {go func(){fmt.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/go/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/go/</guid>
+      <description>Go import语法 ImportDeclaration = &amp;quot;import&amp;quot; ImportSpecImportSpec = [ &amp;quot;.&amp;quot; | &amp;quot;_&amp;quot; | Identifier ] ImportPath .: 匿名别名，可以直接使用包的方法，无需指定包名 _: 仅使用包的init函数，其他方法不使用 Identifier: 显式别名，代替原始包名字  示例：
+import (&amp;quot;math&amp;quot;m &amp;quot;math&amp;quot;. &amp;quot;math&amp;quot;_ &amp;quot;math&amp;quot;&amp;quot;go.etcd.io/etcd/clientv3&amp;quot;) 短路径：标准库，例如：&amp;ldquo;math&amp;rdquo; 长路径：第三方库，例如：&amp;ldquo;go.etcd.io/etcd/clientv3&amp;rdquo;  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/java/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/java/</guid>
+      <description>Java 集合框架（JCF） 核心接口：
+主要实现：
+具体类 Set：元素唯一
+ HashSet - 唯一，无序。（哈希表） TreeSet - 唯一，自然序。（红黑树） LinkedHashSet - 唯一，插入序。（哈希表+链表）  List：元素可相同，有序
+ ArrayList - （数组） LinkedList - （双向链表）  Queue和Deque：队列，FIFO
+ ArrayDeque - Deque（数组）. LinkedList - Queue和Deque（链表）. PriorityQueue - Queue（小顶堆）.  Map：键值对
+ HashMap - 无序（哈希表）. TreeMap - 自然序（红黑树）. LinkedHashMap - 插入序（哈希表+链表）.  工具类  Arrays：对数组(数据类型[])进行各种操作。例如，排序、查找、复制等 Collections：对集合类(Collection的子类)进行操作。例如，排序等。  辅助类 Iterators:
+ Iterator - 单向迭代器. ListIterator - 双向迭代器.  Ordering:
+ Comparable - 自然序，内部重写compareTo. Comparator - 排序规则，作为策略外部传入.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/python/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/python/</guid>
+      <description>Python 内置数据类型 内置类型：
+类型转换：
+ str(x) int(x) float(x) round(x)  内置数据结构  List(as Stacks Queues)，[]，可变序列 Tuples，()，不可变序列 Sets，{}，无序，唯一 Dicts，{}，键值对，键唯一  List生成式 直接生成：
+&amp;gt;&amp;gt;&amp;gt; list(range(1, 11))[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]生成后再处理：
+&amp;gt;&amp;gt;&amp;gt; [x * x for x in range(1, 11)][1, 4, 9, 16, 25, 36, 49, 64, 81, 100]生成后再条件处理：
+&amp;gt;&amp;gt;&amp;gt; [x if x % 2 == 0 else -x for x in range(1, 11)][-1, 2, -3, 4, -5, 6, -7, 8, -9, 10]生成后先过滤再处理：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/sql/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/sql/</guid>
+      <description>SQL 概述  关系型数据库，主要讨论对表数据查询操作
+ 语法  Mysql SELECT Syntax Postgres SELECT Syntax SQLite SELECT Syntax Oracle SELECT Syntax  执行逻辑 从源表数据开始，每个执行逻辑基于前面步骤的源表或虚表生成一个新的虚表，将最后的虚表作为结果返回
+执行顺序  SQL实际执行顺序并不是按照语法顺序执行的
+  FROM：对子句中表执行笛卡尔积，生成虚表VT1。 ON：对VT1应用ON筛选器，生成VT2。 JOIN: 对新表数据按照一定的策略和VT2表中数据进行连接，生成TV3。 WHERE：对VT3应用WHERE筛选器，生成VT4。 GROUP BY：按列对VT4中的行进行分组，生成VT5。 WITH CUTE|ROLLUP：根据聚合策略把聚合数据插入VT5，生成VT6。 HAVING：对VT6应用HAVING筛选器，生成VT7。 SELECT：选择SELECT列表，产生VT8。 DISTINCT：将重复的行从VT8中删除，生成VT9。 ORDER BY：按列进行顺序，生成一个游标(VC10)。 LIMIT(TOP)：从VC10的开始处选择指定数量或比例的行，生成VT11，并作为结果返回。  笛卡尔积  A表m行，B表行，C表k行。笛卡尔积ABC=mnk行数据
+ JOIN  先确定基础表，将另外表数据附加到基础表上的过程
+  表可以SELECT出来的表
+  默认为INNER JOIN
+ GROUP BY  如果指定多个列，则按照多个列内容均相同做为分组条件
+  聚合函数是按组进行聚合执行的
+  SUM	计算合计值，该列必须为数值类型 AVG	计算平均值，该列必须为数值类型 MAX	计算最大值 MIN	计算最小值 COUNT 计数   如果使用了聚合函数但未指定GROUP BY，则默认对整个数据集进行聚合</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/system/system-design-primer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/system-design-primer/</guid>
+      <description>系统设计入门 概览  DNS，第一层路由 CDN，第二层缓存 LB，第三层负载 Web Server和API，前后分离 Queue，消息队列 Cache，缓存 SQL，读写分离 NoSql，对象存储  DNS 域名结构：
+ 分层管理
+ 域名解析：
+递归：
+迭代：
+资源类型：
+ NS 记录（域名服务） ─ 指定解析域名或子域名的DNS服务器。 MX 记录（邮件交换） ─ 指定接收信息的邮件服务器。 A 记录（地址） ─ 指定域名对应的IP地址记录。 CNAME（规范） ─ 一个域名映射到另一个域名或CNAME记录（example.com指向www.example.com）或映射到一个A记录。  优缺点：
+ 延迟 DDOS 不可或缺  CDN 作用：
+CDN是一个全球性的代理服务器分布式网络，它从靠近用户的位置提供内容。通常，HTML/CSS/JS，图片和视频等静态内容由CDN提供。
+ 从靠近用户的数据中心提供资源 通过CDN，服务器不必真的处理请求  内容更新模式：
+ 推送（push）：服务器上内容发生变动时，推送新内容给CDN，并重写URL地址以指向新内容的CDN地址。流量最小化，但储存最大化。 拉取（pull）：当第一个用户请求该资源时，从服务器上拉取资源，存活时间（TTL）决定缓存多久时间。最小化储存空间，有冗余流量。适合高流量站点  优缺点：
+ 减低服务请求压力 流量贵 过期，内容更新  LB  LB和Proxy，在大多场景基本是等效的，LB可以运行在Proxy模式，Proxy可以提供LB功能
+ 特性：
+主要任务：
+ 位于客户端和服务端之间</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/tool/git/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/tool/git/</guid>
+      <description>Git 概述 3+1棵树
+ Workspace：工作目录，持有实际工作文件 Index：暂存区，临时保存工作文件变更情况 Repository：本地仓库，在本地保存完整Git记录 Remote：远端仓库，实际代码仓库   所有的Git操作，都是文件变化记录在这四棵树之间流转，开发过程中重点关注前3棵树
+ 获取代码库  git clone [url]，克隆到本地，文件夹名字和仓库名字保持一致 git clone [url] local_dir，克隆到本地，文件夹名字自定义   url可以是git://或ssh://或http(s)://或ftp://等
+ 查看分支 git branch &amp;lt;options&amp;gt;
+ 无选项，列出本地分支 -a，列出本地分支和远程分支 -r，列出远程分支  git tag
+ 列出标签列表
+ 分支管理  git branch dev，基于当前分支创建dev分支 git checkout dev，切换到dev分支 git branch -d dev，删除分支 git checkout -b dev [origin/branch|tag]，基于指定分支或标签，创建并切换分支  获取更新信息  git fetch &amp;lt;origin&amp;gt; &amp;lt;branch&amp;gt;   仅获取指定分支的更新信息，不合并内容
+  获取的分支名字规则为origin/branch
+  git pull &amp;lt;origin&amp;gt; &amp;lt;branch&amp;gt;   获取指定分支的更新信息，自动合并更新到本地当前分支</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/tool/maven/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/tool/maven/</guid>
+      <description>Maven 坐标 &amp;lt;dependency&amp;gt;&amp;lt;groupId&amp;gt;org.slf4j&amp;lt;/groupId&amp;gt;&amp;lt;artifactId&amp;gt;slf4j-api&amp;lt;/artifactId&amp;gt;&amp;lt;version&amp;gt;1.7.7&amp;lt;/version&amp;gt;&amp;lt;/dependency&amp;gt; groupId，定义当前模块隶属的实际Maven项目 artifactId，定义实际项目中的一个Maven模块 version，定义当前项目所处版本，版本号定义约定: &amp;lt;主版本&amp;gt;.&amp;lt;次版本&amp;gt;.&amp;lt;增量版本&amp;gt;-&amp;lt;里程碑版本&amp;gt; packaging，定义Maven项目打包方式, 通常打包方式与所生成构件扩展名对应，有jar(默认)、war、pom、maven-plugin等.  依赖  直接依赖 传递依赖，依赖的依赖  版本选择原则：
+ 路径最近者优先 第一声明者优先  依赖除了保护坐标信息外，还保护以下内容：
+ scope，用来控制依赖与三种classpath(编译classpath、测试classpath、运行classpath)的关系，包含compile、provided、runtime、test、system和import optional，依赖是否可选 exclusions，排除传递性依赖  查看依赖树：mvn dependency:tree
+仓库  集中存储这些构件的地方
+   本地仓库: 默认地址为~/.m2/, 一个构件只有在本地仓库存在之后, 才能由Maven项目使用
+  远程仓库: 远程仓库又可简单分成两类: 中央仓库和私服（代理仓库）
+  repository表示发布版本构件的仓库
+  snapshotRepository代表快照版本的仓库
+  生命周期与插件  clean：pre-clean、clean、post-clean default：process-resources、compile、process-test-resources、test-compile、test、package、install、deploy site：pre-site、site、post-site、site-deploy  生命周期的阶段phase与插件的目标goal相互绑定, 用以完成实际的构建任务
+mvn compile:compile，冒号前是插件前缀, 后面是该插件目标
+聚合继承 通过在一个打包方式为pom的Maven项目中声明任意数量的module以实现模块聚合 聚合POM放在项目目录的最顶层, 其他模块作为聚合模块的子目录 聚合POM存放公共配置，子模块POM存放定制化配置</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/tool/uml/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/tool/uml/</guid>
+      <description>UML UML类图  理解类之间的关系，统一符号意义，提高工作交流效率
+ 记住三个重要符号：三角形、菱形、尖括号，每个符号分为虚实两类，实虚代表类之间的强弱关系
+三角形  实线，继承关系   理解要点：实实在在的类，不玩虚的
+ 例如，SUV和小汽车，都是独立存在的实体
+ 虚线，实现关系   理解要点：就玩虚的，实现接口或继承抽象类
+ 例如：小汽车和车，车是抽象的概念
+菱形  实心，组合关系   理解要点：大家是不可分割的一体
+ 例如：发动机和小汽车，没有发动机就不能叫小汽车
+ 空心，聚合关系   理解要点：大家只是在一起玩
+ 例如：学生和班级，没有学生，班级照样在哪等着
+尖括号  实线，关联关系  理解要点：强关联，成员变量
+例如：身份证和学生，每个学生都有身份证
+ 虚线，依赖关系  理解要点：弱关联，临时变量
+例如：学生和自行车，不是每个学生都有自行车
+参考：
+ 看懂UML类图和时序图  </description>
+    </item>
+    
+  </channel>
+</rss>
