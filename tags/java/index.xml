@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>java on Luckywinds</title>
+    <link>https://luckywinds.github.io/tags/java/</link>
+    <description>Recent content in java on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 23 Feb 2020 11:24:16 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java：双重检查锁定模式</title>
+      <link>https://luckywinds.github.io/posts/tips/java-double-checked-locking/</link>
+      <pubDate>Sun, 23 Feb 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/tips/java-double-checked-locking/</guid>
+      <description>&lt;p&gt;首先验证锁定条件(第一次检查)，只有通过锁定条件验证才真正的进行加锁逻辑并再次验证条件(第二次检查)&lt;/p&gt;
+&lt;p&gt;用来减少并发系统中竞争和同步的开销&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

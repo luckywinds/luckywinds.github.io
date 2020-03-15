@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>docker on Luckywinds</title>
+    <link>https://luckywinds.github.io/tags/docker/</link>
+    <description>Recent content in docker on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 08 Mar 2020 18:07:32 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Dockerfile简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/dockerfile/</link>
+      <pubDate>Sun, 08 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/dockerfile/</guid>
+      <description>&lt;h2 id=&#34;linux文件系统&#34;&gt;Linux文件系统&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/opensource/dockerfile-os-fs.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;典型的Linux文件系统由bootfs和rootfs两部分组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;bootfs(boot file system)，只读层，主要包含bootloader和kernel，bootloader主要是引导加载kernel，当kernel被加载到内存中后bootfs就被umount了。&lt;/li&gt;
+&lt;li&gt;rootfs(root file system)，读写层，包含的就是典型的/dev，/proc，/bin，/etc等标准目录和文件。&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

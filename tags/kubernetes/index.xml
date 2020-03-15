@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubernetes on Luckywinds</title>
+    <link>https://luckywinds.github.io/tags/kubernetes/</link>
+    <description>Recent content in kubernetes on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 01 Mar 2020 18:07:32 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kubernetes网络</title>
+      <link>https://luckywinds.github.io/posts/opensource/kubernetes-network/</link>
+      <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/kubernetes-network/</guid>
+      <description>&lt;h2 id=&#34;规则&#34;&gt;规则&lt;/h2&gt;
+&lt;p&gt;Kubernetes规定网络需要满足以下条件：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;所有Pod之间可以互通，不能通过NAT&lt;/li&gt;
+&lt;li&gt;所有Node和Pod之间可以互通，不能通过NAT&lt;/li&gt;
+&lt;li&gt;每个Pod拥有唯一的IP&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/kubernetes/</link>
+      <pubDate>Sun, 01 Mar 2020 16:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/kubernetes/</guid>
+      <description>&lt;h2 id=&#34;环境准备&#34;&gt;环境准备&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://labs.play-with-k8s.com/&#34;&gt;https://labs.play-with-k8s.com/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

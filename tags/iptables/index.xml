@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>iptables on Luckywinds</title>
+    <link>https://luckywinds.github.io/tags/iptables/</link>
+    <description>Recent content in iptables on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 01 Mar 2020 11:24:16 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/tags/iptables/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Iptables简介</title>
+      <link>https://luckywinds.github.io/posts/tips/iptables/</link>
+      <pubDate>Sun, 01 Mar 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/tips/iptables/</guid>
+      <description>&lt;h2 id=&#34;工作流&#34;&gt;工作流&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/tips/iptables-tables-traverse.jpg&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;Iptables由表、链和规则组成，从任何网络端口进来的每一个IP数据包都要从上到下的穿过这张图，在大多数使用情况下都不会用到raw和mangle表&lt;/p&gt;
+&lt;p&gt;表包含链，链包含规则。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

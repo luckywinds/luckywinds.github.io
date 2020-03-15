@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tomcat on Luckywinds</title>
+    <link>https://luckywinds.github.io/tags/tomcat/</link>
+    <description>Recent content in tomcat on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 01 Mar 2020 11:24:16 +0800</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/tags/tomcat/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tomcat简介</title>
+      <link>https://luckywinds.github.io/posts/opensource/tomcat/</link>
+      <pubDate>Sun, 01 Mar 2020 11:24:16 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/opensource/tomcat/</guid>
+      <description>&lt;h2 id=&#34;整体架构&#34;&gt;整体架构&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/opensource/tomcat-overview.PNG&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Server：代表整个Tomcat，控制Tomcat自身的生命周期&lt;/li&gt;
+&lt;li&gt;Service：对外提供的服务，由多个Connector和一个Container组成&lt;/li&gt;
+&lt;li&gt;Connector：服务的入口，用于处理连接相关的事情，并提供Socket与Request和Response相关的转化&lt;/li&gt;
+&lt;li&gt;Container：提供实际的服务能力，用于封装和管理Servlet，以及具体处理Request请求&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

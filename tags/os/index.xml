@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>os on Luckywinds</title>
+    <link>https://luckywinds.github.io/tags/os/</link>
+    <description>Recent content in os on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 23 Feb 2020 14:09:21 +0900</lastBuildDate>
+    
+	<atom:link href="https://luckywinds.github.io/tags/os/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>OS问题定位技巧</title>
+      <link>https://luckywinds.github.io/posts/debug/os_problem/</link>
+      <pubDate>Sun, 23 Feb 2020 14:09:21 +0900</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/debug/os_problem/</guid>
+      <description>&lt;h2 id=&#34;cpu&#34;&gt;CPU&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;top&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://luckywinds.github.io/images/posts/debug/os-problem-top.PNG&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;关键点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;键入M，按进程内存占用大小排序&lt;/li&gt;
+&lt;li&gt;键入P，按进程CPU占用大小排序&lt;/li&gt;
+&lt;li&gt;观察Cpu(s)：id值，空闲CPU时间百分比，值过低，表明系统CPU存在瓶颈&lt;/li&gt;
+&lt;li&gt;观察Cpu(s)：wa值，等待I/O的CPU时间百分比，值过高，表明IO存在瓶颈&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
