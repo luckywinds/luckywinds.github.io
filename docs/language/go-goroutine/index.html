@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Go Goroutine"><meta property="og:title" content="" />
+<meta property="og:description" content="Go 并发 Goroutine  协程，轻量级线程，包括匿名协程和命名协程
+ func main() {go test1()go func() {fmt.Println(&#34;Hello&#34;)}()}func test1() {fmt.Println(&#34;Hello&#34;)} 无法获取协程结束标识
+ 互斥  协程之间通过Channel进行通信
+ 单任务 func test2() {done := make(chan bool)go func(){fmt.Println(&#34;Hello&#34;)done &lt;- true}()&lt;-done} 无缓冲Channel，接收动完成生在对Channel的发送完成之前。
+ 多任务 Channel func test3() {done := make(chan bool, 3)for i := 0; i &lt; cap(done); i&#43;&#43; {go func(){fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/language/go-goroutine/" />
+
+<title>Go Goroutine | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Go Goroutine</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go-并发">Go 并发</a>
+      <ul>
+        <li><a href="#goroutine">Goroutine</a></li>
+        <li><a href="#互斥">互斥</a></li>
+        <li><a href="#单任务">单任务</a>
+          <ul>
+            <li><a href="#多任务">多任务</a></li>
+          </ul>
+        </li>
+        <li><a href="#并发">并发</a>
+          <ul>
+            <li><a href="#限流">限流</a></li>
+            <li><a href="#超时">超时</a></li>
+          </ul>
+        </li>
+        <li><a href="#模型">模型</a>
+          <ul>
+            <li><a href="#生产者-消费者">生产者-&gt;消费者</a></li>
+            <li><a href="#发布-订阅">发布-&gt;订阅</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="go-并发">Go 并发</h1>
+<h2 id="goroutine">Goroutine</h2>
+<blockquote>
+<p>协程，轻量级线程，包括匿名协程和命名协程</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test1</span>()
+
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+	}()
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test1</span>() {
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+}
+</code></pre></div><blockquote>
+<p>无法获取协程结束标识</p>
+</blockquote>
+<h2 id="互斥">互斥</h2>
+<blockquote>
+<p>协程之间通过Channel进行通信</p>
+</blockquote>
+<h2 id="单任务">单任务</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test2</span>() {
+  <span style="color:#a6e22e">done</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>)
+
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(){
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+		<span style="color:#a6e22e">done</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">true</span>
+ 	}()
+
+	<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">done</span>
+}
+</code></pre></div><blockquote>
+<p>无缓冲Channel，接收动完成生在对Channel的发送完成之前。</p>
+</blockquote>
+<h3 id="多任务">多任务</h3>
+<h4 id="channel">Channel</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test3</span>() {
+	<span style="color:#a6e22e">done</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>, <span style="color:#ae81ff">3</span>)
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; cap(<span style="color:#a6e22e">done</span>); <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(){
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+			<span style="color:#a6e22e">done</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">true</span>
+		}()
+	}
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; cap(<span style="color:#a6e22e">done</span>); <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">done</span>
+	}
+}
+</code></pre></div><blockquote>
+<p>带缓冲Channel，第K个接收完成发生在第K+C个发送完成之前，其中C是Channel的缓存大小。</p>
+</blockquote>
+<h4 id="waitgroup">WaitGroup</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test4</span>() {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">3</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+			<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+		}()
+	}
+
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+</code></pre></div><blockquote>
+<p>sync.WaitGroup等待一组事件</p>
+</blockquote>
+<ul>
+<li>wg.Add(1)用于增加等待事件的个数，必须确保在后台线程启动之前执行</li>
+<li>wg.Done()表示完成一个事件</li>
+<li>wg.Wait()是等待全部的事件完成</li>
+</ul>
+<h2 id="并发">并发</h2>
+<h3 id="限流">限流</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test5</span>() {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">limit</span> = make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">2</span>)
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>) {
+			<span style="color:#a6e22e">limit</span> <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">1</span>
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Hello %d\n&#34;</span>, <span style="color:#a6e22e">index</span>)
+			<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">limit</span>
+		}(<span style="color:#a6e22e">i</span>)
+	}
+}
+</code></pre></div><blockquote>
+<p>通过带缓冲Channel实现</p>
+</blockquote>
+<h3 id="超时">超时</h3>
+<h4 id="select">select</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>)
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test6</span>(<span style="color:#a6e22e">cancel</span>)
+	}
+
+	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+	close(<span style="color:#a6e22e">cancel</span>)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test6</span>(<span style="color:#a6e22e">cannel</span> <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>) {
+	<span style="color:#66d9ef">for</span> {
+		<span style="color:#66d9ef">select</span> {
+		<span style="color:#66d9ef">default</span>:
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;hello&#34;</span>)
+			<span style="color:#75715e">// 正常工作
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">cannel</span>:
+			<span style="color:#75715e">// 退出
+</span><span style="color:#75715e"></span>		}
+	}
+}
+</code></pre></div><blockquote>
+<p>当select有多个分支时，会随机选择一个可用的管道分支，如果没有可用的则选择default分支，否则会一直保存阻塞状态。</p>
+</blockquote>
+<blockquote>
+<p>close关闭一个管道，所有从关闭管道接收的操作均会收到一个零值和一个可选的失败标志，用来实现广播的效果。</p>
+</blockquote>
+<blockquote>
+<p>退出缺少清理动作</p>
+</blockquote>
+<h4 id="waitgroup-1">WaitGroup</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>)
+
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+		<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test7</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">wg</span>, <span style="color:#a6e22e">cancel</span>)
+	}
+
+	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+	close(<span style="color:#a6e22e">cancel</span>)
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test7</span>(<span style="color:#a6e22e">wg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>, <span style="color:#a6e22e">cannel</span> <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>) {
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+
+	<span style="color:#66d9ef">for</span> {
+		<span style="color:#66d9ef">select</span> {
+		<span style="color:#66d9ef">default</span>:
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;hello&#34;</span>)
+		<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">cannel</span>:
+			<span style="color:#66d9ef">return</span>
+		}
+	}
+}
+</code></pre></div><blockquote>
+<p>close广播结束信号</p>
+</blockquote>
+<blockquote>
+<p>defer wg.Done()，完成清理动作后，退出任务</p>
+</blockquote>
+<h4 id="context">context</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithTimeout</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#ae81ff">10</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+		<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">test8</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">wg</span>)
+	}
+
+	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+	<span style="color:#a6e22e">cancel</span>()
+
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test8</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">wg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+
+	<span style="color:#66d9ef">for</span> {
+		<span style="color:#66d9ef">select</span> {
+		<span style="color:#66d9ef">default</span>:
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;hello&#34;</span>)
+		<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Done</span>():
+			<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Err</span>()
+		}
+	}
+}
+</code></pre></div><blockquote>
+<p>context指定超时，cancel()广播结束信号，case &lt;-ctx.Done()获取结束信号</p>
+</blockquote>
+<blockquote>
+<p>defer wg.Done()，完成清理动作后，退出任务</p>
+</blockquote>
+<h2 id="模型">模型</h2>
+<h3 id="生产者-消费者">生产者-&gt;消费者</h3>
+<blockquote>
+<p>采用单个Channel作为消息缓冲队列</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">ch</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">64</span>)
+
+	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">Producer</span>(<span style="color:#ae81ff">3</span>, <span style="color:#a6e22e">ch</span>)
+	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">Producer</span>(<span style="color:#ae81ff">5</span>, <span style="color:#a6e22e">ch</span>)
+	<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">Consumer</span>(<span style="color:#a6e22e">ch</span>)
+
+	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">3</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Producer</span>(<span style="color:#a6e22e">factor</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">out</span> <span style="color:#66d9ef">chan</span><span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">int</span>) {
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; ; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">out</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">factor</span>
+	}
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Consumer</span>(<span style="color:#a6e22e">in</span> <span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>) {
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">in</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">v</span>)
+	}
+}
+</code></pre></div><blockquote>
+<p>通过带缓冲Channel实现</p>
+</blockquote>
+<h3 id="发布-订阅">发布-&gt;订阅</h3>
+<blockquote>
+<p>采用多个Channel外加过滤器作为消息缓冲队列</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">NewPublisher</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>, <span style="color:#ae81ff">10</span>)
+
+	<span style="color:#a6e22e">all</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Subscribe</span>()
+	<span style="color:#a6e22e">golang</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">SubscribeTopic</span>(<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">v</span> <span style="color:#66d9ef">interface</span>{}) <span style="color:#66d9ef">bool</span> {
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">v</span>.(<span style="color:#66d9ef">string</span>); <span style="color:#a6e22e">ok</span> {
+			<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Contains</span>(<span style="color:#a6e22e">s</span>, <span style="color:#e6db74">&#34;golang&#34;</span>)
+		}
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+	})
+
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Publish</span>(<span style="color:#e6db74">&#34;hello, world!&#34;</span>)
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Publish</span>(<span style="color:#e6db74">&#34;hello, golang!&#34;</span>)
+
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">2</span>)
+
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">msg</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">all</span> {
+			<span style="color:#a6e22e">v</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">msg</span>.(<span style="color:#66d9ef">string</span>)
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;topic all: %s\n&#34;</span>, <span style="color:#a6e22e">v</span>)
+		}
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+	}()
+
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">msg</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">golang</span> {
+			<span style="color:#a6e22e">v</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">msg</span>.(<span style="color:#66d9ef">string</span>)
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;topic golang: %s\n&#34;</span>, <span style="color:#a6e22e">v</span>)
+		}
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+	}()
+
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+
+<span style="color:#66d9ef">type</span> (
+	<span style="color:#a6e22e">Subscriber</span> <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">interface</span>{}
+	<span style="color:#a6e22e">TopicFunc</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">v</span> <span style="color:#66d9ef">interface</span>{}) <span style="color:#66d9ef">bool</span>
+)
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Publisher</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">m</span>           <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">RWMutex</span>
+	<span style="color:#a6e22e">subscribers</span> <span style="color:#66d9ef">map</span>[<span style="color:#a6e22e">Subscriber</span>]<span style="color:#a6e22e">TopicFunc</span>
+	<span style="color:#a6e22e">buffer</span>      <span style="color:#66d9ef">int</span>
+	<span style="color:#a6e22e">timeout</span>     <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewPublisher</span>(<span style="color:#a6e22e">publishTimeout</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>, <span style="color:#a6e22e">buffer</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Publisher</span>{
+		<span style="color:#a6e22e">buffer</span>:      <span style="color:#a6e22e">buffer</span>,
+		<span style="color:#a6e22e">timeout</span>:     <span style="color:#a6e22e">publishTimeout</span>,
+		<span style="color:#a6e22e">subscribers</span>: make(<span style="color:#66d9ef">map</span>[<span style="color:#a6e22e">Subscriber</span>]<span style="color:#a6e22e">TopicFunc</span>),
+	}
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span>) <span style="color:#a6e22e">Subscribe</span>() <span style="color:#a6e22e">Subscriber</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">SubscribeTopic</span>(<span style="color:#66d9ef">nil</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span>) <span style="color:#a6e22e">SubscribeTopic</span>(<span style="color:#a6e22e">topic</span> <span style="color:#a6e22e">TopicFunc</span>) <span style="color:#a6e22e">Subscriber</span> {
+	<span style="color:#a6e22e">ch</span> <span style="color:#f92672">:=</span> make(<span style="color:#a6e22e">Subscriber</span>, <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">buffer</span>)
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Lock</span>()
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">subscribers</span>[<span style="color:#a6e22e">ch</span>] = <span style="color:#a6e22e">topic</span>
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Unlock</span>()
+
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ch</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span>) <span style="color:#a6e22e">Evict</span>(<span style="color:#a6e22e">sub</span> <span style="color:#a6e22e">Subscriber</span>) {
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Lock</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Unlock</span>()
+
+	delete(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">subscribers</span>, <span style="color:#a6e22e">sub</span>)
+	close(<span style="color:#a6e22e">sub</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span>) <span style="color:#a6e22e">Publish</span>(<span style="color:#a6e22e">v</span> <span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">RLock</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">RUnlock</span>()
+
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">sub</span>, <span style="color:#a6e22e">topic</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">subscribers</span> {
+		<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+		<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">sendTopic</span>(<span style="color:#a6e22e">sub</span>, <span style="color:#a6e22e">topic</span>, <span style="color:#a6e22e">v</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">wg</span>)
+	}
+
+	<span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span>) <span style="color:#a6e22e">Close</span>() {
+	<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Lock</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Unlock</span>()
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">sub</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">subscribers</span> {
+		delete(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">subscribers</span>, <span style="color:#a6e22e">sub</span>)
+		close(<span style="color:#a6e22e">sub</span>)
+	}
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">p</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Publisher</span>) <span style="color:#a6e22e">sendTopic</span>(<span style="color:#a6e22e">sub</span> <span style="color:#a6e22e">Subscriber</span>, <span style="color:#a6e22e">topic</span> <span style="color:#a6e22e">TopicFunc</span>, <span style="color:#a6e22e">v</span> <span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">wg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>) {
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">topic</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">&amp;&amp;</span> !<span style="color:#a6e22e">topic</span>(<span style="color:#a6e22e">v</span>) {
+		<span style="color:#66d9ef">return</span>
+	}
+
+	<span style="color:#66d9ef">select</span> {
+	<span style="color:#66d9ef">case</span> <span style="color:#a6e22e">sub</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">v</span>:
+	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">After</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">timeout</span>):
+	}
+}
+</code></pre></div><blockquote>
+<p>通过Channel作为消息管道</p>
+</blockquote>
+<blockquote>
+<p>通过TopicFunc自定义函数作为消息过滤器</p>
+</blockquote>
+<p>参考：</p>
+<ul>
+<li><a href="https://chai2010.cn/advanced-go-programming-book/ch1-basic/ch1-06-goroutine.html">Go 语言高级编程 – 常见的并发模式</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go-并发">Go 并发</a>
+      <ul>
+        <li><a href="#goroutine">Goroutine</a></li>
+        <li><a href="#互斥">互斥</a></li>
+        <li><a href="#单任务">单任务</a>
+          <ul>
+            <li><a href="#多任务">多任务</a></li>
+          </ul>
+        </li>
+        <li><a href="#并发">并发</a>
+          <ul>
+            <li><a href="#限流">限流</a></li>
+            <li><a href="#超时">超时</a></li>
+          </ul>
+        </li>
+        <li><a href="#模型">模型</a>
+          <ul>
+            <li><a href="#生产者-消费者">生产者-&gt;消费者</a></li>
+            <li><a href="#发布-订阅">发布-&gt;订阅</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

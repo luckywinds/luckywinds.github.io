@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Go"><meta property="og:title" content="" />
+<meta property="og:description" content="Go import语法 ImportDeclaration = &quot;import&quot; ImportSpecImportSpec = [ &quot;.&quot; | &quot;_&quot; | Identifier ] ImportPath .: 匿名别名，可以直接使用包的方法，无需指定包名 _: 仅使用包的init函数，其他方法不使用 Identifier: 显式别名，代替原始包名字  示例：
+import (&quot;math&quot;m &quot;math&quot;. &quot;math&quot;_ &quot;math&quot;&quot;go.etcd.io/etcd/clientv3&quot;) 短路径：标准库，例如：&ldquo;math&rdquo; 长路径：第三方库，例如：&ldquo;go.etcd.io/etcd/clientv3&rdquo;  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/language/go/" />
+
+<title>Go | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Go</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go">Go</a>
+      <ul>
+        <li><a href="#import语法">import语法</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="go">Go</h1>
+<h2 id="import语法">import语法</h2>
+<pre><code>ImportDeclaration = &quot;import&quot; ImportSpec
+ImportSpec        = [ &quot;.&quot; | &quot;_&quot; | Identifier ] ImportPath
+</code></pre><ul>
+<li><code>.</code>: 匿名别名，可以直接使用包的方法，无需指定包名</li>
+<li><code>_</code>: 仅使用包的init函数，其他方法不使用</li>
+<li><code>Identifier</code>: 显式别名，代替原始包名字</li>
+</ul>
+<p>示例：</p>
+<pre><code>import (
+    &quot;math&quot;
+    m &quot;math&quot;
+    . &quot;math&quot;
+    _ &quot;math&quot;
+    &quot;go.etcd.io/etcd/clientv3&quot;
+)
+</code></pre><ul>
+<li>短路径：标准库，例如：&ldquo;math&rdquo;</li>
+<li>长路径：第三方库，例如：&ldquo;go.etcd.io/etcd/clientv3&rdquo;</li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go">Go</a>
+      <ul>
+        <li><a href="#import语法">import语法</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

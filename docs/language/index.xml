@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Luckywinds</title>
+    <link>https://luckywinds.github.io/docs/language/</link>
+    <description>Recent content on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="https://luckywinds.github.io/docs/language/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/go-goroutine/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/go-goroutine/</guid>
+      <description>Go 并发 Goroutine  协程，轻量级线程，包括匿名协程和命名协程
+ func main() {go test1()go func() {fmt.Println(&amp;#34;Hello&amp;#34;)}()}func test1() {fmt.Println(&amp;#34;Hello&amp;#34;)} 无法获取协程结束标识
+ 互斥  协程之间通过Channel进行通信
+ 单任务 func test2() {done := make(chan bool)go func(){fmt.Println(&amp;#34;Hello&amp;#34;)done &amp;lt;- true}()&amp;lt;-done} 无缓冲Channel，接收动完成生在对Channel的发送完成之前。
+ 多任务 Channel func test3() {done := make(chan bool, 3)for i := 0; i &amp;lt; cap(done); i++ {go func(){fmt.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/go/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/go/</guid>
+      <description>Go import语法 ImportDeclaration = &amp;quot;import&amp;quot; ImportSpecImportSpec = [ &amp;quot;.&amp;quot; | &amp;quot;_&amp;quot; | Identifier ] ImportPath .: 匿名别名，可以直接使用包的方法，无需指定包名 _: 仅使用包的init函数，其他方法不使用 Identifier: 显式别名，代替原始包名字  示例：
+import (&amp;quot;math&amp;quot;m &amp;quot;math&amp;quot;. &amp;quot;math&amp;quot;_ &amp;quot;math&amp;quot;&amp;quot;go.etcd.io/etcd/clientv3&amp;quot;) 短路径：标准库，例如：&amp;ldquo;math&amp;rdquo; 长路径：第三方库，例如：&amp;ldquo;go.etcd.io/etcd/clientv3&amp;rdquo;  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/java/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/java/</guid>
+      <description>Java 集合框架（JCF） 核心接口：
+主要实现：
+具体类 Set：元素唯一
+ HashSet - 唯一，无序。（哈希表） TreeSet - 唯一，自然序。（红黑树） LinkedHashSet - 唯一，插入序。（哈希表+链表）  List：元素可相同，有序
+ ArrayList - （数组） LinkedList - （双向链表）  Queue和Deque：队列，FIFO
+ ArrayDeque - Deque（数组）. LinkedList - Queue和Deque（链表）. PriorityQueue - Queue（小顶堆）.  Map：键值对
+ HashMap - 无序（哈希表）. TreeMap - 自然序（红黑树）. LinkedHashMap - 插入序（哈希表+链表）.  工具类  Arrays：对数组(数据类型[])进行各种操作。例如，排序、查找、复制等 Collections：对集合类(Collection的子类)进行操作。例如，排序等。  辅助类 Iterators:
+ Iterator - 单向迭代器. ListIterator - 双向迭代器.  Ordering:
+ Comparable - 自然序，内部重写compareTo. Comparator - 排序规则，作为策略外部传入.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/python/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/python/</guid>
+      <description>Python 内置数据类型 内置类型：
+类型转换：
+ str(x) int(x) float(x) round(x)  内置数据结构  List(as Stacks Queues)，[]，可变序列 Tuples，()，不可变序列 Sets，{}，无序，唯一 Dicts，{}，键值对，键唯一  List生成式 直接生成：
+&amp;gt;&amp;gt;&amp;gt; list(range(1, 11))[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]生成后再处理：
+&amp;gt;&amp;gt;&amp;gt; [x * x for x in range(1, 11)][1, 4, 9, 16, 25, 36, 49, 64, 81, 100]生成后再条件处理：
+&amp;gt;&amp;gt;&amp;gt; [x if x % 2 == 0 else -x for x in range(1, 11)][-1, 2, -3, 4, -5, 6, -7, 8, -9, 10]生成后先过滤再处理：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/language/sql/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/language/sql/</guid>
+      <description>SQL 概述  关系型数据库，主要讨论对表数据查询操作
+ 语法  Mysql SELECT Syntax Postgres SELECT Syntax SQLite SELECT Syntax Oracle SELECT Syntax  执行逻辑 从源表数据开始，每个执行逻辑基于前面步骤的源表或虚表生成一个新的虚表，将最后的虚表作为结果返回
+执行顺序  SQL实际执行顺序并不是按照语法顺序执行的
+  FROM：对子句中表执行笛卡尔积，生成虚表VT1。 ON：对VT1应用ON筛选器，生成VT2。 JOIN: 对新表数据按照一定的策略和VT2表中数据进行连接，生成TV3。 WHERE：对VT3应用WHERE筛选器，生成VT4。 GROUP BY：按列对VT4中的行进行分组，生成VT5。 WITH CUTE|ROLLUP：根据聚合策略把聚合数据插入VT5，生成VT6。 HAVING：对VT6应用HAVING筛选器，生成VT7。 SELECT：选择SELECT列表，产生VT8。 DISTINCT：将重复的行从VT8中删除，生成VT9。 ORDER BY：按列进行顺序，生成一个游标(VC10)。 LIMIT(TOP)：从VC10的开始处选择指定数量或比例的行，生成VT11，并作为结果返回。  笛卡尔积  A表m行，B表行，C表k行。笛卡尔积ABC=mnk行数据
+ JOIN  先确定基础表，将另外表数据附加到基础表上的过程
+  表可以SELECT出来的表
+  默认为INNER JOIN
+ GROUP BY  如果指定多个列，则按照多个列内容均相同做为分组条件
+  聚合函数是按组进行聚合执行的
+  SUM	计算合计值，该列必须为数值类型 AVG	计算平均值，该列必须为数值类型 MAX	计算最大值 MIN	计算最小值 COUNT 计数   如果使用了聚合函数但未指定GROUP BY，则默认对整个数据集进行聚合</description>
+    </item>
+    
+  </channel>
+</rss>

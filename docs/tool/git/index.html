@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Git"><meta property="og:title" content="" />
+<meta property="og:description" content="Git 概述 3&#43;1棵树
+ Workspace：工作目录，持有实际工作文件 Index：暂存区，临时保存工作文件变更情况 Repository：本地仓库，在本地保存完整Git记录 Remote：远端仓库，实际代码仓库   所有的Git操作，都是文件变化记录在这四棵树之间流转，开发过程中重点关注前3棵树
+ 获取代码库  git clone [url]，克隆到本地，文件夹名字和仓库名字保持一致 git clone [url] local_dir，克隆到本地，文件夹名字自定义   url可以是git://或ssh://或http(s)://或ftp://等
+ 查看分支 git branch &lt;options&gt;
+ 无选项，列出本地分支 -a，列出本地分支和远程分支 -r，列出远程分支  git tag
+ 列出标签列表
+ 分支管理  git branch dev，基于当前分支创建dev分支 git checkout dev，切换到dev分支 git branch -d dev，删除分支 git checkout -b dev [origin/branch|tag]，基于指定分支或标签，创建并切换分支  获取更新信息  git fetch &lt;origin&gt; &lt;branch&gt;   仅获取指定分支的更新信息，不合并内容
+  获取的分支名字规则为origin/branch
+  git pull &lt;origin&gt; &lt;branch&gt;   获取指定分支的更新信息，自动合并更新到本地当前分支" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/tool/git/" />
+
+<title>Git | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Git</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#git">Git</a>
+      <ul>
+        <li><a href="#概述">概述</a></li>
+        <li><a href="#获取代码库">获取代码库</a></li>
+        <li><a href="#查看分支">查看分支</a></li>
+        <li><a href="#分支管理">分支管理</a></li>
+        <li><a href="#获取更新信息">获取更新信息</a></li>
+        <li><a href="#合并更新信息">合并更新信息</a></li>
+        <li><a href="#合入变更和撤销变更">合入变更和撤销变更</a></li>
+        <li><a href="#工作区内容暂存">工作区内容暂存</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="git">Git</h1>
+<h2 id="概述">概述</h2>
+<p><img src="/images/tool/git-overview.jpg" alt="alt" />
+</p>
+<p><strong>3+1棵树</strong></p>
+<ol>
+<li>Workspace：工作目录，持有实际工作文件</li>
+<li>Index：暂存区，临时保存工作文件变更情况</li>
+<li>Repository：本地仓库，在本地保存完整Git记录</li>
+<li>Remote：远端仓库，实际代码仓库</li>
+</ol>
+<blockquote>
+<p>所有的Git操作，都是文件变化记录在这四棵树之间流转，开发过程中重点关注前3棵树</p>
+</blockquote>
+<h2 id="获取代码库">获取代码库</h2>
+<ul>
+<li><code>git clone [url]</code>，克隆到本地，文件夹名字和仓库名字保持一致</li>
+<li><code>git clone [url] local_dir</code>，克隆到本地，文件夹名字自定义</li>
+</ul>
+<blockquote>
+<p>url可以是git://或ssh://或http(s)://或ftp://等</p>
+</blockquote>
+<h2 id="查看分支">查看分支</h2>
+<p><code>git branch &lt;options&gt;</code></p>
+<ul>
+<li>无选项，列出本地分支</li>
+<li>-a，列出本地分支和远程分支</li>
+<li>-r，列出远程分支</li>
+</ul>
+<p><code>git tag</code></p>
+<blockquote>
+<p>列出标签列表</p>
+</blockquote>
+<h2 id="分支管理">分支管理</h2>
+<ul>
+<li><code>git branch dev</code>，基于当前分支创建dev分支</li>
+<li><code>git checkout dev</code>，切换到dev分支</li>
+<li><code>git branch -d dev</code>，删除分支</li>
+<li><code>git checkout -b dev [origin/branch|tag]</code>，基于指定分支或标签，创建并切换分支</li>
+</ul>
+<h2 id="获取更新信息">获取更新信息</h2>
+<ul>
+<li><code>git fetch &lt;origin&gt; &lt;branch&gt;</code></li>
+</ul>
+<blockquote>
+<p>仅获取指定分支的更新信息，不合并内容</p>
+</blockquote>
+<blockquote>
+<p>获取的分支名字规则为origin/branch</p>
+</blockquote>
+<ul>
+<li><code>git pull &lt;origin&gt; &lt;branch&gt;</code></li>
+</ul>
+<blockquote>
+<p>获取指定分支的更新信息，自动合并更新到本地当前分支</p>
+</blockquote>
+<blockquote>
+<p>相当于<code>git fetch origin branch</code>和<code>git merge origin/branch</code>命令组合</p>
+</blockquote>
+<h2 id="合并更新信息">合并更新信息</h2>
+<p><code>git merge branch</code></p>
+<blockquote>
+<p>合并branch更新信息到当前分支</p>
+</blockquote>
+<p><code>git rebase -i branch</code></p>
+<blockquote>
+<p>基于branch自动建立隐藏分支，合并当前分支到隐藏分支，最后用隐藏分支替换当前分支</p>
+</blockquote>
+<p><img src="/images/tool/git-rebase.png" alt="alt" />
+</p>
+<p><code>git rebase -i HEAD~3</code></p>
+<p><img src="/images/tool/git-rebase-i.png" alt="alt" />
+</p>
+<p>常用交互命令说明：</p>
+<pre><code># p, pick &lt;commit&gt; = use commit
+# r, reword &lt;commit&gt; = use commit, but edit the commit message
+# s, squash &lt;commit&gt; = use commit, but meld into previous commit
+# d, drop &lt;commit&gt; = remove commit
+</code></pre><blockquote>
+<p>HEAD，表示当前分支</p>
+</blockquote>
+<blockquote>
+<p>HEAD~3，数字表示仅处理当前分支的前几个更新信息</p>
+</blockquote>
+<blockquote>
+<p>常用于修改合入记录信息、合并合入记录</p>
+</blockquote>
+<h2 id="合入变更和撤销变更">合入变更和撤销变更</h2>
+<p><strong>合入内容、恢复合入内容</strong>：</p>
+<p><img src="/images/tool/git-update.PNG" alt="alt" />
+</p>
+<ul>
+<li>git add files 把当前文件放入暂存区域。</li>
+<li>git commit 给暂存区域生成快照并提交。</li>
+<li>git reset &ndash; files 用来撤销最后一次git add files，也可以用git reset 撤销所有暂存区域文件。</li>
+<li>git checkout &ndash; files 把文件从暂存区域复制到工作目录，用来丢弃本地修改。</li>
+</ul>
+<p><img src="/images/tool/git-revert.PNG" alt="alt" />
+</p>
+<ul>
+<li>git commit -a 相当于运行git add把所有当前目录下的文件加入暂存区域再运行git commit。</li>
+<li>git commit files 进行一次包含最后一次提交加上工作目录中文件快照的提交，并且文件被添加到暂存区域。</li>
+<li>git checkout HEAD &ndash; files 回滚到复制最后一次提交。</li>
+</ul>
+<p><strong>恢复合入记录</strong>：</p>
+<p><img src="/images/tool/git-reset.PNG" alt="alt" />
+</p>
+<ul>
+<li>无选项，默认更新暂存区</li>
+<li>&ndash;soft，只更新HEAD</li>
+<li>&ndash;hard，更新暂存区和工作目录</li>
+</ul>
+<p><strong>合入特定变更</strong>：</p>
+<p><img src="/images/tool/git-cherry-pick.PNG" alt="alt" />
+</p>
+<blockquote>
+<p>合并指定更新记录到当前分支</p>
+</blockquote>
+<h2 id="工作区内容暂存">工作区内容暂存</h2>
+<ul>
+<li><code>git stash</code>，讲本地修改内容暂存起来</li>
+<li><code>git stash pop</code>，恢复暂存的修改内容</li>
+<li><code>git stach apply</code>，恢复指定暂存内容</li>
+</ul>
+<blockquote>
+<p>常用于中断当前工作，临时处理其他事务情况</p>
+</blockquote>
+<p>参考：</p>
+<ul>
+<li><a href="https://dev.to/unseenwizzard/learn-git-concepts-not-commands-4gjc">Learn git concepts, not commands</a></li>
+<li><a href="https://marklodato.github.io/visual-git-guide/index-zh-cn.html">图解Git</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#git">Git</a>
+      <ul>
+        <li><a href="#概述">概述</a></li>
+        <li><a href="#获取代码库">获取代码库</a></li>
+        <li><a href="#查看分支">查看分支</a></li>
+        <li><a href="#分支管理">分支管理</a></li>
+        <li><a href="#获取更新信息">获取更新信息</a></li>
+        <li><a href="#合并更新信息">合并更新信息</a></li>
+        <li><a href="#合入变更和撤销变更">合入变更和撤销变更</a></li>
+        <li><a href="#工作区内容暂存">工作区内容暂存</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

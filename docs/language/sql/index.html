@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sql"><meta property="og:title" content="" />
+<meta property="og:description" content="SQL 概述  关系型数据库，主要讨论对表数据查询操作
+ 语法  Mysql SELECT Syntax Postgres SELECT Syntax SQLite SELECT Syntax Oracle SELECT Syntax  执行逻辑 从源表数据开始，每个执行逻辑基于前面步骤的源表或虚表生成一个新的虚表，将最后的虚表作为结果返回
+执行顺序  SQL实际执行顺序并不是按照语法顺序执行的
+  FROM：对子句中表执行笛卡尔积，生成虚表VT1。 ON：对VT1应用ON筛选器，生成VT2。 JOIN: 对新表数据按照一定的策略和VT2表中数据进行连接，生成TV3。 WHERE：对VT3应用WHERE筛选器，生成VT4。 GROUP BY：按列对VT4中的行进行分组，生成VT5。 WITH CUTE|ROLLUP：根据聚合策略把聚合数据插入VT5，生成VT6。 HAVING：对VT6应用HAVING筛选器，生成VT7。 SELECT：选择SELECT列表，产生VT8。 DISTINCT：将重复的行从VT8中删除，生成VT9。 ORDER BY：按列进行顺序，生成一个游标(VC10)。 LIMIT(TOP)：从VC10的开始处选择指定数量或比例的行，生成VT11，并作为结果返回。  笛卡尔积  A表m行，B表行，C表k行。笛卡尔积ABC=mnk行数据
+ JOIN  先确定基础表，将另外表数据附加到基础表上的过程
+  表可以SELECT出来的表
+  默认为INNER JOIN
+ GROUP BY  如果指定多个列，则按照多个列内容均相同做为分组条件
+  聚合函数是按组进行聚合执行的
+  SUM	计算合计值，该列必须为数值类型 AVG	计算平均值，该列必须为数值类型 MAX	计算最大值 MIN	计算最小值 COUNT 计数   如果使用了聚合函数但未指定GROUP BY，则默认对整个数据集进行聚合" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/language/sql/" />
+
+<title>Sql | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Sql</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#sql">SQL</a>
+      <ul>
+        <li><a href="#概述">概述</a></li>
+        <li><a href="#语法">语法</a></li>
+        <li><a href="#执行逻辑">执行逻辑</a></li>
+        <li><a href="#执行顺序">执行顺序</a>
+          <ul>
+            <li><a href="#笛卡尔积">笛卡尔积</a></li>
+            <li><a href="#join">JOIN</a></li>
+            <li><a href="#group-by">GROUP BY</a></li>
+            <li><a href="#with">WITH</a></li>
+            <li><a href="#having">HAVING</a></li>
+          </ul>
+        </li>
+        <li><a href="#索引">索引</a>
+          <ul>
+            <li><a href="#聚集索引">聚集索引</a></li>
+            <li><a href="#辅助索引">辅助索引</a></li>
+            <li><a href="#联合索引">联合索引</a></li>
+          </ul>
+        </li>
+        <li><a href="#explain">Explain</a>
+          <ul>
+            <li><a href="#id">id</a></li>
+            <li><a href="#select_type">select_type</a></li>
+            <li><a href="#table">table</a></li>
+            <li><a href="#type">type</a></li>
+            <li><a href="#possible_keys">possible_keys</a></li>
+            <li><a href="#key">key</a></li>
+            <li><a href="#key_len">key_len</a></li>
+            <li><a href="#ref">ref</a></li>
+            <li><a href="#rows">rows</a></li>
+            <li><a href="#extra">Extra</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="sql">SQL</h1>
+<h2 id="概述">概述</h2>
+<blockquote>
+<p>关系型数据库，主要讨论对表数据查询操作</p>
+</blockquote>
+<h2 id="语法">语法</h2>
+<ul>
+<li><a href="http://dev.mysql.com/doc/refman/5.1/en/select.html">Mysql SELECT Syntax</a></li>
+<li><a href="http://www.postgresql.org/docs/current/static/sql-select.html">Postgres SELECT Syntax</a></li>
+<li><a href="http://www.sqlite.org/lang_select.html">SQLite SELECT Syntax</a></li>
+<li><a href="http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm">Oracle SELECT Syntax</a></li>
+</ul>
+<h2 id="执行逻辑">执行逻辑</h2>
+<p>从源表数据开始，每个执行逻辑基于前面步骤的源表或虚表生成一个新的虚表，将最后的虚表作为结果返回</p>
+<h2 id="执行顺序">执行顺序</h2>
+<blockquote>
+<p>SQL实际执行顺序并不是按照语法顺序执行的</p>
+</blockquote>
+<ol>
+<li>FROM：对子句中表执行笛卡尔积，生成虚表VT1。</li>
+<li>ON：对VT1应用ON筛选器，生成VT2。</li>
+<li>JOIN: 对新表数据按照一定的策略和VT2表中数据进行连接，生成TV3。</li>
+<li>WHERE：对VT3应用WHERE筛选器，生成VT4。</li>
+<li>GROUP BY：按列对VT4中的行进行分组，生成VT5。</li>
+<li>WITH CUTE|ROLLUP：根据聚合策略把聚合数据插入VT5，生成VT6。</li>
+<li>HAVING：对VT6应用HAVING筛选器，生成VT7。</li>
+<li>SELECT：选择SELECT列表，产生VT8。</li>
+<li>DISTINCT：将重复的行从VT8中删除，生成VT9。</li>
+<li>ORDER BY：按列进行顺序，生成一个游标(VC10)。</li>
+<li>LIMIT(TOP)：从VC10的开始处选择指定数量或比例的行，生成VT11，并作为结果返回。</li>
+</ol>
+<h3 id="笛卡尔积">笛卡尔积</h3>
+<blockquote>
+<p>A表m行，B表行，C表k行。笛卡尔积A<em>B</em>C=m<em>n</em>k行数据</p>
+</blockquote>
+<p><img src="/images/language/sql-select-tables.jpg" alt="alt" />
+</p>
+<h3 id="join">JOIN</h3>
+<blockquote>
+<p>先确定基础表，将另外表数据附加到基础表上的过程</p>
+</blockquote>
+<blockquote>
+<p>表可以SELECT出来的表</p>
+</blockquote>
+<blockquote>
+<p>默认为INNER JOIN</p>
+</blockquote>
+<p><img src="/images/language/sql-select-join.jpg" alt="alt" />
+</p>
+<h3 id="group-by">GROUP BY</h3>
+<blockquote>
+<p>如果指定多个列，则按照多个列内容均相同做为分组条件</p>
+</blockquote>
+<blockquote>
+<p>聚合函数是按组进行聚合执行的</p>
+</blockquote>
+<ul>
+<li>SUM	计算合计值，该列必须为数值类型</li>
+<li>AVG	计算平均值，该列必须为数值类型</li>
+<li>MAX	计算最大值</li>
+<li>MIN	计算最小值</li>
+<li>COUNT 计数</li>
+</ul>
+<blockquote>
+<p>如果使用了聚合函数但未指定GROUP BY，则默认对整个数据集进行聚合</p>
+</blockquote>
+<h3 id="with">WITH</h3>
+<ul>
+<li>CUTE，对GROUP指定的列进行多维度组合后进行聚合计算，然后插入到虚表中</li>
+<li>ROLLUP，对GROUP指定的最近的列进行单维度聚合执行计算，然后插入到虚表中</li>
+</ul>
+<h3 id="having">HAVING</h3>
+<blockquote>
+<p>对GROUP分组后的每组内数据进行条件过滤，通常使用聚合函数作为条件</p>
+</blockquote>
+<h2 id="索引">索引</h2>
+<p>作用：为数据库中表数据建立数据索引，加速数据访问速度</p>
+<blockquote>
+<p>如果没有建立索引或者数据条件匹配规则不符合索引要求，数据访问需要通过默认的聚集索引进行遍历访问</p>
+</blockquote>
+<blockquote>
+<p>以Mysql的InnoDB存储引擎为例，索引的存储结构为B+树</p>
+</blockquote>
+<h3 id="聚集索引">聚集索引</h3>
+<p><img src="/images/language/sql-select-index-1.png" alt="alt" />
+</p>
+<blockquote>
+<p>主键索引</p>
+</blockquote>
+<blockquote>
+<p>InnoDB的数据文件本身就是索引文件，即索引里面直接保存有完整数据记录</p>
+</blockquote>
+<h3 id="辅助索引">辅助索引</h3>
+<p><img src="/images/language/sql-select-index-2.png" alt="alt" />
+</p>
+<blockquote>
+<p>非主键索引</p>
+</blockquote>
+<blockquote>
+<p>索引里面保存的是聚集索引的数据ID</p>
+</blockquote>
+<blockquote>
+<p>查找数据需要经过辅助索引和聚集索引2次查找过程</p>
+</blockquote>
+<h3 id="联合索引">联合索引</h3>
+<p>对单列索引的扩展，即组合多个列然后进行索引</p>
+<blockquote>
+<p>仍然只有一棵树</p>
+</blockquote>
+<blockquote>
+<p>符合最左前缀原理</p>
+</blockquote>
+<p>最左前缀原理：即只有和多个列能够有公共的前缀列，才能用到该联合索引，中间不能跳过某些列</p>
+<h2 id="explain">Explain</h2>
+<blockquote>
+<p>Mysql提供的SQL分析工具</p>
+</blockquote>
+<blockquote>
+<p>如果不确定编写的SQL执行的情况，可以优先采用Explain进行分析后看是否有优化空间</p>
+</blockquote>
+<p>用法：</p>
+<pre><code>mysql&gt; explain select * from servers;
++----+-------------+---------+------+---------------+------+---------+------+------+-------+
+| id | select_type | table   | type | possible_keys | key  | key_len | ref  | rows | Extra |
++----+-------------+---------+------+---------------+------+---------+------+------+-------+
+|  1 | SIMPLE      | servers | ALL  | NULL          | NULL | NULL    | NULL |    1 | NULL  |
++----+-------------+---------+------+---------------+------+---------+------+------+-------+
+1 row in set (0.03 sec)
+</code></pre><blockquote>
+<p>SQL语句前加上explain关键字即可</p>
+</blockquote>
+<p>说明：</p>
+<h3 id="id">id</h3>
+<ul>
+<li>id值越大优先级越高，越先被执行</li>
+<li>id相同时，执行顺序由上至下</li>
+</ul>
+<h3 id="select_type">select_type</h3>
+<ol>
+<li>SIMPLE(简单SELECT,不使用UNION或子查询等)</li>
+<li>PRIMARY(查询中若包含任何复杂的子部分,最外层的select被标记为PRIMARY)</li>
+<li>UNION(UNION中的第二个或后面的SELECT语句)</li>
+<li>DEPENDENT UNION(UNION中的第二个或后面的SELECT语句，取决于外面的查询)</li>
+<li>UNION RESULT(UNION的结果)</li>
+<li>SUBQUERY(子查询中的第一个SELECT)</li>
+<li>DEPENDENT SUBQUERY(子查询中的第一个SELECT，取决于外面的查询)</li>
+<li>DERIVED(派生表的SELECT, FROM子句的子查询)</li>
+<li>UNCACHEABLE SUBQUERY(一个子查询的结果不能被缓存，必须重新评估外链接的第一行)</li>
+</ol>
+<h3 id="table">table</h3>
+<ul>
+<li>用到的数据表</li>
+<li>derivedx(x)，派生表，x为第几步</li>
+</ul>
+<h3 id="type">type</h3>
+<ol>
+<li>ALL：Full Table Scan， MySQL将遍历全表以找到匹配的行</li>
+<li>index: Full Index Scan，index与ALL区别为index类型只遍历索引树</li>
+<li>range:只检索给定范围的行，使用一个索引来选择行</li>
+<li>ref: 表示上述表的连接匹配条件，即哪些列或常量被用于查找索引列上的值</li>
+<li>eq_ref: 类似ref，区别就在使用的索引是唯一索引，对于每个索引键值，表中只有一条记录匹配，简单来说，就是多表连接中使用primary key或者 unique key作为关联条件</li>
+<li>const、system: 当MySQL对查询某部分进行优化，并转换为一个常量时，使用这些类型访问。如将主键置于where列表中，MySQL就能将该查询转换为一个常量,system是const类型的特例，当查询的表只有一行的情况下，使用system</li>
+<li>NULL: MySQL在优化过程中分解语句，执行时甚至不用访问表或索引，例如从一个索引列里选取最小值可以通过单独索引查找完成。</li>
+</ol>
+<h3 id="possible_keys">possible_keys</h3>
+<p>可能涉及到的索引</p>
+<h3 id="key">key</h3>
+<p>实际用到的索引</p>
+<h3 id="key_len">key_len</h3>
+<ul>
+<li>使用到的索引长度</li>
+<li>越短越好</li>
+</ul>
+<h3 id="ref">ref</h3>
+<p>哪些列或常量被用于查找索引列上的值</p>
+<h3 id="rows">rows</h3>
+<ul>
+<li>大概涉及的行数</li>
+<li>估算值</li>
+</ul>
+<h3 id="extra">Extra</h3>
+<ol>
+<li>Using where: 表示仅仅使用了索引中的信息而没有读取实际的行动的表，这发生在对表的全部的请求列都是同一个索引的部分的时候</li>
+<li>Using temporary：表示需要使用临时表来存储结果集，常见于排序和分组查询</li>
+<li>Using filesort：无法利用索引完成的排序操作称为“文件排序”</li>
+<li>Using join buffer：强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。如果出现了这个值，可能需要添加索引来改进能。</li>
+<li>Impossible where：强调了where语句会导致没有符合条件的行。</li>
+<li>Select tables optimized away：意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Select_(SQL)">Select (SQL)</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1082030">SQL|语句执行逻辑</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E7%AC%9B%E5%8D%A1%E5%84%BF%E7%A7%AF">笛卡儿积</a></li>
+<li><a href="https://www.cnblogs.com/shuangnet/archive/2013/03/26/2982144.html">关于with cube ，with rollup 和 grouping</a></li>
+<li><a href="http://blog.codinglabs.org/articles/theory-of-mysql-index.html">MySQL索引背后的数据结构及算法原理</a></li>
+<li><a href="https://www.cnblogs.com/xuanzhi201111/p/4175635.html">MySQL Explain详解</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#sql">SQL</a>
+      <ul>
+        <li><a href="#概述">概述</a></li>
+        <li><a href="#语法">语法</a></li>
+        <li><a href="#执行逻辑">执行逻辑</a></li>
+        <li><a href="#执行顺序">执行顺序</a>
+          <ul>
+            <li><a href="#笛卡尔积">笛卡尔积</a></li>
+            <li><a href="#join">JOIN</a></li>
+            <li><a href="#group-by">GROUP BY</a></li>
+            <li><a href="#with">WITH</a></li>
+            <li><a href="#having">HAVING</a></li>
+          </ul>
+        </li>
+        <li><a href="#索引">索引</a>
+          <ul>
+            <li><a href="#聚集索引">聚集索引</a></li>
+            <li><a href="#辅助索引">辅助索引</a></li>
+            <li><a href="#联合索引">联合索引</a></li>
+          </ul>
+        </li>
+        <li><a href="#explain">Explain</a>
+          <ul>
+            <li><a href="#id">id</a></li>
+            <li><a href="#select_type">select_type</a></li>
+            <li><a href="#table">table</a></li>
+            <li><a href="#type">type</a></li>
+            <li><a href="#possible_keys">possible_keys</a></li>
+            <li><a href="#key">key</a></li>
+            <li><a href="#key_len">key_len</a></li>
+            <li><a href="#ref">ref</a></li>
+            <li><a href="#rows">rows</a></li>
+            <li><a href="#extra">Extra</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

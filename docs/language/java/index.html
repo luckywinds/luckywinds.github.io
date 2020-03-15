@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Java"><meta property="og:title" content="" />
+<meta property="og:description" content="Java 集合框架（JCF） 核心接口：
+主要实现：
+具体类 Set：元素唯一
+ HashSet - 唯一，无序。（哈希表） TreeSet - 唯一，自然序。（红黑树） LinkedHashSet - 唯一，插入序。（哈希表&#43;链表）  List：元素可相同，有序
+ ArrayList - （数组） LinkedList - （双向链表）  Queue和Deque：队列，FIFO
+ ArrayDeque - Deque（数组）. LinkedList - Queue和Deque（链表）. PriorityQueue - Queue（小顶堆）.  Map：键值对
+ HashMap - 无序（哈希表）. TreeMap - 自然序（红黑树）. LinkedHashMap - 插入序（哈希表&#43;链表）.  工具类  Arrays：对数组(数据类型[])进行各种操作。例如，排序、查找、复制等 Collections：对集合类(Collection的子类)进行操作。例如，排序等。  辅助类 Iterators:
+ Iterator - 单向迭代器. ListIterator - 双向迭代器.  Ordering:
+ Comparable - 自然序，内部重写compareTo. Comparator - 排序规则，作为策略外部传入." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/language/java/" />
+
+<title>Java | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Java</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#java">Java</a>
+      <ul>
+        <li><a href="#集合框架jcf">集合框架（JCF）</a>
+          <ul>
+            <li><a href="#具体类">具体类</a></li>
+            <li><a href="#工具类">工具类</a></li>
+            <li><a href="#辅助类">辅助类</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="java">Java</h1>
+<h2 id="集合框架jcf">集合框架（JCF）</h2>
+<p>核心接口：</p>
+<p><img src="/images/language/java-collection.png" alt="alt" />
+</p>
+<p>主要实现：</p>
+<p><img src="/images/language/java-collection-impl.png" alt="alt" />
+</p>
+<h3 id="具体类">具体类</h3>
+<p>Set：元素唯一</p>
+<ol>
+<li>HashSet - 唯一，无序。（哈希表）</li>
+<li>TreeSet - 唯一，自然序。（红黑树）</li>
+<li>LinkedHashSet - 唯一，插入序。（哈希表+链表）</li>
+</ol>
+<p>List：元素可相同，有序</p>
+<ol>
+<li>ArrayList - （数组）</li>
+<li>LinkedList - （双向链表）</li>
+</ol>
+<p>Queue和Deque：队列，FIFO</p>
+<ol>
+<li>ArrayDeque - Deque（数组）.</li>
+<li>LinkedList - Queue和Deque（链表）.</li>
+<li>PriorityQueue - Queue（小顶堆）.</li>
+</ol>
+<p>Map：键值对</p>
+<ol>
+<li>HashMap - 无序（哈希表）.</li>
+<li>TreeMap - 自然序（红黑树）.</li>
+<li>LinkedHashMap - 插入序（哈希表+链表）.</li>
+</ol>
+<h3 id="工具类">工具类</h3>
+<ol>
+<li>Arrays：对数组(数据类型[])进行各种操作。例如，排序、查找、复制等</li>
+<li>Collections：对集合类(Collection的子类)进行操作。例如，排序等。</li>
+</ol>
+<h3 id="辅助类">辅助类</h3>
+<p>Iterators:</p>
+<ol>
+<li>Iterator - 单向迭代器.</li>
+<li>ListIterator - 双向迭代器.</li>
+</ol>
+<p>Ordering:</p>
+<ol>
+<li>Comparable - 自然序，内部重写compareTo.</li>
+<li>Comparator - 排序规则，作为策略外部传入.</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/collections/">The Collections Framework</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6">Java集合框架</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#java">Java</a>
+      <ul>
+        <li><a href="#集合框架jcf">集合框架（JCF）</a>
+          <ul>
+            <li><a href="#具体类">具体类</a></li>
+            <li><a href="#工具类">工具类</a></li>
+            <li><a href="#辅助类">辅助类</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="System Design Primer"><meta property="og:title" content="" />
+<meta property="og:description" content="系统设计入门 概览  DNS，第一层路由 CDN，第二层缓存 LB，第三层负载 Web Server和API，前后分离 Queue，消息队列 Cache，缓存 SQL，读写分离 NoSql，对象存储  DNS 域名结构：
+ 分层管理
+ 域名解析：
+递归：
+迭代：
+资源类型：
+ NS 记录（域名服务） ─ 指定解析域名或子域名的DNS服务器。 MX 记录（邮件交换） ─ 指定接收信息的邮件服务器。 A 记录（地址） ─ 指定域名对应的IP地址记录。 CNAME（规范） ─ 一个域名映射到另一个域名或CNAME记录（example.com指向www.example.com）或映射到一个A记录。  优缺点：
+ 延迟 DDOS 不可或缺  CDN 作用：
+CDN是一个全球性的代理服务器分布式网络，它从靠近用户的位置提供内容。通常，HTML/CSS/JS，图片和视频等静态内容由CDN提供。
+ 从靠近用户的数据中心提供资源 通过CDN，服务器不必真的处理请求  内容更新模式：
+ 推送（push）：服务器上内容发生变动时，推送新内容给CDN，并重写URL地址以指向新内容的CDN地址。流量最小化，但储存最大化。 拉取（pull）：当第一个用户请求该资源时，从服务器上拉取资源，存活时间（TTL）决定缓存多久时间。最小化储存空间，有冗余流量。适合高流量站点  优缺点：
+ 减低服务请求压力 流量贵 过期，内容更新  LB  LB和Proxy，在大多场景基本是等效的，LB可以运行在Proxy模式，Proxy可以提供LB功能
+ 特性：
+主要任务：
+ 位于客户端和服务端之间" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/system-design-primer/" />
+
+<title>System Design Primer | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>System Design Primer</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#系统设计入门">系统设计入门</a>
+      <ul>
+        <li><a href="#概览">概览</a></li>
+        <li><a href="#dns">DNS</a></li>
+        <li><a href="#cdn">CDN</a></li>
+        <li><a href="#lb">LB</a>
+          <ul>
+            <li><a href="#osi">OSI</a></li>
+            <li><a href="#l4">L4</a></li>
+            <li><a href="#l7">L7</a></li>
+            <li><a href="#lb拓扑">LB拓扑</a></li>
+          </ul>
+        </li>
+        <li><a href="#可扩展性">可扩展性</a>
+          <ul>
+            <li><a href="#克隆">克隆</a></li>
+            <li><a href="#数据库">数据库</a></li>
+            <li><a href="#缓存">缓存</a></li>
+            <li><a href="#异步">异步</a></li>
+          </ul>
+        </li>
+        <li><a href="#缓存-1">缓存</a></li>
+        <li><a href="#数据库-1">数据库</a>
+          <ul>
+            <li><a href="#关系型数据库rdbms">关系型数据库（RDBMS）</a></li>
+            <li><a href="#非关系型数据库nosql">非关系型数据库（NoSQL）</a></li>
+          </ul>
+        </li>
+        <li><a href="#权衡与取舍">权衡与取舍</a>
+          <ul>
+            <li><a href="#性能与可扩展性">性能与可扩展性</a></li>
+            <li><a href="#延迟与吞吐量">延迟与吞吐量</a></li>
+            <li><a href="#可用性与一致性">可用性与一致性</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="系统设计入门">系统设计入门</h1>
+<h2 id="概览">概览</h2>
+<p><img src="/images/system/system-design-primer/Design.png" alt="alt" />
+</p>
+<ol>
+<li>DNS，第一层路由</li>
+<li>CDN，第二层缓存</li>
+<li>LB，第三层负载</li>
+<li>Web Server和API，前后分离</li>
+<li>Queue，消息队列</li>
+<li>Cache，缓存</li>
+<li>SQL，读写分离</li>
+<li>NoSql，对象存储</li>
+</ol>
+<h2 id="dns">DNS</h2>
+<p>域名结构：</p>
+<p><img src="/images/system/system-design-primer/DNS-Domain-Name.PNG" alt="alt" />
+</p>
+<blockquote>
+<p>分层管理</p>
+</blockquote>
+<p>域名解析：</p>
+<p>递归：</p>
+<p><img src="/images/system/system-design-primer/DNS-Query-Recur.PNG" alt="alt" />
+</p>
+<p>迭代：</p>
+<p><img src="/images/system/system-design-primer/DNS-Query-Iterator.PNG" alt="alt" />
+</p>
+<p>资源类型：</p>
+<ol>
+<li>NS 记录（域名服务） ─ 指定解析域名或子域名的DNS服务器。</li>
+<li>MX 记录（邮件交换） ─ 指定接收信息的邮件服务器。</li>
+<li>A 记录（地址） ─ 指定域名对应的IP地址记录。</li>
+<li>CNAME（规范） ─ 一个域名映射到另一个域名或CNAME记录（example.com指向www.example.com）或映射到一个A记录。</li>
+</ol>
+<p>优缺点：</p>
+<ol>
+<li>延迟</li>
+<li>DDOS</li>
+<li>不可或缺</li>
+</ol>
+<h2 id="cdn">CDN</h2>
+<p><img src="/images/system/system-design-primer/CDN.png" alt="alt" />
+</p>
+<p>作用：</p>
+<p>CDN是一个全球性的代理服务器分布式网络，它从靠近用户的位置提供内容。通常，HTML/CSS/JS，图片和视频等静态内容由CDN提供。</p>
+<ul>
+<li>从靠近用户的数据中心提供资源</li>
+<li>通过CDN，服务器不必真的处理请求</li>
+</ul>
+<p>内容更新模式：</p>
+<ul>
+<li>推送（push）：服务器上内容发生变动时，推送新内容给CDN，并重写URL地址以指向新内容的CDN地址。流量最小化，但储存最大化。</li>
+<li>拉取（pull）：当第一个用户请求该资源时，从服务器上拉取资源，存活时间（TTL）决定缓存多久时间。最小化储存空间，有冗余流量。适合高流量站点</li>
+</ul>
+<p>优缺点：</p>
+<ul>
+<li>减低服务请求压力</li>
+<li>流量贵</li>
+<li>过期，内容更新</li>
+</ul>
+<h2 id="lb">LB</h2>
+<blockquote>
+<p>LB和Proxy，在大多场景基本是等效的，LB可以运行在Proxy模式，Proxy可以提供LB功能</p>
+</blockquote>
+<p>特性：</p>
+<p><strong>主要任务</strong>：</p>
+<blockquote>
+<p>位于客户端和服务端之间</p>
+</blockquote>
+<ol>
+<li>服务发现，有哪些后端能提供服务，怎么和后端进行通信</li>
+<li>健康检查，当前哪些后端是好着的能够对外提供服务</li>
+<li>负载均衡，用什么策略去平衡后端的请求量</li>
+</ol>
+<p><strong>主要作用</strong>：</p>
+<ol>
+<li>命名抽象，通过服务发现，提供对后端服务地址的抽象，无序提供具体地址给客户端</li>
+<li>容错能力，通过健康检查和负载均衡，LB可以跳过坏的或负载高的后端从而实现服务容错</li>
+<li>成本和性能，LB可以通过流量控制，在区域间合理配置访问流量</li>
+</ol>
+<h3 id="osi">OSI</h3>
+<p><img src="/images/system/system-design-primer/osi.png" alt="alt" />
+</p>
+<ol>
+<li>Layer 7，应用层，人机交互，描述应用怎么收发数据</li>
+<li>Layer 6，表示层，格式化应用层收到的数据</li>
+<li>Layer 5，会话层，保证数据的同步性</li>
+<li>Layer 4，传输层，管理数据包在网络上的传输过程</li>
+<li>Layer 3，网络层，寻址和路由</li>
+<li>Layer 2，链路层，管理数据帧在网卡上的传输过程</li>
+<li>Layer 1，物理层，转换数据帧和电信号</li>
+</ol>
+<h3 id="l4">L4</h3>
+<blockquote>
+<p>工作在Layer 4层的负载均衡，TCP/UDP connection/session，感知不到应用层数据</p>
+</blockquote>
+<p><strong>TCP/UDP termination load balancers</strong>：</p>
+<p><img src="/images/system/system-design-primer/L4-termination.png" alt="alt" />
+</p>
+<ol>
+<li>Client和L4建立TCP连接</li>
+<li>L4拦截连接，并选择一个后端，L4和后端建立新的TCP连接</li>
+<li>L4打乱了数据顺序，但是保证同一会话数据在同一的后端上</li>
+</ol>
+<p><strong>TCP/UDP passthrough load balancers</strong>：</p>
+<p><img src="/images/system/system-design-primer/L4-passthrough.png" alt="alt" />
+</p>
+<ol>
+<li>通过连接追踪和NAT转换，将客户端连接转发到对应的后端</li>
+</ol>
+<ul>
+<li>连接追踪：跟踪TCP握手和传输状态</li>
+<li>NAT转换：重写数据包的IP和端口信息</li>
+</ul>
+<p>相对Termination型优化：</p>
+<ol>
+<li>性能和资源使用率，无需缓存TCP连接信息</li>
+<li>允许后端采用不同的拥塞控制策略</li>
+</ol>
+<p><strong>Direct server return (DSR)</strong>：</p>
+<p><img src="/images/system/system-design-primer/L4-dsr.png" alt="alt" />
+</p>
+<ol>
+<li>进入的流量走passthough模式</li>
+<li>返回的流程不走LB，直接返回给客户端</li>
+</ol>
+<blockquote>
+<p>适用于少请求内容，大量返回内容的情况</p>
+</blockquote>
+<blockquote>
+<p>取代NAT，采用GRE封装数据包</p>
+</blockquote>
+<p>L4高可用：</p>
+<p><strong>Fault tolerance via high availability pairs</strong>：</p>
+<p><img src="/images/system/system-design-primer/L4-HA.png" alt="alt" />
+</p>
+<ol>
+<li>HA路由</li>
+<li>全连接L4</li>
+</ol>
+<p><strong>Fault tolerance and scaling via clusters with distributed consistent hashing</strong>：</p>
+<p><img src="/images/system/system-design-primer/L4-FULL.png" alt="alt" />
+</p>
+<ol>
+<li>全路由</li>
+<li>全连接L4</li>
+<li>DSR</li>
+</ol>
+<p>L4缺点：</p>
+<p>场景：</p>
+<ol>
+<li>两个gRPC/HTTP2客户端</li>
+<li>第1个请求速率1RPM，第2个请求速率50RPS</li>
+<li>由于L4保证同一个后端服务同一个session，将导致2个后端负载严重不均衡</li>
+</ol>
+<blockquote>
+<p>更多的出现在multiplexing, kept-alive场景中</p>
+</blockquote>
+<h3 id="l7">L7</h3>
+<blockquote>
+<p>工作在Layer 7层的负载均衡</p>
+</blockquote>
+<p><img src="/images/system/system-design-primer/L7-termination.png" alt="alt" />
+</p>
+<ol>
+<li>客户端和L7建立HTTP/2 TCP连接</li>
+<li>L7中断并和后端建立多个新的连接</li>
+</ol>
+<p>特性：</p>
+<ol>
+<li>多协议支持：HTTP/1, HTTP2, gRPC, Redis, MongoDB, and DynamoDB等</li>
+<li>动态配置：Istio等</li>
+<li>功能增强：timeouts, retries, rate limiting, circuit breaking, shadowing, buffering, content based routing等</li>
+<li>监控：Outputting numeric stats, distributed traces, and customizable logging等</li>
+<li>扩展：Lua等</li>
+<li>容错</li>
+</ol>
+<h3 id="lb拓扑">LB拓扑</h3>
+<p><strong>Middle proxy</strong>：</p>
+<p><img src="/images/system/system-design-primer/LB-Middle.png" alt="alt" />
+</p>
+<blockquote>
+<p>通用模式</p>
+</blockquote>
+<p><strong>Edge proxy</strong>：</p>
+<p><img src="/images/system/system-design-primer/LB-Edge.png" alt="alt" />
+</p>
+<blockquote>
+<p>Middle的变种，服务对互联网暴露</p>
+</blockquote>
+<p><strong>Embedded client library</strong>：</p>
+<p><img src="/images/system/system-design-primer/LB-Lib.png" alt="alt" />
+</p>
+<blockquote>
+<p>作为lib库，嵌入服务；性能好，但是服务适配困难</p>
+</blockquote>
+<p><strong>Sidecar proxy</strong>：</p>
+<p><img src="/images/system/system-design-primer/LB-Sidecar.png" alt="alt" />
+</p>
+<blockquote>
+<p>独立代理模式，性能和适配性都不错</p>
+</blockquote>
+<p><strong>Global load balancing and the centralized control plane</strong>：</p>
+<p><img src="/images/system/system-design-primer/LB-Global.png" alt="alt" />
+</p>
+<ol>
+<li>Sidecar控制流量并上报状态给GLB</li>
+<li>GLB根据实际情况调整Sidecar流控策略</li>
+</ol>
+<h2 id="可扩展性">可扩展性</h2>
+<p><img src="/images/system/system-design-primer/scalability.PNG" alt="alt" />
+</p>
+<h3 id="克隆">克隆</h3>
+<blockquote>
+<p>通常Server都隐藏在负载均衡LB后端，通过对Server的克隆可以提升服务能力的扩展</p>
+</blockquote>
+<p>关键点：</p>
+<ol>
+<li>每个Server部署的代码完全相同</li>
+<li>每个Server不在本地或内存保存任何用户状态相关的数据，例如：sessions、配置信息等</li>
+<li>任何用户状态相关的数据均需要外置保存，例如：database、持久化cache等</li>
+</ol>
+<h3 id="数据库">数据库</h3>
+<blockquote>
+<p>伴随着Server克隆数量的增加，服务的能力对外部Database的依赖越来越严重</p>
+</blockquote>
+<p>关键措施1：</p>
+<ol>
+<li>DBA介入运维</li>
+<li>设置主从复制，实现读写分离</li>
+<li>升级服务器规格，增加CPU、内存</li>
+<li>非规范化操作：sharding、denormalization、SQL tuning</li>
+</ol>
+<p>关键措施2：</p>
+<ol>
+<li>切换NoSQL，例如：MongoDB</li>
+<li>Joins查询，需要从DB转移到应用层</li>
+</ol>
+<h3 id="缓存">缓存</h3>
+<blockquote>
+<p>DB优化后，用户请求大量数据时，依然会存在处理时间较长的情况</p>
+</blockquote>
+<p>关键点：</p>
+<ol>
+<li>内存Cache，非文件Cache，例如：Memcached、Redis</li>
+<li>介于应用层和数据层之间，访问数据前，先访问缓存</li>
+</ol>
+<p>缓存策略：</p>
+<p><strong>缓存Database查询结果</strong>：Hash查询语句作为key，存在的问题：容易过期</p>
+<p><strong>缓存对象</strong>：缓存完整对象（每个部件有不同的库表查询结果组成），方便异步操作（只访问对象即可，不用访问每个部件）</p>
+<h3 id="异步">异步</h3>
+<blockquote>
+<p>加上缓存后，为异步创建了条件</p>
+</blockquote>
+<p><strong>主动模式</strong>：提前处理内容并放入缓存，查询直接查询缓存即可，例如：CMS内容
+<strong>被动模式</strong>：对于计算耗时长的任务，启动后台任务，并进入消息队列，前台启动定时查询任务，待任务完成后通知用户，任务运行期间不影响用户其他操作</p>
+<h2 id="缓存-1">缓存</h2>
+<p>缓存层次：</p>
+<ul>
+<li>客户端缓存</li>
+<li>CDN 缓存</li>
+<li>Web 服务器缓存：缓存请求</li>
+<li>数据库缓存</li>
+<li>应用缓存：数据库查询和对象</li>
+</ul>
+<p>更新策略：</p>
+<p><strong>缓存模式</strong>：</p>
+<p><img src="/images/system/system-design-primer/Cache-Cache.png" alt="alt" />
+</p>
+<ol>
+<li>访问缓存</li>
+<li>缓存未中，访问存储</li>
+<li>保存缓存</li>
+</ol>
+<p>缺点：延迟、过期</p>
+<p><strong>直写模式</strong>：</p>
+<p><img src="/images/system/system-design-primer/Cache-Write.png" alt="alt" />
+</p>
+<p>缺点：新增节点，数据缺少缓存</p>
+<p><strong>回写模式</strong>：</p>
+<p><img src="/images/system/system-design-primer/Cache-Write-Back.png" alt="alt" />
+</p>
+<p>缺点：数据容易丢失</p>
+<p><strong>刷新</strong>：</p>
+<p><img src="/images/system/system-design-primer/Cache-Refresh.png" alt="alt" />
+</p>
+<blockquote>
+<p>自动刷新，适用特定场景：可以准确预测将来可能请求哪些数据</p>
+</blockquote>
+<h2 id="数据库-1">数据库</h2>
+<h3 id="关系型数据库rdbms">关系型数据库（RDBMS）</h3>
+<blockquote>
+<p>ACID，重点强调一致性</p>
+</blockquote>
+<p>主从复制：</p>
+<blockquote>
+<p>读写分离</p>
+</blockquote>
+<p><img src="/images/system/system-design-primer/DB-MS.png" alt="alt" />
+</p>
+<ul>
+<li>需要额外的升主逻辑</li>
+<li>数据复制问题：丢失、重复、延迟等</li>
+</ul>
+<p>主主复制：</p>
+<blockquote>
+<p>双主模式</p>
+</blockquote>
+<p><img src="/images/system/system-design-primer/DB-MM.png" alt="alt" />
+</p>
+<ul>
+<li>需要LB，容易不一致</li>
+<li>数据复制问题：丢失、重复、延迟等</li>
+</ul>
+<p>联合：</p>
+<blockquote>
+<p>分库</p>
+</blockquote>
+<p><img src="/images/system/system-design-primer/DB-DB.png" alt="alt" />
+</p>
+<ul>
+<li>联合操作效率不高</li>
+<li>读写逻辑需要应用层解决</li>
+</ul>
+<p>分片：</p>
+<blockquote>
+<p>分表</p>
+</blockquote>
+<p><img src="/images/system/system-design-primer/DB-TB.png" alt="alt" />
+</p>
+<ul>
+<li>读写逻辑复杂，需要应用层解决</li>
+<li>容易数据负载不均衡</li>
+</ul>
+<p>非规范化：</p>
+<blockquote>
+<p>以写入性能为代价来换取读取性能</p>
+</blockquote>
+<ul>
+<li>数据冗余</li>
+<li>设计复杂</li>
+<li>写入性能不高</li>
+</ul>
+<p>SQL调优：</p>
+<blockquote>
+<p>基准测试，性能分析，分析工具</p>
+</blockquote>
+<ul>
+<li>类型优化：</li>
+</ul>
+<ol>
+<li>使用 CHAR 类型存储固定长度的字段，不要用 VARCHAR。</li>
+<li>使用 TEXT 类型存储大块的文本。</li>
+<li>使用 INT 类型存储高达 2^32 或 40 亿的较大数字。</li>
+<li>使用 DECIMAL 类型存储货币可以避免浮点数表示错误。</li>
+<li>使用 NOT NULL 约束来提高搜索性能。</li>
+</ol>
+<ul>
+<li>使用正确的索引</li>
+<li>避免高成本的联合操作</li>
+<li>分割数据表：将热点数据拆分到单独的数据表中，可以有助于缓存。</li>
+</ul>
+<h3 id="非关系型数据库nosql">非关系型数据库（NoSQL）</h3>
+<blockquote>
+<p>BASE，重点强调可用性</p>
+</blockquote>
+<ul>
+<li>键-值存储: 哈希表，适用简单数据</li>
+<li>文档型存储：将文档作为值的键-值存储，具备高度的灵活性，常用于处理偶尔变化的数据。</li>
+<li>列型存储：嵌套的 ColumnFamily&lt;RowKey, Columns&lt;ColKey, Value, Timestamp&raquo; 映射，具备高可用性和高可扩展性。通常被用于大数据相关存储。</li>
+<li>图存储：图，存储复杂关系的数据模型，如社交网络，提供了很高的性能。</li>
+</ul>
+<p>常见应用：</p>
+<ol>
+<li>埋点数据和日志数据</li>
+<li>排行榜或者得分数据</li>
+<li>临时数据，如购物车</li>
+<li>频繁访问的（“热”）表</li>
+<li>元数据／查找表</li>
+</ol>
+<h2 id="权衡与取舍">权衡与取舍</h2>
+<h3 id="性能与可扩展性">性能与可扩展性</h3>
+<ul>
+<li>性能问题：单个用户用起来就比较慢</li>
+<li>扩展性问题：单个用户没问题，多用户用起来会比较慢</li>
+</ul>
+<h3 id="延迟与吞吐量">延迟与吞吐量</h3>
+<ul>
+<li>延迟：执行操作或运算结果所花费的时间</li>
+<li>吞吐量：单位时间内执行操作或运算的次数</li>
+</ul>
+<blockquote>
+<p>应该以可接受的延迟下最大化吞吐量为目标</p>
+</blockquote>
+<h3 id="可用性与一致性">可用性与一致性</h3>
+<p>可用性：</p>
+<ol>
+<li><strong>故障切换</strong>：主备切换、主主切换、故障倒换（切换到全新备件）</li>
+<li><strong>复制</strong>：主从复制、主主复制</li>
+</ol>
+<p>一致性：</p>
+<ol>
+<li>弱一致性：写入之后，访问可能看到，也可能看不到（类似掉线）。应用：视频聊天、游戏等</li>
+<li>强一致性：写入后，访问立即可见（同步复制）。应用：文件系统和关系型数据库等</li>
+<li>最终一致性：写入后，访问最终能看到写入数据（异步复制）。应用：DNS、email等</li>
+</ol>
+<h4 id="cap">CAP</h4>
+<p><img src="/images/system/system-design-primer/CAP.png" alt="alt" />
+</p>
+<ol>
+<li>Consistency - 一致性，每次访问都能获得最新数据但可能会收到错误响应</li>
+<li>Availability - 可用性，每次访问都能收到正确响应，但不保证获取到最新数据</li>
+<li>Partition Tolerance - 分区容错性，在任意分区网络故障的情况下系统仍能继续运行</li>
+</ol>
+<blockquote>
+<p>网络并不可靠，所以要支持分区容错性，但是可用性和一致性无法同时满足，即需要满足AP（适用于原子读写）或CP（适用于最终一致性）</p>
+</blockquote>
+<h4 id="base">BASE</h4>
+<blockquote>
+<p>BASE强调可用性超过一致性, 通常被用于描述NoSQL数据库的特性</p>
+</blockquote>
+<ol>
+<li>Basically Available - 基本可用，系统保证可用性。例如：响应时间上的损失，功能上的损失等</li>
+<li>Soft State - 软状态，系统状态也可能随着时间变化。例如：副本数据存在中间状态，但不影响系统的整体可用性</li>
+<li>Eventually Consistent - 最终一致性，经过一段时间之后，系统最终会变一致</li>
+</ol>
+<h4 id="acid">ACID</h4>
+<blockquote>
+<p>ACID追求强一致性模型，传统关系型数据库常用的设计理念</p>
+</blockquote>
+<ol>
+<li>Atomicity - 原子性，事务中包含的原子操作序列单元，要么全部执行成功，要么全部不执行，任何一项失败，整个事务回滚。</li>
+<li>Consistency - 一致性，事务在执行之前和之后，数据库都必须处于一致性状态。</li>
+<li>Isolation - 隔离性，并发的事务是相互隔离的，一个事务的执行不能被其他事务干扰。</li>
+<li>Durability - 持久性，一个事务一旦提交，对数据库中对应数据的状态变更是永久性的。</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li><a href="https://www.slideshare.net/jboner/scalability-availability-stability-patterns/">scalability-availability-stability-patterns</a></li>
+<li><a href="https://community.cadence.com/cadence_blogs_8/b/sd/posts/understanding-latency-vs-throughput">Understanding Latency versus Throughput</a></li>
+<li><a href="https://robertgreiner.com/cap-theorem-revisited/">CAP Theorem: Revisited</a></li>
+<li><a href="https://juejin.im/post/5b2663fcf265da59a401e6f8">分布式理论(二) - BASE理论</a></li>
+<li><a href="https://www.cnblogs.com/binarylei/p/9903336.html">分布式理论系列（一）从 ACID 到 CAP 到 BASE</a></li>
+<li><a href="https://www.slideshare.net/tmatyashovsky/from-cache-to-in-memory-data-grid-introduction-to-hazelcast">From cache to in-memory data grid. Introduction to Hazelcast.</a></li>
+<li><a href="https://www.lecloud.net/tagged/scalability/chrono">可扩展性</a></li>
+<li><a href="https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236">Introduction to modern network load balancing and proxying</a></li>
+<li><a href="http://jaredheinrichs.com/mastering-the-osi-tcpip-models.html">Mastering the OSI &amp; TCP/IP Models</a></li>
+<li><a href="https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md">系统设计入门</a></li>
+<li><a href="https://www.hostucan.com/cdn">What is CDN</a></li>
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd197427%28v%3dws.10%29">DNS Architecture</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Domain_Name_System">Domain Name System</a></li>
+<li><a href="https://www.slideshare.net/srikrupa5/dns-security-presentation-issa">DNS Security Presentation ISSA</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#系统设计入门">系统设计入门</a>
+      <ul>
+        <li><a href="#概览">概览</a></li>
+        <li><a href="#dns">DNS</a></li>
+        <li><a href="#cdn">CDN</a></li>
+        <li><a href="#lb">LB</a>
+          <ul>
+            <li><a href="#osi">OSI</a></li>
+            <li><a href="#l4">L4</a></li>
+            <li><a href="#l7">L7</a></li>
+            <li><a href="#lb拓扑">LB拓扑</a></li>
+          </ul>
+        </li>
+        <li><a href="#可扩展性">可扩展性</a>
+          <ul>
+            <li><a href="#克隆">克隆</a></li>
+            <li><a href="#数据库">数据库</a></li>
+            <li><a href="#缓存">缓存</a></li>
+            <li><a href="#异步">异步</a></li>
+          </ul>
+        </li>
+        <li><a href="#缓存-1">缓存</a></li>
+        <li><a href="#数据库-1">数据库</a>
+          <ul>
+            <li><a href="#关系型数据库rdbms">关系型数据库（RDBMS）</a></li>
+            <li><a href="#非关系型数据库nosql">非关系型数据库（NoSQL）</a></li>
+          </ul>
+        </li>
+        <li><a href="#权衡与取舍">权衡与取舍</a>
+          <ul>
+            <li><a href="#性能与可扩展性">性能与可扩展性</a></li>
+            <li><a href="#延迟与吞吐量">延迟与吞吐量</a></li>
+            <li><a href="#可用性与一致性">可用性与一致性</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

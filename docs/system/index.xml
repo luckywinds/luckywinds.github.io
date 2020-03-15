@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Luckywinds</title>
+    <link>https://luckywinds.github.io/docs/system/</link>
+    <description>Recent content on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="https://luckywinds.github.io/docs/system/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/system/system-design-primer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/system-design-primer/</guid>
+      <description>系统设计入门 概览  DNS，第一层路由 CDN，第二层缓存 LB，第三层负载 Web Server和API，前后分离 Queue，消息队列 Cache，缓存 SQL，读写分离 NoSql，对象存储  DNS 域名结构：
+ 分层管理
+ 域名解析：
+递归：
+迭代：
+资源类型：
+ NS 记录（域名服务） ─ 指定解析域名或子域名的DNS服务器。 MX 记录（邮件交换） ─ 指定接收信息的邮件服务器。 A 记录（地址） ─ 指定域名对应的IP地址记录。 CNAME（规范） ─ 一个域名映射到另一个域名或CNAME记录（example.com指向www.example.com）或映射到一个A记录。  优缺点：
+ 延迟 DDOS 不可或缺  CDN 作用：
+CDN是一个全球性的代理服务器分布式网络，它从靠近用户的位置提供内容。通常，HTML/CSS/JS，图片和视频等静态内容由CDN提供。
+ 从靠近用户的数据中心提供资源 通过CDN，服务器不必真的处理请求  内容更新模式：
+ 推送（push）：服务器上内容发生变动时，推送新内容给CDN，并重写URL地址以指向新内容的CDN地址。流量最小化，但储存最大化。 拉取（pull）：当第一个用户请求该资源时，从服务器上拉取资源，存活时间（TTL）决定缓存多久时间。最小化储存空间，有冗余流量。适合高流量站点  优缺点：
+ 减低服务请求压力 流量贵 过期，内容更新  LB  LB和Proxy，在大多场景基本是等效的，LB可以运行在Proxy模式，Proxy可以提供LB功能
+ 特性：
+主要任务：
+ 位于客户端和服务端之间</description>
+    </item>
+    
+  </channel>
+</rss>

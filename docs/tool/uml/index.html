@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Uml"><meta property="og:title" content="" />
+<meta property="og:description" content="UML UML类图  理解类之间的关系，统一符号意义，提高工作交流效率
+ 记住三个重要符号：三角形、菱形、尖括号，每个符号分为虚实两类，实虚代表类之间的强弱关系
+三角形  实线，继承关系   理解要点：实实在在的类，不玩虚的
+ 例如，SUV和小汽车，都是独立存在的实体
+ 虚线，实现关系   理解要点：就玩虚的，实现接口或继承抽象类
+ 例如：小汽车和车，车是抽象的概念
+菱形  实心，组合关系   理解要点：大家是不可分割的一体
+ 例如：发动机和小汽车，没有发动机就不能叫小汽车
+ 空心，聚合关系   理解要点：大家只是在一起玩
+ 例如：学生和班级，没有学生，班级照样在哪等着
+尖括号  实线，关联关系  理解要点：强关联，成员变量
+例如：身份证和学生，每个学生都有身份证
+ 虚线，依赖关系  理解要点：弱关联，临时变量
+例如：学生和自行车，不是每个学生都有自行车
+参考：
+ 看懂UML类图和时序图  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/tool/uml/" />
+
+<title>Uml | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Uml</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#uml">UML</a>
+      <ul>
+        <li><a href="#uml类图">UML类图</a>
+          <ul>
+            <li><a href="#三角形">三角形</a></li>
+            <li><a href="#菱形">菱形</a></li>
+            <li><a href="#尖括号">尖括号</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="uml">UML</h1>
+<h2 id="uml类图">UML类图</h2>
+<blockquote>
+<p>理解类之间的关系，统一符号意义，提高工作交流效率</p>
+</blockquote>
+<p><img src="/images/tool/uml-class.jpg" alt="alt" />
+</p>
+<p>记住三个重要符号：<strong>三角形、菱形、尖括号</strong>，每个符号分为虚实两类，实虚代表类之间的强弱关系</p>
+<h3 id="三角形">三角形</h3>
+<ul>
+<li>实线，继承关系</li>
+</ul>
+<blockquote>
+<p>理解要点：实实在在的<strong>类</strong>，不玩虚的</p>
+</blockquote>
+<p>例如，SUV和小汽车，都是独立存在的实体</p>
+<ul>
+<li>虚线，实现关系</li>
+</ul>
+<blockquote>
+<p>理解要点：就玩虚的，实现<strong>接口</strong>或继承<strong>抽象类</strong></p>
+</blockquote>
+<p>例如：小汽车和车，车是抽象的概念</p>
+<h3 id="菱形">菱形</h3>
+<ul>
+<li>实心，组合关系</li>
+</ul>
+<blockquote>
+<p>理解要点：大家是不可分割的一体</p>
+</blockquote>
+<p>例如：发动机和小汽车，没有发动机就不能叫小汽车</p>
+<ul>
+<li>空心，聚合关系</li>
+</ul>
+<blockquote>
+<p>理解要点：大家只是在一起玩</p>
+</blockquote>
+<p>例如：学生和班级，没有学生，班级照样在哪等着</p>
+<h3 id="尖括号">尖括号</h3>
+<ul>
+<li>实线，关联关系</li>
+</ul>
+<p>理解要点：强关联，成员变量</p>
+<p>例如：身份证和学生，每个学生都有身份证</p>
+<ul>
+<li>虚线，依赖关系</li>
+</ul>
+<p>理解要点：弱关联，临时变量</p>
+<p>例如：学生和自行车，不是每个学生都有自行车</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://design-patterns.readthedocs.io/zh_CN/latest/read_uml.html">看懂UML类图和时序图</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#uml">UML</a>
+      <ul>
+        <li><a href="#uml类图">UML类图</a>
+          <ul>
+            <li><a href="#三角形">三角形</a></li>
+            <li><a href="#菱形">菱形</a></li>
+            <li><a href="#尖括号">尖括号</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

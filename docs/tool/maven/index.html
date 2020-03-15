@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Maven"><meta property="og:title" content="" />
+<meta property="og:description" content="Maven 坐标 &lt;dependency&gt;&lt;groupId&gt;org.slf4j&lt;/groupId&gt;&lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;&lt;version&gt;1.7.7&lt;/version&gt;&lt;/dependency&gt; groupId，定义当前模块隶属的实际Maven项目 artifactId，定义实际项目中的一个Maven模块 version，定义当前项目所处版本，版本号定义约定: &lt;主版本&gt;.&lt;次版本&gt;.&lt;增量版本&gt;-&lt;里程碑版本&gt; packaging，定义Maven项目打包方式, 通常打包方式与所生成构件扩展名对应，有jar(默认)、war、pom、maven-plugin等.  依赖  直接依赖 传递依赖，依赖的依赖  版本选择原则：
+ 路径最近者优先 第一声明者优先  依赖除了保护坐标信息外，还保护以下内容：
+ scope，用来控制依赖与三种classpath(编译classpath、测试classpath、运行classpath)的关系，包含compile、provided、runtime、test、system和import optional，依赖是否可选 exclusions，排除传递性依赖  查看依赖树：mvn dependency:tree
+仓库  集中存储这些构件的地方
+   本地仓库: 默认地址为~/.m2/, 一个构件只有在本地仓库存在之后, 才能由Maven项目使用
+  远程仓库: 远程仓库又可简单分成两类: 中央仓库和私服（代理仓库）
+  repository表示发布版本构件的仓库
+  snapshotRepository代表快照版本的仓库
+  生命周期与插件  clean：pre-clean、clean、post-clean default：process-resources、compile、process-test-resources、test-compile、test、package、install、deploy site：pre-site、site、post-site、site-deploy  生命周期的阶段phase与插件的目标goal相互绑定, 用以完成实际的构建任务
+mvn compile:compile，冒号前是插件前缀, 后面是该插件目标
+聚合继承 通过在一个打包方式为pom的Maven项目中声明任意数量的module以实现模块聚合 聚合POM放在项目目录的最顶层, 其他模块作为聚合模块的子目录 聚合POM存放公共配置，子模块POM存放定制化配置" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/tool/maven/" />
+
+<title>Maven | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Maven</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#maven">Maven</a>
+      <ul>
+        <li><a href="#坐标">坐标</a></li>
+        <li><a href="#依赖">依赖</a></li>
+        <li><a href="#仓库">仓库</a></li>
+        <li><a href="#生命周期与插件">生命周期与插件</a></li>
+        <li><a href="#聚合继承">聚合继承</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="maven">Maven</h1>
+<h2 id="坐标">坐标</h2>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+    &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;
+    &lt;version&gt;1.7.7&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><ul>
+<li>groupId，定义当前模块隶属的实际Maven项目</li>
+<li>artifactId，定义实际项目中的一个Maven模块</li>
+<li>version，定义当前项目所处版本，版本号定义约定: &lt;主版本&gt;.&lt;次版本&gt;.&lt;增量版本&gt;-&lt;里程碑版本&gt;</li>
+<li>packaging，定义Maven项目打包方式, 通常打包方式与所生成构件扩展名对应，有jar(默认)、war、pom、maven-plugin等.</li>
+</ul>
+<h2 id="依赖">依赖</h2>
+<ul>
+<li>直接依赖</li>
+<li>传递依赖，依赖的依赖</li>
+</ul>
+<p>版本选择原则：</p>
+<ul>
+<li>路径最近者优先</li>
+<li>第一声明者优先</li>
+</ul>
+<p>依赖除了保护坐标信息外，还保护以下内容：</p>
+<ul>
+<li>scope，用来控制依赖与三种classpath(编译classpath、测试classpath、运行classpath)的关系，包含compile、provided、runtime、test、system和import</li>
+<li>optional，依赖是否可选</li>
+<li>exclusions，排除传递性依赖</li>
+</ul>
+<p>查看依赖树：<code>mvn dependency:tree</code></p>
+<h2 id="仓库">仓库</h2>
+<blockquote>
+<p>集中存储这些构件的地方</p>
+</blockquote>
+<ul>
+<li>
+<p>本地仓库: 默认地址为~/.m2/, 一个构件只有在本地仓库存在之后, 才能由Maven项目使用</p>
+</li>
+<li>
+<p>远程仓库: 远程仓库又可简单分成两类: 中央仓库和私服（代理仓库）</p>
+</li>
+<li>
+<p>repository表示发布版本构件的仓库</p>
+</li>
+<li>
+<p>snapshotRepository代表快照版本的仓库</p>
+</li>
+</ul>
+<h2 id="生命周期与插件">生命周期与插件</h2>
+<ul>
+<li>clean：pre-clean、clean、post-clean</li>
+<li>default：process-resources、compile、process-test-resources、test-compile、test、package、install、deploy</li>
+<li>site：pre-site、site、post-site、site-deploy</li>
+</ul>
+<p>生命周期的阶段phase与插件的目标goal相互绑定, 用以完成实际的构建任务</p>
+<p><code>mvn compile:compile</code>，冒号前是插件前缀, 后面是该插件目标</p>
+<h2 id="聚合继承">聚合继承</h2>
+<p>通过在一个打包方式为pom的Maven项目中声明任意数量的module以实现模块聚合
+聚合POM放在项目目录的最顶层, 其他模块作为聚合模块的子目录
+聚合POM存放公共配置，子模块POM存放定制化配置</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#maven">Maven</a>
+      <ul>
+        <li><a href="#坐标">坐标</a></li>
+        <li><a href="#依赖">依赖</a></li>
+        <li><a href="#仓库">仓库</a></li>
+        <li><a href="#生命周期与插件">生命周期与插件</a></li>
+        <li><a href="#聚合继承">聚合继承</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

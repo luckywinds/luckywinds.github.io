@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Luckywinds</title>
+    <link>https://luckywinds.github.io/docs/tool/</link>
+    <description>Recent content on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="https://luckywinds.github.io/docs/tool/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/tool/git/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/tool/git/</guid>
+      <description>Git 概述 3+1棵树
+ Workspace：工作目录，持有实际工作文件 Index：暂存区，临时保存工作文件变更情况 Repository：本地仓库，在本地保存完整Git记录 Remote：远端仓库，实际代码仓库   所有的Git操作，都是文件变化记录在这四棵树之间流转，开发过程中重点关注前3棵树
+ 获取代码库  git clone [url]，克隆到本地，文件夹名字和仓库名字保持一致 git clone [url] local_dir，克隆到本地，文件夹名字自定义   url可以是git://或ssh://或http(s)://或ftp://等
+ 查看分支 git branch &amp;lt;options&amp;gt;
+ 无选项，列出本地分支 -a，列出本地分支和远程分支 -r，列出远程分支  git tag
+ 列出标签列表
+ 分支管理  git branch dev，基于当前分支创建dev分支 git checkout dev，切换到dev分支 git branch -d dev，删除分支 git checkout -b dev [origin/branch|tag]，基于指定分支或标签，创建并切换分支  获取更新信息  git fetch &amp;lt;origin&amp;gt; &amp;lt;branch&amp;gt;   仅获取指定分支的更新信息，不合并内容
+  获取的分支名字规则为origin/branch
+  git pull &amp;lt;origin&amp;gt; &amp;lt;branch&amp;gt;   获取指定分支的更新信息，自动合并更新到本地当前分支</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/tool/maven/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/tool/maven/</guid>
+      <description>Maven 坐标 &amp;lt;dependency&amp;gt;&amp;lt;groupId&amp;gt;org.slf4j&amp;lt;/groupId&amp;gt;&amp;lt;artifactId&amp;gt;slf4j-api&amp;lt;/artifactId&amp;gt;&amp;lt;version&amp;gt;1.7.7&amp;lt;/version&amp;gt;&amp;lt;/dependency&amp;gt; groupId，定义当前模块隶属的实际Maven项目 artifactId，定义实际项目中的一个Maven模块 version，定义当前项目所处版本，版本号定义约定: &amp;lt;主版本&amp;gt;.&amp;lt;次版本&amp;gt;.&amp;lt;增量版本&amp;gt;-&amp;lt;里程碑版本&amp;gt; packaging，定义Maven项目打包方式, 通常打包方式与所生成构件扩展名对应，有jar(默认)、war、pom、maven-plugin等.  依赖  直接依赖 传递依赖，依赖的依赖  版本选择原则：
+ 路径最近者优先 第一声明者优先  依赖除了保护坐标信息外，还保护以下内容：
+ scope，用来控制依赖与三种classpath(编译classpath、测试classpath、运行classpath)的关系，包含compile、provided、runtime、test、system和import optional，依赖是否可选 exclusions，排除传递性依赖  查看依赖树：mvn dependency:tree
+仓库  集中存储这些构件的地方
+   本地仓库: 默认地址为~/.m2/, 一个构件只有在本地仓库存在之后, 才能由Maven项目使用
+  远程仓库: 远程仓库又可简单分成两类: 中央仓库和私服（代理仓库）
+  repository表示发布版本构件的仓库
+  snapshotRepository代表快照版本的仓库
+  生命周期与插件  clean：pre-clean、clean、post-clean default：process-resources、compile、process-test-resources、test-compile、test、package、install、deploy site：pre-site、site、post-site、site-deploy  生命周期的阶段phase与插件的目标goal相互绑定, 用以完成实际的构建任务
+mvn compile:compile，冒号前是插件前缀, 后面是该插件目标
+聚合继承 通过在一个打包方式为pom的Maven项目中声明任意数量的module以实现模块聚合 聚合POM放在项目目录的最顶层, 其他模块作为聚合模块的子目录 聚合POM存放公共配置，子模块POM存放定制化配置</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/tool/uml/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/tool/uml/</guid>
+      <description>UML UML类图  理解类之间的关系，统一符号意义，提高工作交流效率
+ 记住三个重要符号：三角形、菱形、尖括号，每个符号分为虚实两类，实虚代表类之间的强弱关系
+三角形  实线，继承关系   理解要点：实实在在的类，不玩虚的
+ 例如，SUV和小汽车，都是独立存在的实体
+ 虚线，实现关系   理解要点：就玩虚的，实现接口或继承抽象类
+ 例如：小汽车和车，车是抽象的概念
+菱形  实心，组合关系   理解要点：大家是不可分割的一体
+ 例如：发动机和小汽车，没有发动机就不能叫小汽车
+ 空心，聚合关系   理解要点：大家只是在一起玩
+ 例如：学生和班级，没有学生，班级照样在哪等着
+尖括号  实线，关联关系  理解要点：强关联，成员变量
+例如：身份证和学生，每个学生都有身份证
+ 虚线，依赖关系  理解要点：弱关联，临时变量
+例如：学生和自行车，不是每个学生都有自行车
+参考：
+ 看懂UML类图和时序图  </description>
+    </item>
+    
+  </channel>
+</rss>
