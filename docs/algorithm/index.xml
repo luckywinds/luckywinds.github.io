@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Luckywinds</title>
+    <link>https://luckywinds.github.io/docs/algorithm/</link>
+    <description>Recent content on Luckywinds</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="https://luckywinds.github.io/docs/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/priorityqueues/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/priorityqueues/</guid>
+      <description>优先级队列 应用场景  数据流中最大/小N元素判断 图搜索 &amp;hellip;  Code class MaxPQ:def __init__(self):self.key = [0]self.len = 0def empty(self):return self.len == 0def insert(self, k):self.key.append(k)self.len += 1self.swim(self.len)def del_max(self):m = self.key[1]self.swap(1, self.len)del self.key[self.len]self.len -= 1self.sink(1)return mdef swim(self, k):while k &amp;gt; 1 and self.less(int(k / 2), k):self.swap(k, int(k / 2))k = int(k / 2)def sink(self, k):while 2 * k &amp;lt;= self.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/recursion/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/recursion/</guid>
+      <description>递归 思路 某个函数直接或者间接地调用自己，把原问题的求解转换为许多性质相同但是规模更小的子问题。
+重点关注如何把原问题划分成符合条件的子问题，以及最简问题的求解。
+套路 int func(问题规模) {if (终止条件) {return 最小子问题解;}return func(缩小规模);} 问题规模通常包含数据和其当前状态
+ 优化  所谓的剪枝，即提前判断当前状态是否有必要继续分解下去而提前结束
+ 备忘录 int memo[MAX]int func(问题规模) {if (memo[当前状态]) {return 当前问题解}if (终止条件) {return 最小子问题解;}return func(缩小规模);} 定义备忘录，记录问题状态和其对应的解 判断当前状态是否在备忘录中，提前返回解（有解和无解）  最优化 int ans；//当前最差状态int func(问题规模) {if (当前状态 比 ans 更差) {return 无解}if (终止条件) {return 最小子问题解;}return func(缩小规模);} 定义临时状态，记录当前最差状态 判断当前状态是否比最差状态还差或者直接不可用，提前返回解（无解）  示例 力扣1137.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/unionfind/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/unionfind/</guid>
+      <description>并查集 应用场景  照片中的像素 网络中的计算机 社交网络的朋友 等  Code class UnionFind:def __init__(self, n):self.id = [i for i in range(n)]self.size = [1] * ndef root(self, i):while i != self.id[i]:self.id[i] = self.id[self.id[i]]i = self.id[i]return idef connected(self, p, q):return self.root(p) == self.root(q)def union(self, p, q):i = self.root(p)j = self.root(q)if i == j:returnif self.size[i] &amp;lt; self.size[j]:self.id[i] = jself.</description>
+    </item>
+    
+  </channel>
+</rss>

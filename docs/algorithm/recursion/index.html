@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Recursion"><meta property="og:title" content="" />
+<meta property="og:description" content="递归 思路 某个函数直接或者间接地调用自己，把原问题的求解转换为许多性质相同但是规模更小的子问题。
+重点关注如何把原问题划分成符合条件的子问题，以及最简问题的求解。
+套路 int func(问题规模) {if (终止条件) {return 最小子问题解;}return func(缩小规模);} 问题规模通常包含数据和其当前状态
+ 优化  所谓的剪枝，即提前判断当前状态是否有必要继续分解下去而提前结束
+ 备忘录 int memo[MAX]int func(问题规模) {if (memo[当前状态]) {return 当前问题解}if (终止条件) {return 最小子问题解;}return func(缩小规模);} 定义备忘录，记录问题状态和其对应的解 判断当前状态是否在备忘录中，提前返回解（有解和无解）  最优化 int ans；//当前最差状态int func(问题规模) {if (当前状态 比 ans 更差) {return 无解}if (终止条件) {return 最小子问题解;}return func(缩小规模);} 定义临时状态，记录当前最差状态 判断当前状态是否比最差状态还差或者直接不可用，提前返回解（无解）  示例 力扣1137." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/algorithm/recursion/" />
+
+<title>Recursion | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Recursion</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#递归">递归</a>
+      <ul>
+        <li><a href="#思路">思路</a></li>
+        <li><a href="#套路">套路</a></li>
+        <li><a href="#优化">优化</a>
+          <ul>
+            <li><a href="#备忘录">备忘录</a></li>
+            <li><a href="#最优化">最优化</a></li>
+          </ul>
+        </li>
+        <li><a href="#示例">示例</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="递归">递归</h1>
+<h2 id="思路">思路</h2>
+<p>某个函数直接或者间接地调用自己，把原问题的求解转换为许多性质相同但是规模更小的子问题。</p>
+<p>重点关注如何把原问题划分成符合条件的子问题，以及最简问题的求解。</p>
+<h2 id="套路">套路</h2>
+<pre><code>int func(问题规模) {
+  if (终止条件) {
+    return 最小子问题解;
+  }
+  return func(缩小规模);
+}
+</code></pre><blockquote>
+<p>问题规模通常包含数据和其当前状态</p>
+</blockquote>
+<h2 id="优化">优化</h2>
+<blockquote>
+<p>所谓的剪枝，即提前判断当前状态是否有必要继续分解下去而提前结束</p>
+</blockquote>
+<h3 id="备忘录">备忘录</h3>
+<pre><code>int memo[MAX]
+int func(问题规模) {
+  if (memo[当前状态]) {
+    return 当前问题解
+  }
+
+  if (终止条件) {
+    return 最小子问题解;
+  }
+  return func(缩小规模);
+}
+</code></pre><ol>
+<li>定义备忘录，记录问题状态和其对应的解</li>
+<li>判断当前状态是否在备忘录中，提前返回解（有解和无解）</li>
+</ol>
+<h3 id="最优化">最优化</h3>
+<pre><code>int ans；//当前最差状态
+int func(问题规模) {
+  if (当前状态 比 ans 更差) {
+    return 无解
+  }
+
+  if (终止条件) {
+    return 最小子问题解;
+  }
+  return func(缩小规模);
+}
+</code></pre><ol>
+<li>定义临时状态，记录当前最差状态</li>
+<li>判断当前状态是否比最差状态还差或者直接不可用，提前返回解（无解）</li>
+</ol>
+<h2 id="示例">示例</h2>
+<p><a href="https://leetcode-cn.com/problems/n-th-tribonacci-number/">力扣1137. 第 N 个泰波那契数</a></p>
+<pre><code>泰波那契序列 Tn 定义如下： 
+
+T0 = 0, T1 = 1, T2 = 1, 且在 n &gt;= 0 的条件下 Tn+3 = Tn + Tn+1 + Tn+2
+
+给你整数 n，请返回第 n 个泰波那契数 Tn 的值。
+</code></pre><p>标准套路：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">tribonacci</span>(self, n: int) <span style="color:#f92672">-&gt;</span> int:
+        <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>:
+            <span style="color:#66d9ef">return</span> n
+        <span style="color:#66d9ef">elif</span> n <span style="color:#f92672">==</span> <span style="color:#ae81ff">2</span>:
+            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>tribonacci(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>tribonacci(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>tribonacci(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+
+</code></pre></div><blockquote>
+<p>时间复杂度3N，容易运行超时</p>
+</blockquote>
+<blockquote>
+<p>tribonacci(k)被运行多次</p>
+</blockquote>
+<p>备忘录优化：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">tribonacci</span>(self, n: int) <span style="color:#f92672">-&gt;</span> int:
+        <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">2</span>:
+            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">if</span> n <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">0</span>
+
+        memo <span style="color:#f92672">=</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> (n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+        memo[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+        memo[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+        memo[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>trib(n, memo)
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">trib</span>(self, n: int, memo: List):
+        <span style="color:#66d9ef">if</span> memo[n] <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>:
+            <span style="color:#66d9ef">return</span> memo[n]
+        <span style="color:#66d9ef">else</span>:
+            memo[n] <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>trib(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>, memo) <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>trib(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>, memo) <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>trib(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, memo)
+            <span style="color:#66d9ef">return</span> memo[n]
+
+</code></pre></div><blockquote>
+<p>memo做备忘录，边执行边记录解，重复运算直接查找备忘录</p>
+</blockquote>
+<blockquote>
+<p>memo可以提前求所有解，也可以边计算边动态记录解</p>
+</blockquote>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#递归">递归</a>
+      <ul>
+        <li><a href="#思路">思路</a></li>
+        <li><a href="#套路">套路</a></li>
+        <li><a href="#优化">优化</a>
+          <ul>
+            <li><a href="#备忘录">备忘录</a></li>
+            <li><a href="#最优化">最优化</a></li>
+          </ul>
+        </li>
+        <li><a href="#示例">示例</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

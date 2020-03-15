@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Unionfind"><meta property="og:title" content="" />
+<meta property="og:description" content="并查集 应用场景  照片中的像素 网络中的计算机 社交网络的朋友 等  Code class UnionFind:def __init__(self, n):self.id = [i for i in range(n)]self.size = [1] * ndef root(self, i):while i != self.id[i]:self.id[i] = self.id[self.id[i]]i = self.id[i]return idef connected(self, p, q):return self.root(p) == self.root(q)def union(self, p, q):i = self.root(p)j = self.root(q)if i == j:returnif self.size[i] &lt; self.size[j]:self.id[i] = jself." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/algorithm/unionfind/" />
+
+<title>Unionfind | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Unionfind</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#并查集">并查集</a>
+      <ul>
+        <li><a href="#应用场景">应用场景</a></li>
+        <li><a href="#code">Code</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="并查集">并查集</h1>
+<p><img src="/images/algorithms/UnionFind.PNG" alt="alt" />
+</p>
+<h2 id="应用场景">应用场景</h2>
+<ul>
+<li>照片中的像素</li>
+<li>网络中的计算机</li>
+<li>社交网络的朋友</li>
+<li>等</li>
+</ul>
+<h2 id="code">Code</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UnionFind</span>:
+    <span style="color:#66d9ef">def</span> __init__(self, n):
+        self<span style="color:#f92672">.</span>id <span style="color:#f92672">=</span> [i <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(n)]
+        self<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> n
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">root</span>(self, i):
+        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">!=</span> self<span style="color:#f92672">.</span>id[i]:
+            self<span style="color:#f92672">.</span>id[i] <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>id[self<span style="color:#f92672">.</span>id[i]]
+            i <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>id[i]
+        <span style="color:#66d9ef">return</span> i
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">connected</span>(self, p, q):
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>root(p) <span style="color:#f92672">==</span> self<span style="color:#f92672">.</span>root(q)
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">union</span>(self, p, q):
+        i <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>root(p)
+        j <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>root(q)
+        <span style="color:#66d9ef">if</span> i <span style="color:#f92672">==</span> j:
+            <span style="color:#66d9ef">return</span>
+        <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>size[i] <span style="color:#f92672">&lt;</span> self<span style="color:#f92672">.</span>size[j]:
+            self<span style="color:#f92672">.</span>id[i] <span style="color:#f92672">=</span> j
+            self<span style="color:#f92672">.</span>size[j] <span style="color:#f92672">+=</span> self<span style="color:#f92672">.</span>size[i]
+        <span style="color:#66d9ef">else</span>:
+            self<span style="color:#f92672">.</span>id[j] <span style="color:#f92672">=</span> i
+            self<span style="color:#f92672">.</span>size[i] <span style="color:#f92672">+=</span> self<span style="color:#f92672">.</span>size[j]
+
+</code></pre></div><p>说明：</p>
+<ul>
+<li>id保存对应根节点的id</li>
+<li>size保存当前根节点的元素个数</li>
+</ul>
+<p>关键点：</p>
+<ul>
+<li>root，查找过程中，更新查找路径上节点的父节点值为祖父节点，达到路径压缩目的，缩短查找路径长度</li>
+<li>union，连接过程中，将元素个数少的树挂载到元素个数多的树上，降低树的整体高度</li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#并查集">并查集</a>
+      <ul>
+        <li><a href="#应用场景">应用场景</a></li>
+        <li><a href="#code">Code</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
