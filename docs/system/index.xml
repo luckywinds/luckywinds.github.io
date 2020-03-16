@@ -55,7 +55,7 @@
       <description>Istio简介  Istio是service mesh的一种
  核心特性  流量管理：限流、熔断、故障注入等 安全：认证、授权、加密等 监测：跟踪、监控、日志等  架构 Istio逻辑上分为数据面（data plane）和控制面（control plane）
  数据面：由sidecar模式部署的Envoy代理组成，控制微服务之间的网络通信 控制面：管理和配置sidecar代理服务上  组件：
- Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-egressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  </description>
+ Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-egressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  网络  外部流量通过Gateway进入集群，提供基本控制能力，例如port、tls、limit等 通过Virtual Service实现不同版本的Service服务路由能力，例如headers/url/weight等，支持蓝绿、金丝雀、故障注入等能力 Service内部支持LB负载配置，精确控制各实例访问控制策略  </description>
     </item>
     
     <item>
