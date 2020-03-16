@@ -5,22 +5,10 @@
     <link>https://luckywinds.github.io/posts/</link>
     <description>Recent content in 博客 on Luckywinds</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 08 Mar 2020 20:07:32 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 08 Mar 2020 18:07:32 +0800</lastBuildDate>
     
 	<atom:link href="https://luckywinds.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Istio Sidecar简介</title>
-      <link>https://luckywinds.github.io/posts/opensource/istio-sidecar/</link>
-      <pubDate>Sun, 08 Mar 2020 20:07:32 +0800</pubDate>
-      
-      <guid>https://luckywinds.github.io/posts/opensource/istio-sidecar/</guid>
-      <description>Sidecar  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  注入内容 Istio sidecar向应用pod中注入2个容器：
- init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，实现流量多样化配置  Init 容器  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
-  将应用容器的所有流量都转发到 Envoy 的 15001 端口。 使用 istio-proxy 用户身份运行， UID 为 1337，即 Envoy 所处的用户空间，这也是 istio-proxy 容器默认使用的用户。 使用默认的 REDIRECT 模式来重定向流量。 将所有出站流量都重定向到 Envoy 代理。 将所有访问应用容器端口的流量重定向到 Envoy 代理。  参考
- Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  </description>
-    </item>
     
     <item>
       <title>Dockerfile简介</title>

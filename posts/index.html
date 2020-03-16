@@ -8,7 +8,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://luckywinds.github.io/posts/" />
-<meta property="og:updated_time" content="2020-03-08T20:07:32+08:00" />
+<meta property="og:updated_time" content="2020-03-08T18:07:32+08:00" />
 <title>博客 | Luckywinds</title>
 <link rel="icon" href="/favicon.png" type="image/x-icon">
 
@@ -146,7 +146,7 @@ https://github.com/alex-shpak/hugo-book
       
         <li class="flex justify-between">
           <a href="/categories/opensource/">opensource</a>
-          <span>5</span>
+          <span>4</span>
         </li>
       
         <li class="flex justify-between">
@@ -167,16 +167,6 @@ https://github.com/alex-shpak/hugo-book
     <li class="book-section-flat">
       <strong>Tags</strong>
       <ul>
-      
-        <li class="flex justify-between">
-          <a href="/tags/istio/">istio</a>
-          <span>1</span>
-        </li>
-      
-        <li class="flex justify-between">
-          <a href="/tags/sidecar/">sidecar</a>
-          <span>1</span>
-        </li>
       
         <li class="flex justify-between">
           <a href="/tags/docker/">docker</a>
@@ -224,39 +214,6 @@ https://github.com/alex-shpak/hugo-book
       
       
   
-  
-  <article class="markdown book-post">
-    <h2>
-      <a href="/posts/opensource/istio-sidecar/">Istio Sidecar简介</a>
-    </h2>
-    
-
-  <h5>2020-03-08</h5>
-
-
-
-  
-  <div>
-    
-        <a href="/categories/opensource/">opensource</a>
-  </div>
-  
-
-  
-  <div>
-    
-        <a href="/tags/istio/">istio</a>, 
-        <a href="/tags/sidecar/">sidecar</a>
-  </div>
-  
-
-
-    <p>Sidecar  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  注入内容 Istio sidecar向应用pod中注入2个容器：
- init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，实现流量多样化配置  Init 容器  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
-  将应用容器的所有流量都转发到 Envoy 的 15001 端口。 使用 istio-proxy 用户身份运行， UID 为 1337，即 Envoy 所处的用户空间，这也是 istio-proxy 容器默认使用的用户。 使用默认的 REDIRECT 模式来重定向流量。 将所有出站流量都重定向到 Envoy 代理。 将所有访问应用容器端口的流量重定向到 Envoy 代理。  参考
- Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  
-    </p>
-  </article>
   
   <article class="markdown book-post">
     <h2>
@@ -552,7 +509,7 @@ https://github.com/alex-shpak/hugo-book
       
         <li class="flex justify-between">
           <a href="/categories/opensource/">opensource</a>
-          <span>5</span>
+          <span>4</span>
         </li>
       
         <li class="flex justify-between">
@@ -573,16 +530,6 @@ https://github.com/alex-shpak/hugo-book
     <li class="book-section-flat">
       <strong>Tags</strong>
       <ul>
-      
-        <li class="flex justify-between">
-          <a href="/tags/istio/">istio</a>
-          <span>1</span>
-        </li>
-      
-        <li class="flex justify-between">
-          <a href="/tags/sidecar/">sidecar</a>
-          <span>1</span>
-        </li>
       
         <li class="flex justify-between">
           <a href="/tags/docker/">docker</a>
