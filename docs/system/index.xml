@@ -11,6 +11,19 @@
     
     <item>
       <title></title>
+      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-gateway/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-gateway/</guid>
+      <description>Gateway边缘控制 Ingress  入口流量控制
+  外部流量通过LB进入集群 集群通过节点NodePort开放入口 流量通过Istio Gateway进入服务网格内 Gateway通过Envoy代理实现 Envoy通过Virtual Service规则实现流量路由 Virtual Service根据规则匹配对应的Service  Egress  出口流量控制
+ Egress类似Ingress，通过Envoy提供外部访问代理
+参考：
+ Which One is the Right Choice for the Ingress Gateway of Your Service Mesh? Kubernetes Ingress, Istio Gateway or API Gateway?  </description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -42,7 +55,7 @@
       <description>Istio简介  Istio是service mesh的一种
  核心特性  流量管理：限流、熔断、故障注入等 安全：认证、授权、加密等 监测：跟踪、监控、日志等  架构 Istio逻辑上分为数据面（data plane）和控制面（control plane）
  数据面：由sidecar模式部署的Envoy代理组成，控制微服务之间的网络通信 控制面：管理和配置sidecar代理服务上  组件：
- Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-engressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  </description>
+ Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-egressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  </description>
     </item>
     
     <item>
