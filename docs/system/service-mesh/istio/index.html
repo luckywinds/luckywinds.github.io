@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Istio"><meta property="og:title" content="" />
+<meta property="og:description" content="Istio简介  Istio是service mesh的一种
+ 核心特性  流量管理：限流、熔断、故障注入等 安全：认证、授权、加密等 监测：跟踪、监控、日志等  架构 Istio逻辑上分为数据面（data plane）和控制面（control plane）
+ 数据面：由sidecar模式部署的Envoy代理组成，控制微服务之间的网络通信 控制面：管理和配置sidecar代理服务上  组件：
+ Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-engressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio/" />
+
+<title>Istio | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Istio</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#istio简介">Istio简介</a>
+      <ul>
+        <li><a href="#核心特性">核心特性</a></li>
+        <li><a href="#架构">架构</a></li>
+        <li><a href="#组件">组件</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="istio简介">Istio简介</h1>
+<blockquote>
+<p>Istio是service mesh的一种</p>
+</blockquote>
+<h2 id="核心特性">核心特性</h2>
+<ul>
+<li>流量管理：限流、熔断、故障注入等</li>
+<li>安全：认证、授权、加密等</li>
+<li>监测：跟踪、监控、日志等</li>
+</ul>
+<h2 id="架构">架构</h2>
+<p><img src="/images/system/service-mesh/istio-architecture.PNG" alt="alt" />
+</p>
+<p>Istio逻辑上分为数据面（data plane）和控制面（control plane）</p>
+<ul>
+<li>数据面：由sidecar模式部署的Envoy代理组成，控制微服务之间的网络通信</li>
+<li>控制面：管理和配置sidecar代理服务上</li>
+</ul>
+<p>组件：</p>
+<ul>
+<li>Envoy：高性能的代理服务，代理微服务所有的出入流量</li>
+<li>Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等）</li>
+<li>Citadel：安全管理</li>
+<li>Galley：策略管理</li>
+</ul>
+<h2 id="组件">组件</h2>
+<p><img src="/images/system/service-mesh/istio-components.jpg" alt="alt" />
+</p>
+<ul>
+<li>istio-citadel，安全管理</li>
+<li>istio-galley，配置管理</li>
+<li>istio-pilot，服务发现、智能路由、策略控制</li>
+<li>istio-ingressgateway，入口管理</li>
+<li>istio-engressgateway，出口管理</li>
+<li>istio-policy，访问控制管理</li>
+<li>istio-telemetry，服务监测管理</li>
+<li>istio-sidecar-injector，代理管理</li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#istio简介">Istio简介</a>
+      <ul>
+        <li><a href="#核心特性">核心特性</a></li>
+        <li><a href="#架构">架构</a></li>
+        <li><a href="#组件">组件</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

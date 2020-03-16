@@ -53,11 +53,6 @@
   </url>
   
   <url>
-    <loc>https://luckywinds.github.io/posts/opensource/istio/</loc>
-    <lastmod>2020-03-01T18:07:32+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://luckywinds.github.io/tags/kubernetes/</loc>
     <lastmod>2020-03-01T18:07:32+08:00</lastmod>
   </url>
@@ -168,6 +163,10 @@
   
   <url>
     <loc>https://luckywinds.github.io/docs/system/</loc>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio/</loc>
   </url>
   
   <url>

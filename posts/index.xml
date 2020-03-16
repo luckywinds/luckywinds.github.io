@@ -39,25 +39,6 @@
     </item>
     
     <item>
-      <title>Istio简介</title>
-      <link>https://luckywinds.github.io/posts/opensource/istio/</link>
-      <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
-      
-      <guid>https://luckywinds.github.io/posts/opensource/istio/</guid>
-      <description>&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Istio是service mesh的一种&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;核心特性：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;流量管理：熔断、超时、重试等&lt;/li&gt;
-&lt;li&gt;安全：认证、授权、加密等&lt;/li&gt;
-&lt;li&gt;策略：限流、访问控制、Header重写等&lt;/li&gt;
-&lt;li&gt;监测：跟踪、监控、日志等&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    
-    <item>
       <title>Kubernetes网络</title>
       <link>https://luckywinds.github.io/posts/opensource/kubernetes-network/</link>
       <pubDate>Sun, 01 Mar 2020 18:07:32 +0800</pubDate>
