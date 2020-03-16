@@ -8,7 +8,7 @@
 <meta property="og:description" content="Sidecar注入 Sidecar简介  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  注入方式  istio通过修改deployment配置完成相关内容注入
  k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  istioctl手工注入 istioctl kube-inject -f samples/sleep/sleep.yaml | kubectl apply -f -
 注入内容 Istio sidecar向应用pod中注入2个容器：
- init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，运行pilot-agent和envoy进程  Init 容器  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
+ init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，运行pilot-agent和envoy进程   Pilot-agent负责管理Envoy进程，重启、静态配置热加载等 Envoy动态配置通过xDS更新  网络控制  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
   将应用容器的所有流量都转发到Envoy的15001端口。 使用istio-proxy默认用户身份运行，UID为1337，即Envoy所处的用户空间。 使用默认的REDIRECT模式来重定向流量。 将所有出站流量都重定向到Envoy代理。 将所有访问应用容器端口的流量重定向到Envoy代理。  参考
  Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  " />
 <meta property="og:type" content="article" />
@@ -151,11 +151,8 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#istioctl手工注入">istioctl手工注入</a></li>
           </ul>
         </li>
-        <li><a href="#注入内容">注入内容</a>
-          <ul>
-            <li><a href="#init-容器">Init 容器</a></li>
-          </ul>
-        </li>
+        <li><a href="#注入内容">注入内容</a></li>
+        <li><a href="#网络控制">网络控制</a></li>
       </ul>
     </li>
   </ul>
@@ -200,7 +197,13 @@ https://github.com/alex-shpak/hugo-book
 <li>init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy</li>
 <li>istio-proxy，Envoy代理，运行pilot-agent和envoy进程</li>
 </ul>
-<h3 id="init-容器">Init 容器</h3>
+<p><img src="/images/system/service-mesh/istio-envoy-pilot-agent.png" alt="alt" />
+</p>
+<ul>
+<li>Pilot-agent负责管理Envoy进程，重启、静态配置热加载等</li>
+<li>Envoy动态配置通过xDS更新</li>
+</ul>
+<h2 id="网络控制">网络控制</h2>
 <blockquote>
 <p>Init 容器通过向 iptables nat 表中注入转发规则来劫持流量</p>
 </blockquote>
@@ -258,11 +261,8 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#istioctl手工注入">istioctl手工注入</a></li>
           </ul>
         </li>
-        <li><a href="#注入内容">注入内容</a>
-          <ul>
-            <li><a href="#init-容器">Init 容器</a></li>
-          </ul>
-        </li>
+        <li><a href="#注入内容">注入内容</a></li>
+        <li><a href="#网络控制">网络控制</a></li>
       </ul>
     </li>
   </ul>
