@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Istio Polit"><meta property="og:title" content="" />
+<meta property="og:description" content="Polit策略配置 策略管理  Polit通过调用第三方云平台（k8s等）接口获取服务发现能力 Polit提供接口支持外部服务配置，和第三方云平台服务发现的内容，一起抽象出Istio自己的服务模型 Polit适配Envoy提供xDS（LDS、RDS、CDS、EDS等）服务接口，支持配置动态能力  动态配置  Concept	概念	描述 Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口 Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口 Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口 Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口  参考：
+ Envoy概念与术语 Pilot  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-polit/" />
+
+<title>Istio Polit | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Istio Polit</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#polit策略配置">Polit策略配置</a>
+      <ul>
+        <li><a href="#策略管理">策略管理</a></li>
+        <li><a href="#动态配置">动态配置</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="polit策略配置">Polit策略配置</h1>
+<h2 id="策略管理">策略管理</h2>
+<p><img src="/images/system/service-mesh/istio-polit.PNG" alt="alt" />
+</p>
+<ul>
+<li>Polit通过调用第三方云平台（k8s等）接口获取服务发现能力</li>
+<li>Polit提供接口支持外部服务配置，和第三方云平台服务发现的内容，一起抽象出Istio自己的服务模型</li>
+<li>Polit适配Envoy提供xDS（LDS、RDS、CDS、EDS等）服务接口，支持配置动态能力</li>
+</ul>
+<h2 id="动态配置">动态配置</h2>
+<p><img src="/images/system/service-mesh/istio-envoy-xds.png" alt="alt" />
+</p>
+<ul>
+<li>Concept	概念	描述</li>
+<li>Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口</li>
+<li>Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口</li>
+<li>Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口</li>
+<li>Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口</li>
+</ul>
+<p>参考：</p>
+<ul>
+<li><a href="https://skyao.io/learning-envoy/architecture/concept/">Envoy概念与术语</a></li>
+<li><a href="https://istio.io/docs/ops/deployment/architecture/">Pilot</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#polit策略配置">Polit策略配置</a>
+      <ul>
+        <li><a href="#策略管理">策略管理</a></li>
+        <li><a href="#动态配置">动态配置</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

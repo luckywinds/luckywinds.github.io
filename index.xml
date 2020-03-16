@@ -217,6 +217,30 @@ import (&amp;quot;math&amp;quot;m &amp;quot;math&amp;quot;. &amp;quot;math&am
     
     <item>
       <title></title>
+      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</guid>
+      <description>Polit策略配置 策略管理  Polit通过调用第三方云平台（k8s等）接口获取服务发现能力 Polit提供接口支持外部服务配置，和第三方云平台服务发现的内容，一起抽象出Istio自己的服务模型 Polit适配Envoy提供xDS（LDS、RDS、CDS、EDS等）服务接口，支持配置动态能力  动态配置  Concept	概念	描述 Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口 Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口 Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口 Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口  参考：
+ Envoy概念与术语 Pilot  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-sidecar/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-sidecar/</guid>
+      <description>Sidecar注入 Sidecar简介  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  注入方式  istio通过修改deployment配置完成相关内容注入
+ k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  istioctl手工注入 istioctl kube-inject -f samples/sleep/sleep.yaml | kubectl apply -f -
+注入内容 Istio sidecar向应用pod中注入2个容器：
+ init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，运行pilot-agent和envoy进程   Pilot-agent负责管理Envoy进程，重启、静态配置热加载等 Envoy动态配置通过xDS更新  网络控制  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
+  将应用容器的所有流量都转发到Envoy的15001端口。 使用istio-proxy默认用户身份运行，UID为1337，即Envoy所处的用户空间。 使用默认的REDIRECT模式来重定向流量。 将所有出站流量都重定向到Envoy代理。 将所有访问应用容器端口的流量重定向到Envoy代理。  参考
+ Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  </description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://luckywinds.github.io/docs/system/service-mesh/istio/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -225,20 +249,6 @@ import (&amp;quot;math&amp;quot;m &amp;quot;math&amp;quot;. &amp;quot;math&am
  核心特性  流量管理：限流、熔断、故障注入等 安全：认证、授权、加密等 监测：跟踪、监控、日志等  架构 Istio逻辑上分为数据面（data plane）和控制面（control plane）
  数据面：由sidecar模式部署的Envoy代理组成，控制微服务之间的网络通信 控制面：管理和配置sidecar代理服务上  组件：
  Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-engressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://luckywinds.github.io/docs/system/service-mesh/sidecar/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://luckywinds.github.io/docs/system/service-mesh/sidecar/</guid>
-      <description>Sidecar注入 Sidecar简介  Sidecar设计模式允许你为应用程序添加许多功能，而无需额外第三方组件的配置和代码的修改。 Sidecar 应用是连接到父应用并且为其扩展或者增强功能，可观察性、监控、日志记录、配置、断路器等。 Sidecar应用与主应用程序松散耦合。  注入方式  istio通过修改deployment配置完成相关内容注入
- k8s自动注入  Kubernetes通过Admission Controller可以拦截所有发往Api server的请求 Istio通过MutatingAdmissionWebhook（变更类型Admission Controller）完成对deployment的请求修改 自定义配置通过ConfigMap获取  istioctl手工注入 istioctl kube-inject -f samples/sleep/sleep.yaml | kubectl apply -f -
-注入内容 Istio sidecar向应用pod中注入2个容器：
- init，初始化Envoy环境，配置iptables规则，拦截所有进出口流量至proxy istio-proxy，Envoy代理，运行pilot-agent和envoy进程   Pilot-agent负责管理Envoy进程，重启、静态配置热加载等 Envoy动态配置通过xDS更新  网络控制  Init 容器通过向 iptables nat 表中注入转发规则来劫持流量
-  将应用容器的所有流量都转发到Envoy的15001端口。 使用istio-proxy默认用户身份运行，UID为1337，即Envoy所处的用户空间。 使用默认的REDIRECT模式来重定向流量。 将所有出站流量都重定向到Envoy代理。 将所有访问应用容器端口的流量重定向到Envoy代理。  参考
- Sidecar 模式 理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持  </description>
     </item>
     
     <item>

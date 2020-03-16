@@ -151,11 +151,15 @@
   </url>
   
   <url>
-    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio/</loc>
+    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</loc>
   </url>
   
   <url>
-    <loc>https://luckywinds.github.io/docs/system/service-mesh/sidecar/</loc>
+    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-sidecar/</loc>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio/</loc>
   </url>
   
   <url>
