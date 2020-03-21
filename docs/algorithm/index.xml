@@ -11,6 +11,24 @@
     
     <item>
       <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/kmp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/kmp/</guid>
+      <description>KMP 应用场景：字符串匹配及扩展场景
+原理 例：字符串&amp;quot;BBC ABCDAB ABCDABCDABDE&amp;quot;是否包含&amp;quot;ABCDABD&amp;rdquo;
+假设已经匹配到当前位置
+正常情况下，将目标串右移一位继续进行比较匹配
+简单识别后，会发现下一次有意义的比较是将目标串右移4位再进行比较
+KMP算法的核心就是如何快速找到下一次有意义的右移，避免无意义的比较，来提高效率
+KMP算法，通过构建辅助表（又叫部分匹配表），表中数据表示，当前位置最长“前缀”和“后缀”相同的长度，以前6个字符“ABCDAB”为例
+ 相同的最长“前缀”和“后缀”是“AB”，所以第6位是2 假设已经匹配到“ABCDAB”前6个字符串，但是第7个字符“D”发现不匹配，这时候前4个字符“ABCD”已经没有比较意义 直接将目标串跳过“ABCD”，右移4位继续比较即可  部分匹配表 例：目标串是“ACABACACD”
+i，表示当前处理的位置 m，表示最长“前缀”和“后缀”的长度
+def createPMT(self, w):aux = [0] * len(w)i = 1m = 0while i &amp;lt; len(w):if w[i] == w[m]:m += 1aux[i] = mi += 1elif w[i] != w[m] and m != 0:m = aux[m-1]else:aux[i] = 0i += 1return aux关键点：</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://luckywinds.github.io/docs/algorithm/priorityqueues/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
