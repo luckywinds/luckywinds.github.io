@@ -5,15 +5,8 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Java"><meta property="og:title" content="" />
-<meta property="og:description" content="Java 集合框架（JCF） 核心接口：
-主要实现：
-具体类 Set：元素唯一
- HashSet - 唯一，无序。（哈希表） TreeSet - 唯一，自然序。（红黑树） LinkedHashSet - 唯一，插入序。（哈希表&#43;链表）  List：元素可相同，有序
- ArrayList - （数组） LinkedList - （双向链表）  Queue和Deque：队列，FIFO
- ArrayDeque - Deque（数组）. LinkedList - Queue和Deque（链表）. PriorityQueue - Queue（小顶堆）.  Map：键值对
- HashMap - 无序（哈希表）. TreeMap - 自然序（红黑树）. LinkedHashMap - 插入序（哈希表&#43;链表）.  工具类  Arrays：对数组(数据类型[])进行各种操作。例如，排序、查找、复制等 Collections：对集合类(Collection的子类)进行操作。例如，排序等。  辅助类 Iterators:
- Iterator - 单向迭代器. ListIterator - 双向迭代器.  Ordering:
- Comparable - 自然序，内部重写compareTo. Comparator - 排序规则，作为策略外部传入." />
+<meta property="og:description" content="Java 工具 基础工具：
+appletviewer	Run and debug applets without a web browser.extcheck	Utility to detect Jar conflicts.jar	Create and manage Java Archive (JAR) files.java	The launcher for Java applications. In this release, a single launcher is used both for development and deployment.javac	The compiler for the Java programming language.javadoc	API documentation generator.javah	C header and stub generator. Used to write native methods.javap	Class file disassemblerjdb	The Java Debugger." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://luckywinds.github.io/docs/language/java/" />
 
@@ -153,6 +146,9 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#java">Java</a>
       <ul>
+        <li><a href="#工具">工具</a></li>
+        <li><a href="#类初始化">类初始化</a></li>
+        <li><a href="#泛型">泛型</a></li>
         <li><a href="#集合框架jcf">集合框架（JCF）</a>
           <ul>
             <li><a href="#具体类">具体类</a></li>
@@ -174,6 +170,179 @@ https://github.com/alex-shpak/hugo-book
       
       
 <article class="markdown"><h1 id="java">Java</h1>
+<h2 id="工具">工具</h2>
+<p>基础工具：</p>
+<pre><code>appletviewer	Run and debug applets without a web browser.
+extcheck	    Utility to detect Jar conflicts.
+jar	            Create and manage Java Archive (JAR) files.
+java	        The launcher for Java applications. In this release, a single launcher is used both for development and deployment.
+javac	        The compiler for the Java programming language.
+javadoc	        API documentation generator.
+javah	        C header and stub generator. Used to write native methods.
+javap	        Class file disassembler
+jdb	            The Java Debugger.
+jdeps	        Java class dependency analyzer
+</code></pre><p>监控工具：</p>
+<pre><code>jps	    Experimental: JVM Process Status Tool - Lists instrumented HotSpot Java virtual machines on a target system.	
+jstat	Experimental: JVM Statistics Monitoring Tool - Attaches to an instrumented HotSpot Java virtual machine and collects and logs performance statistics as specified by the command line options.	
+jstatd	Experimental: JVM jstat Daemon - Launches an RMI server application that monitors for the creation and termination of instrumented HotSpot Java virtual machines and provides a interface to allow remote monitoring tools to attach to Java virtual machines running on the local system.	
+</code></pre><p>问题定位工具：</p>
+<pre><code>jinfo	    Experimental - Configuration Info for Java - Prints configuration information for a given process or core file or a remote debug server.	
+jhat	    Experimental - Heap Dump Browser - Starts a web server on a heap dump file (for example, produced by jmap -dump), allowing the heap to be browsed.	
+jmap	    Experimental - Memory Map for Java - Prints shared object memory maps or heap memory details of a given process or core file or a remote debug server.	
+jsadebugd	Experimental - Serviceability Agent Debug Daemon for Java - Attaches to a process or core file and acts as a debug server.	
+jstack	    Experimental - Stack Trace for Java - Prints a stack trace of threads for a given process or core file or remote debug server.	
+</code></pre><p>管理工具：</p>
+<pre><code>jcmd	    JVM Diagnostic Commands tool - Sends diagnostic command requests to a running Java Virtual Machine.	
+jconsole	A JMX-compliant graphical tool for monitoring a Java virtual machine. It can monitor both local and remote JVMs. It can also monitor and manage an application.
+</code></pre><h2 id="类初始化">类初始化</h2>
+<p>生命周期：</p>
+<ul>
+<li>加载（Loading）
+<ul>
+<li>通过类的完全限定名称获取定义该类的二进制字节流。</li>
+<li>将该字节流表示的静态存储结构转换为方法区的运行时存储结构。</li>
+<li>在内存中生成一个代表该类的 Class 对象，作为方法区中该类各种数据的访问入口。</li>
+</ul>
+</li>
+<li>验证（Verification），确保 Class 文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</li>
+<li>准备（Preparation），为类变量（被 static 修饰）分配内存并设置初始值（非定义值），使用的是方法区的内存。</li>
+<li>解析（Resolution），将常量池的符号引用替换为直接引用的过程。</li>
+<li>初始化（Initialization）
+<ul>
+<li>执行类构造器 <clinit>() 方法</li>
+<li>父类的 <clinit>() 方法先执行</li>
+<li>包括所有类变量的赋值动作和静态语句块中的语句</li>
+<li>顺序由语句在源文件中出现的顺序决定，静态语句块只能访问到定义在它之前的类变量，定义在它之后的类变量只能赋值，不能访问。</li>
+<li>初始化时机：
+<ul>
+<li>遇到 new、getstatic、putstatic、invokestatic 这四条字节码指令时</li>
+<li>使用 java.lang.reflect 包的方法对类进行反射调用的时候</li>
+<li>当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化</li>
+<li>当虚拟机启动时，虚拟机会先初始化这个主类</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>使用（Using）</li>
+<li>卸载（Unloading）</li>
+</ul>
+<p>初始化顺序：</p>
+<p>普通类：</p>
+<ul>
+<li>静态变量</li>
+<li>静态代码块</li>
+<li>普通变量</li>
+<li>普通代码块</li>
+<li>构造函数</li>
+</ul>
+<p>带继承的子类：</p>
+<ul>
+<li>父类静态变量</li>
+<li>父类静态代码块</li>
+<li>子类静态变量</li>
+<li>子类静态代码块</li>
+<li>父类普通变量</li>
+<li>父类普通代码块</li>
+<li>父类构造函数</li>
+<li>子类普通变量</li>
+<li>子类普通代码块</li>
+<li>子类构造函数</li>
+</ul>
+<p>带抽象的实现子类: 接口 - 抽象类 - 实现类</p>
+<ul>
+<li>接口静态变量</li>
+<li>抽象类静态变量</li>
+<li>抽象类静态代码块</li>
+<li>实现类静态变量</li>
+<li>实现类静态代码块</li>
+<li>抽象类普通变量</li>
+<li>抽象类普通代码块</li>
+<li>抽象类构造函数</li>
+<li>实现类普通变量</li>
+<li>实现类普通代码块</li>
+<li>实现类构造函数</li>
+</ul>
+<p>接口注意：</p>
+<ul>
+<li>声明的变量都是静态变量并且是final的，所以子类无法修改，并且是固定值不会因为实例而变化</li>
+<li>接口中能有静态方法，不能有普通方法，普通方法需要用defalut添加默认实现</li>
+<li>接口中的变量必须实例化</li>
+<li>接口中没有静态代码块、普通变量、普通代码块、构造函数</li>
+</ul>
+<p>类加载器：</p>
+<p>两个类相等，需要类本身相等，并且使用同一个类加载器进行加载。</p>
+<ul>
+<li>启动类加载器（Bootstrap ClassLoader）</li>
+<li>扩展类加载器（Extension ClassLoader）</li>
+<li>应用程序类加载器（Application ClassLoader）</li>
+</ul>
+<p>双亲委派模型：</p>
+<ul>
+<li>除了顶层的启动类加载器外，其它的类加载器都要有自己的父类加载器。</li>
+<li>一个类加载器首先将类加载请求转发到父类加载器，只有当父类加载器无法完成时才尝试自己加载。</li>
+<li>使得基础类得到统一</li>
+</ul>
+<h2 id="泛型">泛型</h2>
+<blockquote>
+<p>也称泛型类型，是一种类型参数化的类或接口，可以通过为泛型类型分配一个类型，将用分配的具体类型替换泛型类型</p>
+</blockquote>
+<blockquote>
+<p>无法将原始类型用于泛型；只能使用引用类型。</p>
+</blockquote>
+<p>泛型类：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GenericContainer</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> T obj<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">GenericContainer</span><span style="color:#f92672">(){</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">// Pass type in as parameter to constructor
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">GenericContainer</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">){</span>
+        obj <span style="color:#f92672">=</span> t<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @return the obj
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">getObj</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> obj<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @param obj the obj to set
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setObj</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        obj <span style="color:#f92672">=</span> t<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>泛型方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>N <span style="color:#66d9ef">extends</span> Number<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">double</span> <span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>N a<span style="color:#f92672">,</span> N b<span style="color:#f92672">){</span>
+    <span style="color:#66d9ef">double</span> sum <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+    sum <span style="color:#f92672">=</span> a<span style="color:#f92672">.</span><span style="color:#a6e22e">doubleValue</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> b<span style="color:#f92672">.</span><span style="color:#a6e22e">doubleValue</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">return</span> sum<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>   
+</code></pre></div><p>类定义中的尖括号之间是类型参数部分，T 是与此类中定义的泛型类型关联的参数</p>
+<p>采用<code>&lt;T, S&gt;</code>形式，标识多种泛型类型</p>
+<p>好处：</p>
+<ul>
+<li>更强的类型检查</li>
+<li>消除类型转换</li>
+<li>定制泛型算法</li>
+</ul>
+<p>标准类型参数建议：</p>
+<pre><code>E：元素
+K：键
+N：数字
+T：类型
+V：值
+S、U、V 等：多参数情况中的第 2、3、4 个类型
+</code></pre><p>有界：</p>
+<ul>
+<li><code>&lt;T extends UpperBoundType&gt;</code>，上限类型</li>
+<li><code>&lt;T super LowerBoundType&gt;</code>，下限类型</li>
+<li><code>问号 (?) </code>，表示未知类型，可用于参数、字段、局部变量和返回类型</li>
+</ul>
 <h2 id="集合框架jcf">集合框架（JCF）</h2>
 <p>核心接口：</p>
 <p><img src="/images/language/java-collection.png" alt="alt" />
@@ -225,6 +394,10 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/collections/">The Collections Framework</a></li>
 <li><a href="https://zh.wikipedia.org/wiki/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6">Java集合框架</a></li>
+<li><a href="https://www.oracle.com/technetwork/cn/articles/java/juneau-generics-2255374-zhs.html">泛型：工作原理及其重要性</a></li>
+<li><a href="https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20%E8%99%9A%E6%8B%9F%E6%9C%BA.md#%E5%9B%9B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6">类加载机制</a></li>
+<li><a href="https://www.cnblogs.com/fly-piglet/p/8766226.html">Java类初始化顺序说明</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/">JDK Tools and Utilities</a></li>
 </ul>
 </article>
  
@@ -255,6 +428,9 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#java">Java</a>
       <ul>
+        <li><a href="#工具">工具</a></li>
+        <li><a href="#类初始化">类初始化</a></li>
+        <li><a href="#泛型">泛型</a></li>
         <li><a href="#集合框架jcf">集合框架（JCF）</a>
           <ul>
             <li><a href="#具体类">具体类</a></li>

@@ -172,15 +172,8 @@ import (&amp;quot;math&amp;quot;m &amp;quot;math&amp;quot;. &amp;quot;math&am
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://luckywinds.github.io/docs/language/java/</guid>
-      <description>Java 集合框架（JCF） 核心接口：
-主要实现：
-具体类 Set：元素唯一
- HashSet - 唯一，无序。（哈希表） TreeSet - 唯一，自然序。（红黑树） LinkedHashSet - 唯一，插入序。（哈希表+链表）  List：元素可相同，有序
- ArrayList - （数组） LinkedList - （双向链表）  Queue和Deque：队列，FIFO
- ArrayDeque - Deque（数组）. LinkedList - Queue和Deque（链表）. PriorityQueue - Queue（小顶堆）.  Map：键值对
- HashMap - 无序（哈希表）. TreeMap - 自然序（红黑树）. LinkedHashMap - 插入序（哈希表+链表）.  工具类  Arrays：对数组(数据类型[])进行各种操作。例如，排序、查找、复制等 Collections：对集合类(Collection的子类)进行操作。例如，排序等。  辅助类 Iterators:
- Iterator - 单向迭代器. ListIterator - 双向迭代器.  Ordering:
- Comparable - 自然序，内部重写compareTo. Comparator - 排序规则，作为策略外部传入.</description>
+      <description>Java 工具 基础工具：
+appletviewer	Run and debug applets without a web browser.extcheck	Utility to detect Jar conflicts.jar	Create and manage Java Archive (JAR) files.java	The launcher for Java applications. In this release, a single launcher is used both for development and deployment.javac	The compiler for the Java programming language.javadoc	API documentation generator.javah	C header and stub generator. Used to write native methods.javap	Class file disassemblerjdb	The Java Debugger.</description>
     </item>
     
     <item>
