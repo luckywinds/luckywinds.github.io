@@ -5,10 +5,20 @@
     <link>https://luckywinds.github.io/categories/opensource/</link>
     <description>Recent content in opensource on Luckywinds</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 08 Mar 2020 18:07:32 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 15 Mar 2020 18:07:32 +0800</lastBuildDate>
     
 	<atom:link href="https://luckywinds.github.io/categories/opensource/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Pilot Discovery</title>
+      <link>https://luckywinds.github.io/posts/sourcecode/istio/pilot-discovery/</link>
+      <pubDate>Sun, 15 Mar 2020 18:07:32 +0800</pubDate>
+      
+      <guid>https://luckywinds.github.io/posts/sourcecode/istio/pilot-discovery/</guid>
+      <description>入口 pilot/cmd/pilot-discovery/main.go
+ init()，初始化参数并设置默认值，初始化标识符等 main()，启动server  bootstrap </description>
+    </item>
     
     <item>
       <title>Dockerfile简介</title>

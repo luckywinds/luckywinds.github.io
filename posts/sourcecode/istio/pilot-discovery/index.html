@@ -4,12 +4,14 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Docs\algorithm\"><meta property="og:title" content="" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://luckywinds.github.io/docs/algorithm/" />
-
-<title>Docs\algorithm\ | Luckywinds</title>
+<meta name="description" content="Pilot Discovery"><meta property="og:title" content="Pilot Discovery" />
+<meta property="og:description" content="入口 pilot/cmd/pilot-discovery/main.go
+ init()，初始化参数并设置默认值，初始化标识符等 main()，启动server  bootstrap " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/posts/sourcecode/istio/pilot-discovery/" />
+<meta property="article:published_time" content="2020-03-15T18:07:32+08:00" />
+<meta property="article:modified_time" content="2020-03-15T18:07:32+08:00" />
+<title>Pilot Discovery | Luckywinds</title>
 <link rel="icon" href="/favicon.png" type="image/x-icon">
 
 
@@ -27,7 +29,6 @@ if (!doNotTrack) {
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
 
-<link rel="alternate" type="application/rss+xml" href="https://luckywinds.github.io/docs/algorithm/index.xml" title="Luckywinds" />
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -67,7 +68,7 @@ https://github.com/alex-shpak/hugo-book
 <p><a href="/docs/system/">系统</a></p>
 </li>
 <li>
-<p><a href="/docs/algorithm/"class=active>算法</a></p>
+<p><a href="/docs/algorithm/">算法</a></p>
 </li>
 <li>
 <p><a href="/docs/tool/">工具</a></p>
@@ -130,7 +131,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Docs\algorithm\</strong>
+  <strong>Pilot Discovery</strong>
 
   <label for="toc-control">
     <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
@@ -139,28 +140,62 @@ https://github.com/alex-shpak/hugo-book
 
 
   
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#入口">入口</a></li>
+        <li><a href="#bootstrap">bootstrap</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
  
       </header>
 
       
       
-<article class="markdown"><h1 id="算法">算法</h1>
-<h2 id="基础">基础</h2>
+<article class="markdown">
+  <h1>
+    <a href="/posts/sourcecode/istio/pilot-discovery/">Pilot Discovery</a>
+  </h1>
+  
+
+  <h5>2020-03-15</h5>
+
+
+
+  
+  <div>
+    
+        <a href="/categories/opensource/">opensource</a>
+  </div>
+  
+
+  
+  <div>
+    
+        <a href="/tags/sourcecode/">sourcecode</a>, 
+        <a href="/tags/istio/">istio</a>
+  </div>
+  
+
+
+  <p><h2 id="入口">入口</h2>
+<p><code>pilot/cmd/pilot-discovery/main.go</code></p>
 <ul>
-<li><a href="recursion">递归</a></li>
-<li><a href="priorityqueues">优先级队列</a></li>
+<li><code>init()</code>，初始化参数并设置默认值，初始化标识符等</li>
+<li><code>main()</code>，启动server</li>
 </ul>
-<h2 id="字符串">字符串</h2>
-<ul>
-<li><a href="kmp">KMP</a></li>
-</ul>
-<h2 id="搜索">搜索</h2>
-<h2 id="图论">图论</h2>
-<h2 id="动态规划">动态规划</h2>
-<h2 id="其他">其他</h2>
-<ul>
-<li><a href="unionfind">并查集</a></li>
-</ul>
+<h2 id="bootstrap">bootstrap</h2>
+</p>
 </article>
  
       
@@ -183,6 +218,22 @@ https://github.com/alex-shpak/hugo-book
       
     </div>
 
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#入口">入口</a></li>
+        <li><a href="#bootstrap">bootstrap</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
     
   </main>
 

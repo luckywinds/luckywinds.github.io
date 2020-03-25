@@ -4,12 +4,42 @@
   
   <url>
     <loc>https://luckywinds.github.io/</loc>
-    <lastmod>2020-03-08T18:07:32+08:00</lastmod>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://luckywinds.github.io/categories/</loc>
-    <lastmod>2020-03-08T18:07:32+08:00</lastmod>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/tags/istio/</loc>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/categories/opensource/</loc>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/posts/sourcecode/istio/pilot-discovery/</loc>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/tags/sourcecode/</loc>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/tags/</loc>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/posts/</loc>
+    <lastmod>2020-03-15T18:07:32+08:00</lastmod>
   </url>
   
   <url>
@@ -19,21 +49,6 @@
   
   <url>
     <loc>https://luckywinds.github.io/posts/opensource/dockerfile/</loc>
-    <lastmod>2020-03-08T18:07:32+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://luckywinds.github.io/categories/opensource/</loc>
-    <lastmod>2020-03-08T18:07:32+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://luckywinds.github.io/tags/</loc>
-    <lastmod>2020-03-08T18:07:32+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://luckywinds.github.io/posts/</loc>
     <lastmod>2020-03-08T18:07:32+08:00</lastmod>
   </url>
   
