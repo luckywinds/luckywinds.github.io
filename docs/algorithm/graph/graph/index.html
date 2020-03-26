@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Graph"><meta property="og:title" content="" />
+<meta property="og:description" content="无向图 表示 通过符号表，将名称转换成序号，达到通用图表示的目的
+邻接矩阵  采用二维bool数组，表示i和j之间是否存在边
+ 邻接表  采用二维list数组，表示i和i所有边的对应关系
+ class Graph:def __init__(self, v):self.v = vself.e = 0self.adj = [[] for i in range(v)]def get_v(self):return self.vdef get_e(self):return self.edef __validate_v(self, v):if v &lt; 0 or v &gt;= self.v:raise Exception(&#34;{} illegal&#34;.format(v))def add_edge(self, v, w):self.__validate_v(v)self.__validate_v(w)self.e &#43;= 1self.adj[v].append(w)self.adj[w].append(v)def get_adj(self, v):self.__validate_v(v)return self.adj[v]def get_degree(self, v):self." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/algorithm/graph/graph/" />
+
+<title>Graph | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds/luckywinds.github.io/issues" target="_blank" rel="noopener">
+        Issues
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Graph</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#无向图">无向图</a>
+      <ul>
+        <li><a href="#表示">表示</a></li>
+        <li><a href="#邻接矩阵">邻接矩阵</a></li>
+        <li><a href="#邻接表">邻接表</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="无向图">无向图</h1>
+<h2 id="表示">表示</h2>
+<p><img src="/images/algorithms/graph/graph-representation.PNG" alt="alt" />
+</p>
+<p>通过符号表，将名称转换成序号，达到通用图表示的目的</p>
+<h2 id="邻接矩阵">邻接矩阵</h2>
+<p><img src="/images/algorithms/graph/graph-representation-adj-matrix.PNG" alt="alt" />
+</p>
+<blockquote>
+<p>采用二维bool数组，表示i和j之间是否存在边</p>
+</blockquote>
+<h2 id="邻接表">邻接表</h2>
+<p><img src="/images/algorithms/graph/graph-representation-adj-list.PNG" alt="alt" />
+</p>
+<blockquote>
+<p>采用二维list数组，表示i和i所有边的对应关系</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Graph</span>:
+    <span style="color:#66d9ef">def</span> __init__(self, v):
+        self<span style="color:#f92672">.</span>v <span style="color:#f92672">=</span> v
+        self<span style="color:#f92672">.</span>e <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+        self<span style="color:#f92672">.</span>adj <span style="color:#f92672">=</span> [[] <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(v)]
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_v</span>(self):
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>v
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_e</span>(self):
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>e
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__validate_v</span>(self, v):
+        <span style="color:#66d9ef">if</span> v <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> v <span style="color:#f92672">&gt;=</span> self<span style="color:#f92672">.</span>v:
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(<span style="color:#e6db74">&#34;{} illegal&#34;</span><span style="color:#f92672">.</span>format(v))
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_edge</span>(self, v, w):
+        self<span style="color:#f92672">.</span>__validate_v(v)
+        self<span style="color:#f92672">.</span>__validate_v(w)
+        self<span style="color:#f92672">.</span>e <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        self<span style="color:#f92672">.</span>adj[v]<span style="color:#f92672">.</span>append(w)
+        self<span style="color:#f92672">.</span>adj[w]<span style="color:#f92672">.</span>append(v)
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_adj</span>(self, v):
+        self<span style="color:#f92672">.</span>__validate_v(v)
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>adj[v]
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_degree</span>(self, v):
+        self<span style="color:#f92672">.</span>__validate_v(v)
+        <span style="color:#66d9ef">return</span> len(self<span style="color:#f92672">.</span>adj[v])
+
+    <span style="color:#66d9ef">def</span> __str__(self):
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;v:&#34;</span> <span style="color:#f92672">+</span> str(self<span style="color:#f92672">.</span>v) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; e:&#34;</span> <span style="color:#f92672">+</span> str(self<span style="color:#f92672">.</span>e) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; adj: &#34;</span> <span style="color:#f92672">+</span> str(self<span style="color:#f92672">.</span>adj)
+
+
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    g <span style="color:#f92672">=</span> Graph(<span style="color:#ae81ff">7</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">5</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">6</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>)
+    g<span style="color:#f92672">.</span>add_edge(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>)
+
+    <span style="color:#66d9ef">print</span>(g)
+</code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#无向图">无向图</a>
+      <ul>
+        <li><a href="#表示">表示</a></li>
+        <li><a href="#邻接矩阵">邻接矩阵</a></li>
+        <li><a href="#邻接表">邻接表</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

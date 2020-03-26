@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kmp"><meta property="og:title" content="" />
+<meta property="og:description" content="KMP 应用场景：字符串匹配及扩展场景
+原理 例：字符串&quot;BBC ABCDAB ABCDABCDABDE&quot;是否包含&quot;ABCDABD&rdquo;
+假设已经匹配到当前位置
+正常情况下，将目标串右移一位继续进行比较匹配
+简单识别后，会发现下一次有意义的比较是将目标串右移4位再进行比较
+KMP算法的核心就是如何快速找到下一次有意义的右移，避免无意义的比较，来提高效率
+KMP算法，通过构建辅助表（又叫部分匹配表），表中数据表示，当前位置最长“前缀”和“后缀”相同的长度，以前6个字符“ABCDAB”为例
+ 相同的最长“前缀”和“后缀”是“AB”，所以第6位是2 假设已经匹配到“ABCDAB”前6个字符串，但是第7个字符“D”发现不匹配，这时候前4个字符“ABCD”已经没有比较意义 直接将目标串跳过“ABCD”，右移4位继续比较即可  部分匹配表 例：目标串是“ACABACACD”
+i，表示当前处理的位置 m，表示最长“前缀”和“后缀”的长度
+def createPMT(self, w):aux = [0] * len(w)i = 1m = 0while i &lt; len(w):if w[i] == w[m]:m &#43;= 1aux[i] = mi &#43;= 1elif w[i] != w[m] and m != 0:m = aux[m-1]else:aux[i] = 0i &#43;= 1return aux关键点：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/algorithm/string/kmp/" />
+
+<title>Kmp | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds/luckywinds.github.io/issues" target="_blank" rel="noopener">
+        Issues
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Kmp</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#kmp">KMP</a>
+      <ul>
+        <li><a href="#原理">原理</a>
+          <ul>
+            <li><a href="#部分匹配表">部分匹配表</a></li>
+          </ul>
+        </li>
+        <li><a href="#代码">代码</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="kmp">KMP</h1>
+<p>应用场景：字符串匹配及扩展场景</p>
+<h2 id="原理">原理</h2>
+<p>例：字符串&quot;BBC ABCDAB ABCDABCDABDE&quot;是否包含&quot;ABCDABD&rdquo;</p>
+<p><img src="/images/algorithms/string/kmp-1.png" alt="alt" />
+</p>
+<p>假设已经匹配到当前位置</p>
+<p><img src="/images/algorithms/string/kmp-2.png" alt="alt" />
+</p>
+<p>正常情况下，将目标串右移一位继续进行比较匹配</p>
+<p><img src="/images/algorithms/string/kmp-3.png" alt="alt" />
+</p>
+<p>简单识别后，会发现下一次有意义的比较是将目标串右移4位再进行比较</p>
+<p>KMP算法的核心就是如何快速找到下一次有意义的右移，避免无意义的比较，来提高效率</p>
+<p><img src="/images/algorithms/string/kmp-4.png" alt="alt" />
+</p>
+<p>KMP算法，通过构建辅助表（又叫部分匹配表），表中数据表示，当前位置最长“前缀”和“后缀”相同的长度，以前6个字符“ABCDAB”为例</p>
+<ul>
+<li>相同的最长“前缀”和“后缀”是“AB”，所以第6位是2</li>
+<li>假设已经匹配到“ABCDAB”前6个字符串，但是第7个字符“D”发现不匹配，这时候前4个字符“ABCD”已经没有比较意义</li>
+<li>直接将目标串跳过“ABCD”，右移4位继续比较即可</li>
+</ul>
+<h3 id="部分匹配表">部分匹配表</h3>
+<p>例：目标串是“ACABACACD”</p>
+<p><img src="/images/algorithms/string/kmp-5.jpeg" alt="alt" />
+</p>
+<p>i，表示当前处理的位置
+m，表示最长“前缀”和“后缀”的长度</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">createPMT</span>(self, w):
+        aux <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> len(w)
+        i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+        m <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+
+        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">&lt;</span> len(w):
+            <span style="color:#66d9ef">if</span> w[i] <span style="color:#f92672">==</span> w[m]:
+                m <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+                aux[i] <span style="color:#f92672">=</span> m
+                i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            <span style="color:#66d9ef">elif</span> w[i] <span style="color:#f92672">!=</span> w[m] <span style="color:#f92672">and</span> m <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+                m <span style="color:#f92672">=</span> aux[m<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+            <span style="color:#66d9ef">else</span>:
+                aux[i] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+                i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+
+        <span style="color:#66d9ef">return</span> aux
+</code></pre></div><p>关键点：</p>
+<ul>
+<li>初始全0，第一个肯定是0，默认从第2个位置开始</li>
+<li>如果当前位置和最长“前缀”后一个位置相同，表示最长长度又多了一位</li>
+<li>如果不相同，前面已经有最长“前缀”，则最长“前缀”位置后退一位，继续判断当前位置</li>
+<li>如果不相同，前面已经没有最长“前缀”，说明当前位置没有最长“前缀”能够匹配到，置0后，继续判断下一位</li>
+</ul>
+<h2 id="代码">代码</h2>
+<pre><code>class KMP:
+    ......
+
+    def substring(self, t, w):
+        aux = self.createPMT(w)
+        i = 0
+        j = 0
+        while j &lt; len(t):
+            if w[i] != t[j]:
+                if i == 0:
+                    j += 1
+                else:
+                    i = aux[i-1]
+            else:
+                i += 1
+                j += 1
+                if i == len(w):
+                    return j - i
+        if j == len(t):
+            return -1
+</code></pre><ul>
+<li>匹配没结束，查表后继续匹配</li>
+<li>匹配结束，匹配到返回首字符位置</li>
+<li>匹配结束，匹配不到返回-1</li>
+</ul>
+<p>参考：</p>
+<ul>
+<li><a href="https://medium.com/@giri_sh/string-matching-kmp-algorithm-27c182efa387">KMP Algorithm (String Matching) Demystified</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html">字符串匹配的KMP算法</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#kmp">KMP</a>
+      <ul>
+        <li><a href="#原理">原理</a>
+          <ul>
+            <li><a href="#部分匹配表">部分匹配表</a></li>
+          </ul>
+        </li>
+        <li><a href="#代码">代码</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

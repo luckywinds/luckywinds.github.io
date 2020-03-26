@@ -122,7 +122,7 @@
   </url>
   
   <url>
-    <loc>https://luckywinds.github.io/docs/algorithm/kmp/</loc>
+    <loc>https://luckywinds.github.io/docs/algorithm/graph/graph/</loc>
   </url>
   
   <url>
@@ -131,6 +131,10 @@
   
   <url>
     <loc>https://luckywinds.github.io/docs/algorithm/recursion/</loc>
+  </url>
+  
+  <url>
+    <loc>https://luckywinds.github.io/docs/algorithm/string/kmp/</loc>
   </url>
   
   <url>
