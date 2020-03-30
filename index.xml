@@ -124,6 +124,19 @@
     
     <item>
       <title></title>
+      <link>https://luckywinds.github.io/docs/algorithm/graph/dfs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/algorithm/graph/dfs/</guid>
+      <description>DFS  深度优化搜索
+ 简介 目标：图的系统化搜索，模仿迷宫探索式搜索
+应用：
+ 根据一个点，找到所有关联的点 判断两个点之间是否可达   两点之间搜索路径不唯一
+ 代码 class DFS:def __init__(self, graph: Graph, source: int):self.marked = [False] * graph.vself.edge_to = [i for i in range(graph.v)]self.source = sourceself.graph = graphself.cnt = 0self.__validate_v(source)self.__dfs(graph, source)def __validate_v(self, v):if v &amp;lt; 0 or v &amp;gt;= self.graph.v:raise Exception(&amp;#34;{} illegal&amp;#34;.format(v))def __dfs(self, graph, v):self.marked[v] = Trueself.cnt += 1for w in graph.</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://luckywinds.github.io/docs/algorithm/graph/graph/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
