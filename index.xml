@@ -154,9 +154,9 @@
       <guid>https://luckywinds.github.io/docs/algorithm/graph/graph/</guid>
       <description>无向图 表示 通过符号表，将名称转换成序号，达到通用图表示的目的
 问题 路径：
- s和t之间是否可达路径（DFS） s和t之间的最短路径  环路：
+ s和t之间是否可达路径（DFS，BFS） s和t之间的最短路径（BFS）  环路：
  图中是否存在环路 是否存在一个环路经过图上所有点并且只路过一次 是否存在一个环路经过图上所有边并且只路过一次  连接：
- 图上所有点是否可以全部连接在一起（DFS） 最佳的方法是什么？最小生成树 是否能够删除一个点将图一分为二？割点  平面度：
+ 图上所有点是否可以全部连接在一起（DFS，BFS） 最佳的方法是什么？最小生成树 是否能够删除一个点将图一分为二？割点  平面度：
  是否可以不跨边画出同构图？ 两个邻接列表是否可以表示同一个图？  邻接矩阵  采用二维bool数组，表示i和j之间是否存在边
  邻接表  采用二维list数组，表示i和i所有边的对应关系
  class Graph:def __init__(self, v):self.v = vself.e = 0self.adj = [[] for i in range(v)]def get_v(self):return self.vdef get_e(self):return self.edef __validate_v(self, v):if v &amp;lt; 0 or v &amp;gt;= self.</description>
@@ -274,6 +274,21 @@ appletviewer	Run and debug applets without a web browser.extcheck	Utility to de
  GROUP BY  如果指定多个列，则按照多个列内容均相同做为分组条件
   聚合函数是按组进行聚合执行的
   SUM	计算合计值，该列必须为数值类型 AVG	计算平均值，该列必须为数值类型 MAX	计算最大值 MIN	计算最小值 COUNT 计数   如果使用了聚合函数但未指定GROUP BY，则默认对整个数据集进行聚合</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/</guid>
+      <description>Docker Desktop for Istio 环境 Windows 10
+设置CFG：
+ Windows安全中心 应用和浏览器控制 Exploit Protection 设置 程序设置 vmcompute.exe 编辑 控制流保护(CFG) 替代系统设置，取消勾选  Docker Desktop community 2.2.0.4
+设置Resources
+ ADVANCED：4U8G PROXIES：HTTP和HTTPS，http://docker.for.win.localhost:3128替代http://127.0.0.1:3128 NETWORK：DNS，8.8.8.8 登录Docker Hub 切换Kubernetes至docker-desktop  部署Istio  istio-1.5.1-win.zip
+ cd istio-1.5.1 复制bin\istioctl.exe至C:\Program Files\Docker\Docker\resources\bin
+ $ istioctl manifest apply --set profile=demoDetected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens for details.</description>
     </item>
     
     <item>

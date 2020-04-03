@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Istio Docker Desktop"><meta property="og:title" content="" />
+<meta property="og:description" content="Docker Desktop for Istio 环境 Windows 10
+设置CFG：
+ Windows安全中心 应用和浏览器控制 Exploit Protection 设置 程序设置 vmcompute.exe 编辑 控制流保护(CFG) 替代系统设置，取消勾选  Docker Desktop community 2.2.0.4
+设置Resources
+ ADVANCED：4U8G PROXIES：HTTP和HTTPS，http://docker.for.win.localhost:3128替代http://127.0.0.1:3128 NETWORK：DNS，8.8.8.8 登录Docker Hub 切换Kubernetes至docker-desktop  部署Istio  istio-1.5.1-win.zip
+ cd istio-1.5.1 复制bin\istioctl.exe至C:\Program Files\Docker\Docker\resources\bin
+ $ istioctl manifest apply --set profile=demoDetected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens for details." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/" />
+
+<title>Istio Docker Desktop | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds/luckywinds.github.io/issues" target="_blank" rel="noopener">
+        Issues
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Istio Docker Desktop</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#docker-desktop-for-istio">Docker Desktop for Istio</a>
+      <ul>
+        <li><a href="#环境">环境</a></li>
+        <li><a href="#部署istio">部署Istio</a></li>
+        <li><a href="#部署bookinfo">部署Bookinfo</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="docker-desktop-for-istio">Docker Desktop for Istio</h1>
+<h2 id="环境">环境</h2>
+<p>Windows 10</p>
+<p>设置CFG：</p>
+<ol>
+<li>Windows安全中心</li>
+<li>应用和浏览器控制</li>
+<li>Exploit Protection 设置</li>
+<li>程序设置</li>
+<li>vmcompute.exe 编辑</li>
+<li>控制流保护(CFG)</li>
+<li>替代系统设置，取消勾选</li>
+</ol>
+<p>Docker Desktop community 2.2.0.4</p>
+<p>设置Resources</p>
+<ol>
+<li>ADVANCED：4U8G</li>
+<li>PROXIES：HTTP和HTTPS，http://docker.for.win.localhost:3128替代http://127.0.0.1:3128</li>
+<li>NETWORK：DNS，8.8.8.8</li>
+<li>登录Docker Hub</li>
+<li>切换Kubernetes至docker-desktop</li>
+</ol>
+<h2 id="部署istio">部署Istio</h2>
+<blockquote>
+<p>istio-1.5.1-win.zip</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cd istio-1.5.1
+</code></pre></div><blockquote>
+<p>复制bin\istioctl.exe至C:\Program Files\Docker\Docker\resources\bin</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ istioctl manifest apply --set profile<span style="color:#f92672">=</span>demo
+Detected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens <span style="color:#66d9ef">for</span> details.
+- Applying manifest <span style="color:#66d9ef">for</span> component Base...
+✔ Finished applying manifest <span style="color:#66d9ef">for</span> component Base.
+- Applying manifest <span style="color:#66d9ef">for</span> component Pilot...
+✔ Finished applying manifest <span style="color:#66d9ef">for</span> component Pilot.
+  Waiting <span style="color:#66d9ef">for</span> resources to become ready...
+  Waiting <span style="color:#66d9ef">for</span> resources to become ready...
+  Waiting <span style="color:#66d9ef">for</span> resources to become ready...
+- Applying manifest <span style="color:#66d9ef">for</span> component EgressGateways...
+- Applying manifest <span style="color:#66d9ef">for</span> component IngressGateways...
+- Applying manifest <span style="color:#66d9ef">for</span> component AddonComponents...
+✔ Finished applying manifest <span style="color:#66d9ef">for</span> component EgressGateways.
+✔ Finished applying manifest <span style="color:#66d9ef">for</span> component IngressGateways.
+✔ Finished applying manifest <span style="color:#66d9ef">for</span> component AddonComponents.
+
+
+✔ Installation complete
+</code></pre></div><pre><code>$ kubectl get pods,svc -n istio-system
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/grafana-78bc994d79-475p5                1/1     Running   0          3h47m
+pod/istio-egressgateway-5b5d88f7ff-bqpwc    1/1     Running   0          3h47m
+pod/istio-ingressgateway-75877dc5bf-zfqlw   1/1     Running   0          3h47m
+pod/istio-tracing-c7b59f68f-sbpcj           1/1     Running   0          3h47m
+pod/istiod-6b69865db8-94fjg                 1/1     Running   0          3h47m
+pod/kiali-7ff568c949-qkwzs                  1/1     Running   0          3h47m
+pod/prometheus-584757d974-lhmvt             2/2     Running   0          3h47m
+
+NAME                                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                       AGE
+service/grafana                     ClusterIP      10.98.24.77      &lt;none&gt;        3000/TCP                                                      3h47m
+service/istio-egressgateway         ClusterIP      10.98.3.21       &lt;none&gt;        80/TCP,443/TCP,15443/TCP                                      3h47m
+service/istio-ingressgateway        LoadBalancer   10.99.165.79     localhost     15020:30774/TCP,80:30895/TCP,443:31134/TCP,15029:31511/TCP,15030:31292/TCP,15031:32062/TCP,15032:31637/TCP,31400:31482/TCP,15443:31354/TCP   3h47m
+service/istio-pilot                 ClusterIP      10.111.250.87    &lt;none&gt;        15010/TCP,15011/TCP,15012/TCP,8080/TCP,15014/TCP,443/TCP      3h47m
+service/istiod                      ClusterIP      10.98.198.20     &lt;none&gt;        15012/TCP,443/TCP                                             3h47m
+service/jaeger-agent                ClusterIP      None             &lt;none&gt;        5775/UDP,6831/UDP,6832/UDP                                    3h47m
+service/jaeger-collector            ClusterIP      10.111.222.130   &lt;none&gt;        14267/TCP,14268/TCP,14250/TCP                                 3h47m
+service/jaeger-collector-headless   ClusterIP      None             &lt;none&gt;        14250/TCP                                                     3h47m
+service/jaeger-query                ClusterIP      10.97.54.55      &lt;none&gt;        16686/TCP                                                     3h47m
+service/kiali                       ClusterIP      10.108.68.201    &lt;none&gt;        20001/TCP                                                     3h47m
+service/prometheus                  ClusterIP      10.97.234.176    &lt;none&gt;        9090/TCP                                                      3h47m
+service/tracing                     ClusterIP      10.105.107.112   &lt;none&gt;        80/TCP                                                        3h47m
+service/zipkin                      ClusterIP      10.109.155.38    &lt;none&gt;        9411/TCP                                                      3h47m
+
+</code></pre><blockquote>
+<p>确保service/istio-ingressgateway对外监听localhost端口没有被Windows本机占用，如果有冲突，修改监听端口即可</p>
+</blockquote>
+<h2 id="部署bookinfo">部署Bookinfo</h2>
+<pre><code>$ kubectl label namespace book istio-injection=enabled
+namespace/book labeled
+
+$ kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -n book
+service/details created
+serviceaccount/bookinfo-details created
+deployment.apps/details-v1 created
+service/ratings created
+serviceaccount/bookinfo-ratings created
+deployment.apps/ratings-v1 created
+service/reviews created
+serviceaccount/bookinfo-reviews created
+deployment.apps/reviews-v1 created
+deployment.apps/reviews-v2 created
+deployment.apps/reviews-v3 created
+service/productpage created
+serviceaccount/bookinfo-productpage created
+deployment.apps/productpage-v1 created
+
+$ kubectl get pods -n book
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-74f858558f-xnvwz       2/2     Running   0          64s
+productpage-v1-76589d9fdc-knv7t   2/2     Running   0          64s
+ratings-v1-7855f5bcb9-blrkh       2/2     Running   0          64s
+reviews-v1-64bc5454b9-6d96p       2/2     Running   0          64s
+reviews-v2-76c64d4bdf-6xmb6       2/2     Running   0          64s
+reviews-v3-5545c7c78f-j8bxg       2/2     Running   0          64s
+</code></pre><pre><code>$ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml -n book
+gateway.networking.istio.io/bookinfo-gateway created
+virtualservice.networking.istio.io/bookinfo created
+</code></pre><pre><code>$ curl localhost/productpage
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Simple Bookstore App&lt;/title&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+
+&lt;!-- Latest compiled and minified CSS --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;static/bootstrap/css/bootstrap.min.css&quot;&gt;
+
+&lt;!-- Optional theme --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;static/bootstrap/css/bootstrap-theme.min.css&quot;&gt;
+
+  &lt;/head&gt;
+......
+</code></pre><p>参考：</p>
+<ul>
+<li><a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop">k8s-for-docker-desktop</a></li>
+<li><a href="https://github.com/docker/for-win/issues/894">Docker on windows fails to pull linux images behind proxy</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#docker-desktop-for-istio">Docker Desktop for Istio</a>
+      <ul>
+        <li><a href="#环境">环境</a></li>
+        <li><a href="#部署istio">部署Istio</a></li>
+        <li><a href="#部署bookinfo">部署Bookinfo</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
