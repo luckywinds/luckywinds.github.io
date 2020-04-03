@@ -278,40 +278,26 @@ appletviewer	Run and debug applets without a web browser.extcheck	Utility to de
     
     <item>
       <title></title>
+      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-bookinfo/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-bookinfo/</guid>
+      <description>理解Bookinfo 资源列表 $ kubectl get svc,pod,gateway,virtualservice -n bookNAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGEservice/details ClusterIP 10.107.54.71 &amp;lt;none&amp;gt; 9080/TCP 5h14mservice/productpage ClusterIP 10.102.44.220 &amp;lt;none&amp;gt; 9080/TCP 5h14mservice/ratings ClusterIP 10.110.60.146 &amp;lt;none&amp;gt; 9080/TCP 5h14mservice/reviews ClusterIP 10.102.61.22 &amp;lt;none&amp;gt; 9080/TCP 5h14mNAME READY STATUS RESTARTS AGEpod/details-v1-74f858558f-xnvwz 2/2 Running 0 5h14mpod/productpage-v1-76589d9fdc-knv7t 2/2 Running 0 5h14mpod/ratings-v1-7855f5bcb9-blrkh 2/2 Running 0 5h14mpod/reviews-v1-64bc5454b9-6d96p 2/2 Running 0 5h14mpod/reviews-v2-76c64d4bdf-6xmb6 2/2 Running 0 5h14mpod/reviews-v3-5545c7c78f-j8bxg 2/2 Running 0 5h14mNAME AGEgateway.</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/</guid>
       <description>Docker Desktop for Istio 环境 Windows 10
-设置CFG：
- Windows安全中心 应用和浏览器控制 Exploit Protection 设置 程序设置 vmcompute.exe 编辑 控制流保护(CFG) 替代系统设置，取消勾选  Docker Desktop community 2.2.0.4
+设置vmcompute：
+ Windows安全中心 应用和浏览器控制 Exploit Protection 设置 程序设置 vmcompute.exe 编辑 控制流保护(CFG) 替代系统设置，取消勾选 net start vmcompute  Docker Desktop community 2.2.0.4
 设置Resources
  ADVANCED：4U8G PROXIES：HTTP和HTTPS，http://docker.for.win.localhost:3128替代http://127.0.0.1:3128 NETWORK：DNS，8.8.8.8 登录Docker Hub 切换Kubernetes至docker-desktop  部署Istio  istio-1.5.1-win.zip
  cd istio-1.5.1 复制bin\istioctl.exe至C:\Program Files\Docker\Docker\resources\bin
- $ istioctl manifest apply --set profile=demoDetected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens for details.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-gateway/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-gateway/</guid>
-      <description>Gateway边缘控制 Ingress  入口流量控制
-  外部流量通过LB进入集群 集群通过节点NodePort开放入口 流量通过Istio Gateway进入服务网格内 Gateway通过Envoy代理实现 Envoy通过Virtual Service规则实现流量路由 Virtual Service根据规则匹配对应的Service  Egress  出口流量控制
- Egress类似Ingress，通过Envoy提供外部访问代理
-参考：
- Which One is the Right Choice for the Ingress Gateway of Your Service Mesh? Kubernetes Ingress, Istio Gateway or API Gateway?  </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</guid>
-      <description>Polit策略配置 策略管理  Polit通过调用第三方云平台（k8s等）接口获取服务发现能力 Polit提供接口支持外部服务配置，和第三方云平台服务发现的内容，一起抽象出Istio自己的服务模型 Polit适配Envoy提供xDS（LDS、RDS、CDS、EDS等）服务接口，支持配置动态能力  动态配置  Concept	概念	描述 Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口 Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口 Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口 Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口  参考：
- Envoy概念与术语 Pilot  </description>
+ $ istioctl manifest apply --set profile=demoDetected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT.</description>
     </item>
     
     <item>
@@ -337,7 +323,7 @@ appletviewer	Run and debug applets without a web browser.extcheck	Utility to de
       <description>Istio简介  Istio是service mesh的一种
  核心特性  流量管理：限流、熔断、故障注入等 安全：认证、授权、加密等 监测：跟踪、监控、日志等  架构 Istio逻辑上分为数据面（data plane）和控制面（control plane）
  数据面：由sidecar模式部署的Envoy代理组成，控制微服务之间的网络通信 控制面：管理和配置sidecar代理服务上  组件：
- Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-egressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  网络  外部流量通过Gateway进入集群，提供基本控制能力，例如port、tls、limit等 通过Virtual Service实现不同版本的Service服务路由能力，例如headers/url/weight等，支持蓝绿、金丝雀、故障注入等能力 Service内部支持LB负载配置，精确控制各实例访问控制策略  </description>
+ Envoy：高性能的代理服务，代理微服务所有的出入流量 Pilot：服务发现、智能路由、网络韧性（超时、重试、熔断等） Citadel：安全管理 Galley：策略管理   Polit通过调用第三方云平台（k8s等）接口获取服务发现能力 Polit提供接口支持外部服务配置，和第三方云平台服务发现的内容，一起抽象出Istio自己的服务模型 Polit适配Envoy提供xDS（LDS、RDS、CDS、EDS等）服务接口，支持配置动态能力  组件  istio-citadel，安全管理 istio-galley，配置管理 istio-pilot，服务发现、智能路由、策略控制 istio-ingressgateway，入口管理 istio-egressgateway，出口管理 istio-policy，访问控制管理 istio-telemetry，服务监测管理 istio-sidecar-injector，代理管理  网络  外部流量通过Gateway进入集群，提供基本控制能力，例如port、tls、limit等 通过Virtual Service实现不同版本的Service服务路由能力，例如headers/url/weight等，支持蓝绿、金丝雀、故障注入等能力 Service内部支持LB负载配置，精确控制各实例访问控制策略  </description>
     </item>
     
     <item>

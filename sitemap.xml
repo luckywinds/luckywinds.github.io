@@ -182,15 +182,11 @@
   </url>
   
   <url>
+    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-bookinfo/</loc>
+  </url>
+  
+  <url>
     <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/</loc>
-  </url>
-  
-  <url>
-    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-gateway/</loc>
-  </url>
-  
-  <url>
-    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-polit/</loc>
   </url>
   
   <url>

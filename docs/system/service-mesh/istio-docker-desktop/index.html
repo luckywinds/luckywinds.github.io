@@ -6,12 +6,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Istio Docker Desktop"><meta property="og:title" content="" />
 <meta property="og:description" content="Docker Desktop for Istio 环境 Windows 10
-设置CFG：
- Windows安全中心 应用和浏览器控制 Exploit Protection 设置 程序设置 vmcompute.exe 编辑 控制流保护(CFG) 替代系统设置，取消勾选  Docker Desktop community 2.2.0.4
+设置vmcompute：
+ Windows安全中心 应用和浏览器控制 Exploit Protection 设置 程序设置 vmcompute.exe 编辑 控制流保护(CFG) 替代系统设置，取消勾选 net start vmcompute  Docker Desktop community 2.2.0.4
 设置Resources
  ADVANCED：4U8G PROXIES：HTTP和HTTPS，http://docker.for.win.localhost:3128替代http://127.0.0.1:3128 NETWORK：DNS，8.8.8.8 登录Docker Hub 切换Kubernetes至docker-desktop  部署Istio  istio-1.5.1-win.zip
  cd istio-1.5.1 复制bin\istioctl.exe至C:\Program Files\Docker\Docker\resources\bin
- $ istioctl manifest apply --set profile=demoDetected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens for details." />
+ $ istioctl manifest apply --set profile=demoDetected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-docker-desktop/" />
 
@@ -170,7 +170,7 @@ https://github.com/alex-shpak/hugo-book
 <article class="markdown"><h1 id="docker-desktop-for-istio">Docker Desktop for Istio</h1>
 <h2 id="环境">环境</h2>
 <p>Windows 10</p>
-<p>设置CFG：</p>
+<p>设置vmcompute：</p>
 <ol>
 <li>Windows安全中心</li>
 <li>应用和浏览器控制</li>
@@ -179,6 +179,7 @@ https://github.com/alex-shpak/hugo-book
 <li>vmcompute.exe 编辑</li>
 <li>控制流保护(CFG)</li>
 <li>替代系统设置，取消勾选</li>
+<li>net start vmcompute</li>
 </ol>
 <p>Docker Desktop community 2.2.0.4</p>
 <p>设置Resources</p>
