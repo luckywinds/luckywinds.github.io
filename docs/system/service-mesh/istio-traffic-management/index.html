@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Istio Traffic Management"><meta property="og:title" content="" />
+<meta property="og:description" content="理解Istio流量管理  参考官网：https://istio.io/zh/docs/tasks/traffic-management/
+ Istio核心概念：
+ Gateway定义服务出入口 Virtual Service定义服务路由策略 Destination Rule定义服务子集、负载均衡、连接池等信息  Envoy核心概念：
+ Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口 Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口 Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口 Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口  原理：Istio配置下发后，转换为Envoy配置后在proxy上生效，实现Istio策略下发，Envoy流量控制，完成整体服务网格流量管理
+配置请求路由 设置服务集、路由
+$ kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml -n bookdestinationrule.networking.istio.io/productpage createddestinationrule.networking.istio.io/reviews createddestinationrule.networking.istio.io/ratings createddestinationrule.networking.istio.io/details created$ kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml -n bookvirtualservice.networking.istio.io/productpage createdvirtualservice.networking.istio.io/reviews createdvirtualservice.networking.istio.io/ratings createdvirtualservice.networking.istio.io/details created destination-rule-all.yaml，根据pod的标签version值划分服务子集 virtual-service-all-v1.yaml，定义路径策略，将各服务请求默认路由至v1版本  Virtual Service如果关联了Gateway则同时在具体ingressgateway的proxy上生效，用于服务入口控制，例如productpage
+apiVersion: networking.istio.io/v1alpha3kind: VirtualServicemetadata:name: productpage...spec:gateways:- bookinfo-gateway- meshhosts:- productpagehttp:- route:- destination:host: productpagesubset: v1$ istioctl proxy-config route reviews-v1-64bc5454b9-6d96p -n book -o json --name 9080." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-traffic-management/" />
+
+<title>Istio Traffic Management | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds/luckywinds.github.io/issues" target="_blank" rel="noopener">
+        Issues
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Istio Traffic Management</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#理解istio流量管理">理解Istio流量管理</a>
+      <ul>
+        <li><a href="#配置请求路由">配置请求路由</a>
+          <ul>
+            <li><a href="#基于用户身份的路由">基于用户身份的路由</a></li>
+          </ul>
+        </li>
+        <li><a href="#故障注入">故障注入</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="理解istio流量管理">理解Istio流量管理</h1>
+<blockquote>
+<p>参考官网：https://istio.io/zh/docs/tasks/traffic-management/</p>
+</blockquote>
+<p>Istio核心概念：</p>
+<ul>
+<li>Gateway定义服务出入口</li>
+<li>Virtual Service定义服务路由策略</li>
+<li>Destination Rule定义服务子集、负载均衡、连接池等信息</li>
+</ul>
+<p>Envoy核心概念：</p>
+<ul>
+<li>Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口</li>
+<li>Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口</li>
+<li>Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口</li>
+<li>Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口</li>
+</ul>
+<p>原理：Istio配置下发后，转换为Envoy配置后在proxy上生效，实现Istio策略下发，Envoy流量控制，完成整体服务网格流量管理</p>
+<h2 id="配置请求路由">配置请求路由</h2>
+<p>设置服务集、路由</p>
+<pre><code>$ kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml -n book
+destinationrule.networking.istio.io/productpage created
+destinationrule.networking.istio.io/reviews created
+destinationrule.networking.istio.io/ratings created
+destinationrule.networking.istio.io/details created
+$ kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml -n book
+virtualservice.networking.istio.io/productpage created
+virtualservice.networking.istio.io/reviews created
+virtualservice.networking.istio.io/ratings created
+virtualservice.networking.istio.io/details created
+</code></pre><ul>
+<li>destination-rule-all.yaml，根据pod的标签version值划分服务子集</li>
+<li>virtual-service-all-v1.yaml，定义路径策略，将各服务请求默认路由至v1版本</li>
+</ul>
+<p>Virtual Service如果关联了Gateway则同时在具体ingressgateway的proxy上生效，用于服务入口控制，例如productpage</p>
+<pre><code>apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: productpage
+  ...
+spec:
+  gateways:
+  - bookinfo-gateway
+  - mesh
+  hosts:
+  - productpage
+  http:
+  - route:
+    - destination:
+        host: productpage
+        subset: v1
+</code></pre><pre><code>$ istioctl proxy-config route reviews-v1-64bc5454b9-6d96p -n book -o json --name 9080
+......
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;outbound|9080|v1|details.book.svc.cluster.local&quot;,
+......
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;outbound|9080|v1|productpage.book.svc.cluster.local&quot;,
+......
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;outbound|9080|v1|ratings.book.svc.cluster.local&quot;,
+......
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+......
+</code></pre><p>在所有proxy节点上都能看到将所有服务9080端口的访问均路由至v1版本的cluster中</p>
+<p>Destination Rule配置服务子集、负载均衡、连接池等信息，</p>
+<pre><code>$ istioctl proxy-config cluster reviews-v1-64bc5454b9-6d96p -n book --fqdn book.svc.cluster.local
+SERVICE FQDN                           PORT     SUBSET          DIRECTION     TYPE
+details.book.svc.cluster.local         9080     -               outbound      EDS
+details.book.svc.cluster.local         9080     v1              outbound      EDS
+details.book.svc.cluster.local         9080     v2              outbound      EDS
+productpage.book.svc.cluster.local     9080     -               outbound      EDS
+productpage.book.svc.cluster.local     9080     v1              outbound      EDS
+ratings.book.svc.cluster.local         9080     -               outbound      EDS
+ratings.book.svc.cluster.local         9080     v1              outbound      EDS
+ratings.book.svc.cluster.local         9080     v2              outbound      EDS
+reviews.book.svc.cluster.local         9080     -               outbound      EDS
+reviews.book.svc.cluster.local         9080     http            inbound       STATIC
+reviews.book.svc.cluster.local         9080     v1              outbound      EDS
+reviews.book.svc.cluster.local         9080     v2              outbound      EDS
+reviews.book.svc.cluster.local         9080     v3              outbound      EDS
+</code></pre><p>可以看到Envoy为每一个服务都根据version划分了子集</p>
+<pre><code>$ istioctl proxy-config cluster reviews-v1-64bc5454b9-6d96p -n book --fqdn reviews.book.svc.cluster.local -o json
+......
+        &quot;name&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+        &quot;type&quot;: &quot;EDS&quot;,
+        &quot;edsClusterConfig&quot;: {
+            &quot;edsConfig&quot;: {
+                &quot;ads&quot;: {}
+            },
+            &quot;serviceName&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;
+        },
+......
+</code></pre><p>指定v1版本的路由后端为outbound|9080|v1|reviews.book.svc.cluster.local</p>
+<pre><code>$ istioctl proxy-config endpoint reviews-v1-64bc5454b9-6d96p -n book -o json --cluster &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;
+[
+    {
+        &quot;name&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+        &quot;addedViaApi&quot;: true,
+        &quot;hostStatuses&quot;: [
+            {
+                &quot;address&quot;: {
+                    &quot;socketAddress&quot;: {
+                        &quot;address&quot;: &quot;10.1.0.149&quot;,
+                        &quot;portValue&quot;: 9080
+                    }
+                },
+</code></pre><p>定义v1版本的后端节点信息列表</p>
+<p>至此，完成服务从访问到具体pod节点的路由分发流量控制</p>
+<p>http://localhost:5678/productpage，再次访问样例，将只会看到所有服务v1版本的内容。</p>
+<p><img src="/images/system/service-mesh/istio-bookinfo-request-route.PNG" alt="alt" />
+</p>
+<h3 id="基于用户身份的路由">基于用户身份的路由</h3>
+<pre><code>$ kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml -n book
+virtualservice.networking.istio.io/reviews configured
+$ kubectl get virtualservice reviews -o yaml -n book
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+......
+spec:
+  hosts:
+  - reviews
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: reviews
+        subset: v2
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+</code></pre><p>定义不同的策略，路由至不同的服务子集</p>
+<pre><code>$ istioctl proxy-config route reviews-v1-64bc5454b9-6d96p -n book -o json --name 9080
+......
+                &quot;name&quot;: &quot;reviews.book.svc.cluster.local:9080&quot;,
+                ......
+                &quot;routes&quot;: [
+                    {
+                        &quot;match&quot;: {
+                            &quot;prefix&quot;: &quot;/&quot;,
+                            &quot;caseSensitive&quot;: true,
+                            &quot;headers&quot;: [
+                                {
+                                    &quot;name&quot;: &quot;end-user&quot;,
+                                    &quot;exactMatch&quot;: &quot;jason&quot;
+                                }
+                            ]
+                        },
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;outbound|9080|v2|reviews.book.svc.cluster.local&quot;,
+                            ......
+                    {
+                        &quot;match&quot;: {
+                            &quot;prefix&quot;: &quot;/&quot;
+                        },
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+......
+</code></pre><p>转换Envoy代理配置后</p>
+<p>效果：用户为jason的用户将看到v2版本的reviews，其他请求将路由至v1版本的reviews服务</p>
+<h2 id="故障注入">故障注入</h2>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#理解istio流量管理">理解Istio流量管理</a>
+      <ul>
+        <li><a href="#配置请求路由">配置请求路由</a>
+          <ul>
+            <li><a href="#基于用户身份的路由">基于用户身份的路由</a></li>
+          </ul>
+        </li>
+        <li><a href="#故障注入">故障注入</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
