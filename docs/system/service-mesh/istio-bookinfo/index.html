@@ -149,7 +149,7 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#外部入口service">外部入口Service</a></li>
         <li><a href="#入口网关gateway">入口网关Gateway</a></li>
         <li><a href="#路由virtualservice">路由VirtualService</a></li>
-        <li><a href="#服务productpage">服务productpage</a></li>
+        <li><a href="#服务">服务</a></li>
       </ul>
     </li>
   </ul>
@@ -235,6 +235,9 @@ Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   &lt;none&gt;
 </code></pre><p>外部流量通过LoadBalancer入口localhost:5678，经过节点NodePort的30735/TCP，到达目标TargetPort的80/TCP，即网关istio-ingressgateway的80端口</p>
+<p>http://localhost:5678/productpage</p>
+<p><img src="/images/system/service-mesh/istio-bookinfo.PNG" alt="alt" />
+</p>
 <h2 id="入口网关gateway">入口网关Gateway</h2>
 <pre><code>$ kubectl describe gateway bookinfo-gateway -n book
 Name:         bookinfo-gateway
@@ -274,12 +277,14 @@ Events:          &lt;none&gt;
 <li>Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口</li>
 <li>Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口</li>
 </ul>
+<p>流量经过Envoy的路径：请求来自Downstream，经过Listener、Router、Cluster、Endpoint，到达目的地Upstream</p>
 <p>Istio envoy sidecar proxy 配置中包含以下四个部分:</p>
 <ul>
 <li>bootstrap：Envoy proxy 启动时候加载的静态配置。</li>
 <li>listeners：监听器配置，使用 LDS 下发。</li>
 <li>clusters：集群配置，静态配置中包括 xds-grpc 和 zipkin 地址，动态配置使用 CDS 下发。</li>
 <li>routes：路由配置，静态配置中包括了本地监听的服务的集群信息，其中引用了 cluster，动态配置使用 RDS 下发。</li>
+<li>endpoints：后端节点列表配置。</li>
 </ul>
 <p>Envoy Listener的特点:</p>
 <ul>
@@ -494,7 +499,11 @@ productpage   10.1.0.152:9080                                   6h50m
 ratings       10.1.0.148:9080                                   6h50m
 reviews       10.1.0.149:9080,10.1.0.150:9080,10.1.0.151:9080   6h50m
 </code></pre><p>最终路由至productpage服务</p>
-<h2 id="服务productpage">服务productpage</h2>
+<h2 id="服务">服务</h2>
+<p>流量进入productpage后，路径和前面过程类似，经过Listener、Router、Cluster、Endpoint，到达目的地Upstream</p>
+<p>Bookinfo服务内部视图如下：</p>
+<p><img src="/images/system/service-mesh/istio-bookinfo-graph.PNG" alt="alt" />
+</p>
 <p>参考：</p>
 <ul>
 <li><a href="https://imfox.io/2020/03/09/istio-common-10-problems/">istio 常见异常分析</a></li>
@@ -534,7 +543,7 @@ reviews       10.1.0.149:9080,10.1.0.150:9080,10.1.0.151:9080   6h50m
         <li><a href="#外部入口service">外部入口Service</a></li>
         <li><a href="#入口网关gateway">入口网关Gateway</a></li>
         <li><a href="#路由virtualservice">路由VirtualService</a></li>
-        <li><a href="#服务productpage">服务productpage</a></li>
+        <li><a href="#服务">服务</a></li>
       </ul>
     </li>
   </ul>
