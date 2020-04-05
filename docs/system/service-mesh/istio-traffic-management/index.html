@@ -156,7 +156,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#基于用户身份的路由">基于用户身份的路由</a></li>
           </ul>
         </li>
-        <li><a href="#故障注入">故障注入</a></li>
+        <li><a href="#通用规则">通用规则</a></li>
       </ul>
     </li>
   </ul>
@@ -336,7 +336,61 @@ spec:
 ......
 </code></pre><p>转换Envoy代理配置后</p>
 <p>效果：用户为jason的用户将看到v2版本的reviews，其他请求将路由至v1版本的reviews服务</p>
-<h2 id="故障注入">故障注入</h2>
+<h2 id="通用规则">通用规则</h2>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>Istio</th>
+<th>Envoy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>请求路由</td>
+<td>VirtualService</td>
+<td>route</td>
+</tr>
+<tr>
+<td>基于用户身份的路由</td>
+<td>VirtualService -&gt; match</td>
+<td>route -&gt; match</td>
+</tr>
+<tr>
+<td>故障注入，延迟</td>
+<td>VirtualService -&gt; fault -&gt; delay</td>
+<td>route -&gt; typedPerFilterConfig -&gt; envoy.fault -&gt; delay</td>
+</tr>
+<tr>
+<td>故障注入, 终止</td>
+<td>VirtualService -&gt; fault -&gt; abort</td>
+<td>route -&gt; typedPerFilterConfig -&gt; envoy.fault -&gt; abort</td>
+</tr>
+<tr>
+<td>流量转移，基于权重</td>
+<td>VirtualService -&gt; route -&gt; weight</td>
+<td>route -&gt; weightedClusters</td>
+</tr>
+<tr>
+<td>超时</td>
+<td>VirtualService -&gt; route -&gt; timeout</td>
+<td>route -&gt; timeout</td>
+</tr>
+<tr>
+<td>熔断</td>
+<td>DestinationRule -&gt; trafficPolicy</td>
+<td>cluster -&gt; circuitBreakers</td>
+</tr>
+</tbody>
+</table>
+<p>Istio和Envoy配置对应关系：</p>
+<ul>
+<li>Gateway &lt;-&gt; Listener</li>
+<li>VirtualService &lt;-&gt; Route</li>
+<li>DestinationRule &lt;-&gt; Cluster</li>
+</ul>
+<p>Istio流量管理配置参考：https://istio.io/zh/docs/reference/config/networking/</p>
+<p>Envoy配置参考：https://www.envoyproxy.io/docs/envoy/latest/configuration/configuration</p>
 </article>
  
       
@@ -371,7 +425,7 @@ spec:
             <li><a href="#基于用户身份的路由">基于用户身份的路由</a></li>
           </ul>
         </li>
-        <li><a href="#故障注入">故障注入</a></li>
+        <li><a href="#通用规则">通用规则</a></li>
       </ul>
     </li>
   </ul>
