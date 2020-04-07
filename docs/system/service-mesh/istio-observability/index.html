@@ -157,6 +157,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#监控">监控</a></li>
           </ul>
         </li>
+        <li><a href="#proxy-wasm">Proxy-wasm</a></li>
       </ul>
     </li>
   </ul>
@@ -215,8 +216,28 @@ public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,
 <p><img src="/images/system/service-mesh/istio-bookinfo-jaeger.PNG" alt="alt" />
 </p>
 <h2 id="mixer">Mixer</h2>
-<h3 id="日志">日志</h3>
+<blockquote>
+<p>新版本的Istio默认未启用Mixer，采样更优方案Proxy-wasm替代</p>
+</blockquote>
+<p>打开Mixer：</p>
+<pre><code>$ istioctl manifest apply --set profile=demo --set values.prometheus.enabled=true --set values.telemetry.v1.enabled=true --set values.telemetry.v2.enabled=false --set components.citadel.enabled=true --set components.telemetry.enabled=true --set values.tracing.enabled=true
+</code></pre><h3 id="日志">日志</h3>
+<p>配置Mixer：</p>
+<pre><code>$ kubectl apply -f samples/bookinfo/telemetry/log-entry.yaml
+</code></pre><ul>
+<li>instances，定义需要采样哪些指标属性</li>
+<li>handlers，定义指标处理后端系统</li>
+<li>rules，定义instance和handler的绑定关系</li>
+</ul>
+<pre><code>$ istioctl dashboard prometheus
+</code></pre><p><img src="/images/system/service-mesh/istio-bookinfo-prometheus.PNG" alt="alt" />
+</p>
 <h3 id="监控">监控</h3>
+<p>配置Mixer：</p>
+<pre><code>$ kubectl apply -f samples/bookinfo/telemetry/metrics.yaml
+</code></pre><pre><code>$ istioctl dashboard grafana
+</code></pre><p>Istio默认提供了系统各个组件的监控看板</p>
+<h2 id="proxy-wasm">Proxy-wasm</h2>
 </article>
  
       
@@ -253,6 +274,7 @@ public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,
             <li><a href="#监控">监控</a></li>
           </ul>
         </li>
+        <li><a href="#proxy-wasm">Proxy-wasm</a></li>
       </ul>
     </li>
   </ul>
