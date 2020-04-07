@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Istio Observability"><meta property="og:title" content="" />
+<meta property="og:description" content="理解Istio可观察性 分布式追踪 分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。
+Istio 利用 Envoy 的分布式追踪功能提供了开箱即用的追踪集成。
+原理：Istio利用应用程序传入请求和传出的请求中的请求头信息，proxy将相关span信息发送至后端服务，然后通过span信息将服务间调用信息串联起来
+请求头信息列表：
+ x-request-id x-b3-traceid x-b3-spanid x-b3-parentspanid x-b3-sampled x-b3-flags x-ot-span-context  在业务应用中增加信息：
+@GET@Path(&quot;/reviews/{productId}&quot;)public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,@HeaderParam(&quot;end-user&quot;) String user,@HeaderParam(&quot;x-request-id&quot;) String xreq,@HeaderParam(&quot;x-b3-traceid&quot;) String xtraceid,@HeaderParam(&quot;x-b3-spanid&quot;) String xspanid,@HeaderParam(&quot;x-b3-parentspanid&quot;) String xparentspanid,@HeaderParam(&quot;x-b3-sampled&quot;) String xsampled,@HeaderParam(&quot;x-b3-flags&quot;) String xflags,@HeaderParam(&quot;x-ot-span-context&quot;) String xotspan) {if (ratings_enabled) {JsonObject ratingsResponse = getRatings(Integer.toString(productId), user, xreq, xtraceid, xspanid, xparentspanid, xsampled, xflags, xotspan); Istio默认对每条请求都进行采样，可以通过参数values.pilot.traceSampling调整采样率" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-observability/" />
+
+<title>Istio Observability | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds/luckywinds.github.io/issues" target="_blank" rel="noopener">
+        Issues
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Istio Observability</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#理解istio可观察性">理解Istio可观察性</a>
+      <ul>
+        <li><a href="#分布式追踪">分布式追踪</a></li>
+        <li><a href="#mixer">Mixer</a>
+          <ul>
+            <li><a href="#日志">日志</a></li>
+            <li><a href="#监控">监控</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="理解istio可观察性">理解Istio可观察性</h1>
+<h2 id="分布式追踪">分布式追踪</h2>
+<p>分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。</p>
+<p>Istio 利用 Envoy 的分布式追踪功能提供了开箱即用的追踪集成。</p>
+<p>原理：Istio利用应用程序传入请求和传出的请求中的请求头信息，proxy将相关span信息发送至后端服务，然后通过span信息将服务间调用信息串联起来</p>
+<p>请求头信息列表：</p>
+<ul>
+<li>x-request-id</li>
+<li>x-b3-traceid</li>
+<li>x-b3-spanid</li>
+<li>x-b3-parentspanid</li>
+<li>x-b3-sampled</li>
+<li>x-b3-flags</li>
+<li>x-ot-span-context</li>
+</ul>
+<p>在业务应用中增加信息：</p>
+<pre><code>@GET
+@Path(&quot;/reviews/{productId}&quot;)
+public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,
+                            @HeaderParam(&quot;end-user&quot;) String user,
+                            @HeaderParam(&quot;x-request-id&quot;) String xreq,
+                            @HeaderParam(&quot;x-b3-traceid&quot;) String xtraceid,
+                            @HeaderParam(&quot;x-b3-spanid&quot;) String xspanid,
+                            @HeaderParam(&quot;x-b3-parentspanid&quot;) String xparentspanid,
+                            @HeaderParam(&quot;x-b3-sampled&quot;) String xsampled,
+                            @HeaderParam(&quot;x-b3-flags&quot;) String xflags,
+                            @HeaderParam(&quot;x-ot-span-context&quot;) String xotspan) {
+
+  if (ratings_enabled) {
+    JsonObject ratingsResponse = getRatings(Integer.toString(productId), user, xreq, xtraceid, xspanid, xparentspanid, xsampled, xflags, xotspan);
+
+</code></pre><blockquote>
+<p>Istio默认对每条请求都进行采样，可以通过参数values.pilot.traceSampling调整采样率</p>
+</blockquote>
+<p>部署：</p>
+<pre><code>istioctl manifest apply --set profile=demo --set values.tracing.enabled=true
+</code></pre><p>打开Jaeger页面：</p>
+<pre><code>istioctl dashboard jaeger
+</code></pre><blockquote>
+<p>Istio默认后端为Jaeger</p>
+</blockquote>
+<p>刷新几次http://localhost:5678/productpage后，可以就可以看到Jaeger中的调用跟踪数据了</p>
+<p><img src="/images/system/service-mesh/istio-bookinfo-jaeger.PNG" alt="alt" />
+</p>
+<h2 id="mixer">Mixer</h2>
+<h3 id="日志">日志</h3>
+<h3 id="监控">监控</h3>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#理解istio可观察性">理解Istio可观察性</a>
+      <ul>
+        <li><a href="#分布式追踪">分布式追踪</a></li>
+        <li><a href="#mixer">Mixer</a>
+          <ul>
+            <li><a href="#日志">日志</a></li>
+            <li><a href="#监控">监控</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
