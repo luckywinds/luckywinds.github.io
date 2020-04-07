@@ -5,12 +5,13 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Istio Observability"><meta property="og:title" content="" />
-<meta property="og:description" content="理解Istio可观察性 分布式追踪 分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。
+<meta property="og:description" content="理解Istio可观察性 kiali Istio默认自带了Kiali可视化系统
+$ istioctl dashboard kiali分布式追踪 分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。
 Istio 利用 Envoy 的分布式追踪功能提供了开箱即用的追踪集成。
 原理：Istio利用应用程序传入请求和传出的请求中的请求头信息，proxy将相关span信息发送至后端服务，然后通过span信息将服务间调用信息串联起来
 请求头信息列表：
  x-request-id x-b3-traceid x-b3-spanid x-b3-parentspanid x-b3-sampled x-b3-flags x-ot-span-context  在业务应用中增加信息：
-@GET@Path(&quot;/reviews/{productId}&quot;)public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,@HeaderParam(&quot;end-user&quot;) String user,@HeaderParam(&quot;x-request-id&quot;) String xreq,@HeaderParam(&quot;x-b3-traceid&quot;) String xtraceid,@HeaderParam(&quot;x-b3-spanid&quot;) String xspanid,@HeaderParam(&quot;x-b3-parentspanid&quot;) String xparentspanid,@HeaderParam(&quot;x-b3-sampled&quot;) String xsampled,@HeaderParam(&quot;x-b3-flags&quot;) String xflags,@HeaderParam(&quot;x-ot-span-context&quot;) String xotspan) {if (ratings_enabled) {JsonObject ratingsResponse = getRatings(Integer.toString(productId), user, xreq, xtraceid, xspanid, xparentspanid, xsampled, xflags, xotspan); Istio默认对每条请求都进行采样，可以通过参数values.pilot.traceSampling调整采样率" />
+@GET@Path(&quot;/reviews/{productId}&quot;)public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,@HeaderParam(&quot;end-user&quot;) String user,@HeaderParam(&quot;x-request-id&quot;) String xreq,@HeaderParam(&quot;x-b3-traceid&quot;) String xtraceid,@HeaderParam(&quot;x-b3-spanid&quot;) String xspanid,@HeaderParam(&quot;x-b3-parentspanid&quot;) String xparentspanid,@HeaderParam(&quot;x-b3-sampled&quot;) String xsampled,@HeaderParam(&quot;x-b3-flags&quot;) String xflags,@HeaderParam(&quot;x-ot-span-context&quot;) String xotspan) {if (ratings_enabled) {JsonObject ratingsResponse = getRatings(Integer.toString(productId), user, xreq, xtraceid, xspanid, xparentspanid, xsampled, xflags, xotspan); Istio默认对每条请求都进行采样，可以通过参数values." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-observability/" />
 
@@ -150,6 +151,7 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#理解istio可观察性">理解Istio可观察性</a>
       <ul>
+        <li><a href="#kiali">kiali</a></li>
         <li><a href="#分布式追踪">分布式追踪</a></li>
         <li><a href="#mixer">Mixer</a>
           <ul>
@@ -172,6 +174,11 @@ https://github.com/alex-shpak/hugo-book
       
       
 <article class="markdown"><h1 id="理解istio可观察性">理解Istio可观察性</h1>
+<h2 id="kiali">kiali</h2>
+<p>Istio默认自带了Kiali可视化系统</p>
+<pre><code>$ istioctl dashboard kiali
+</code></pre><p><img src="/images/system/service-mesh/istio-bookinfo-kiali.PNG" alt="alt" />
+</p>
 <h2 id="分布式追踪">分布式追踪</h2>
 <p>分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。</p>
 <p>Istio 利用 Envoy 的分布式追踪功能提供了开箱即用的追踪集成。</p>
@@ -267,6 +274,7 @@ public Response bookReviewsById(@PathParam(&quot;productId&quot;) int productId,
   <ul>
     <li><a href="#理解istio可观察性">理解Istio可观察性</a>
       <ul>
+        <li><a href="#kiali">kiali</a></li>
         <li><a href="#分布式追踪">分布式追踪</a></li>
         <li><a href="#mixer">Mixer</a>
           <ul>

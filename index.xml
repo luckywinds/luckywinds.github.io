@@ -306,12 +306,13 @@ appletviewer	Run and debug applets without a web browser.extcheck	Utility to de
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-observability/</guid>
-      <description>理解Istio可观察性 分布式追踪 分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。
+      <description>理解Istio可观察性 kiali Istio默认自带了Kiali可视化系统
+$ istioctl dashboard kiali分布式追踪 分布式追踪可以让用户对跨多个分布式服务网格的 1 个请求进行追踪分析。
 Istio 利用 Envoy 的分布式追踪功能提供了开箱即用的追踪集成。
 原理：Istio利用应用程序传入请求和传出的请求中的请求头信息，proxy将相关span信息发送至后端服务，然后通过span信息将服务间调用信息串联起来
 请求头信息列表：
  x-request-id x-b3-traceid x-b3-spanid x-b3-parentspanid x-b3-sampled x-b3-flags x-ot-span-context  在业务应用中增加信息：
-@GET@Path(&amp;quot;/reviews/{productId}&amp;quot;)public Response bookReviewsById(@PathParam(&amp;quot;productId&amp;quot;) int productId,@HeaderParam(&amp;quot;end-user&amp;quot;) String user,@HeaderParam(&amp;quot;x-request-id&amp;quot;) String xreq,@HeaderParam(&amp;quot;x-b3-traceid&amp;quot;) String xtraceid,@HeaderParam(&amp;quot;x-b3-spanid&amp;quot;) String xspanid,@HeaderParam(&amp;quot;x-b3-parentspanid&amp;quot;) String xparentspanid,@HeaderParam(&amp;quot;x-b3-sampled&amp;quot;) String xsampled,@HeaderParam(&amp;quot;x-b3-flags&amp;quot;) String xflags,@HeaderParam(&amp;quot;x-ot-span-context&amp;quot;) String xotspan) {if (ratings_enabled) {JsonObject ratingsResponse = getRatings(Integer.toString(productId), user, xreq, xtraceid, xspanid, xparentspanid, xsampled, xflags, xotspan); Istio默认对每条请求都进行采样，可以通过参数values.pilot.traceSampling调整采样率</description>
+@GET@Path(&amp;quot;/reviews/{productId}&amp;quot;)public Response bookReviewsById(@PathParam(&amp;quot;productId&amp;quot;) int productId,@HeaderParam(&amp;quot;end-user&amp;quot;) String user,@HeaderParam(&amp;quot;x-request-id&amp;quot;) String xreq,@HeaderParam(&amp;quot;x-b3-traceid&amp;quot;) String xtraceid,@HeaderParam(&amp;quot;x-b3-spanid&amp;quot;) String xspanid,@HeaderParam(&amp;quot;x-b3-parentspanid&amp;quot;) String xparentspanid,@HeaderParam(&amp;quot;x-b3-sampled&amp;quot;) String xsampled,@HeaderParam(&amp;quot;x-b3-flags&amp;quot;) String xflags,@HeaderParam(&amp;quot;x-ot-span-context&amp;quot;) String xotspan) {if (ratings_enabled) {JsonObject ratingsResponse = getRatings(Integer.toString(productId), user, xreq, xtraceid, xspanid, xparentspanid, xsampled, xflags, xotspan); Istio默认对每条请求都进行采样，可以通过参数values.</description>
     </item>
     
     <item>
