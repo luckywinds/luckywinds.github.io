@@ -9,7 +9,7 @@
  Istio核心概念：
  Gateway定义服务出入口 Virtual Service定义服务路由策略 Destination Rule定义服务子集、负载均衡、连接池等信息  Envoy核心概念：
  Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口 Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口 Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口 Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口  原理：Istio配置下发后，转换为Envoy配置后在proxy上生效，实现Istio策略下发，Envoy流量控制，完成整体服务网格流量管理
-配置请求路由 设置服务集、路由
+网关 设置服务集、路由
 $ kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml -n bookdestinationrule.networking.istio.io/productpage createddestinationrule.networking.istio.io/reviews createddestinationrule.networking.istio.io/ratings createddestinationrule.networking.istio.io/details created$ kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml -n bookvirtualservice.networking.istio.io/productpage createdvirtualservice.networking.istio.io/reviews createdvirtualservice.networking.istio.io/ratings createdvirtualservice.networking.istio.io/details created destination-rule-all.yaml，根据pod的标签version值划分服务子集 virtual-service-all-v1.yaml，定义路径策略，将各服务请求默认路由至v1版本  Virtual Service如果关联了Gateway则同时在具体ingressgateway的proxy上生效，用于服务入口控制，例如productpage
 apiVersion: networking.istio.io/v1alpha3kind: VirtualServicemetadata:name: productpage...spec:gateways:- bookinfo-gateway- meshhosts:- productpagehttp:- route:- destination:host: productpagesubset: v1$ istioctl proxy-config route reviews-v1-64bc5454b9-6d96p -n book -o json --name 9080." />
 <meta property="og:type" content="article" />
@@ -151,11 +151,9 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#理解istio流量管理">理解Istio流量管理</a>
       <ul>
-        <li><a href="#配置请求路由">配置请求路由</a>
-          <ul>
-            <li><a href="#基于用户身份的路由">基于用户身份的路由</a></li>
-          </ul>
-        </li>
+        <li><a href="#网关">网关</a></li>
+        <li><a href="#入口流量">入口流量</a></li>
+        <li><a href="#出口流量">出口流量</a></li>
         <li><a href="#通用规则">通用规则</a></li>
       </ul>
     </li>
@@ -188,7 +186,7 @@ https://github.com/alex-shpak/hugo-book
 <li>Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口</li>
 </ul>
 <p>原理：Istio配置下发后，转换为Envoy配置后在proxy上生效，实现Istio策略下发，Envoy流量控制，完成整体服务网格流量管理</p>
-<h2 id="配置请求路由">配置请求路由</h2>
+<h2 id="网关">网关</h2>
 <p>设置服务集、路由</p>
 <pre><code>$ kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml -n book
 destinationrule.networking.istio.io/productpage created
@@ -283,59 +281,292 @@ reviews.book.svc.cluster.local         9080     v3              outbound      ED
 <p>http://localhost:5678/productpage，再次访问样例，将只会看到所有服务v1版本的内容。</p>
 <p><img src="/images/system/service-mesh/istio-bookinfo-request-route.PNG" alt="alt" />
 </p>
-<h3 id="基于用户身份的路由">基于用户身份的路由</h3>
-<pre><code>$ kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml -n book
-virtualservice.networking.istio.io/reviews configured
-$ kubectl get virtualservice reviews -o yaml -n book
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
+<h2 id="入口流量">入口流量</h2>
+<blockquote>
+<p>所有入口流量都转发到Envoy的15006端口</p>
+</blockquote>
+<p>Listener:</p>
+<pre><code>$ istioctl pc listener productpage-v1-76589d9fdc-4krcv -n book -o json --port 15006
+[
+    {
+        &quot;name&quot;: &quot;virtualInbound&quot;,
+        &quot;address&quot;: {
+            &quot;socketAddress&quot;: {
+                &quot;address&quot;: &quot;0.0.0.0&quot;,
+                &quot;portValue&quot;: 15006
+            }
+        },
 ......
-spec:
-  hosts:
-  - reviews
-  http:
-  - match:
-    - headers:
-        end-user:
-          exact: jason
-    route:
-    - destination:
-        host: reviews
-        subset: v2
-  - route:
-    - destination:
-        host: reviews
-        subset: v1
-</code></pre><p>定义不同的策略，路由至不同的服务子集</p>
-<pre><code>$ istioctl proxy-config route reviews-v1-64bc5454b9-6d96p -n book -o json --name 9080
+                &quot;filterChainMatch&quot;: {
+                    &quot;destinationPort&quot;: 9080,
 ......
-                &quot;name&quot;: &quot;reviews.book.svc.cluster.local:9080&quot;,
-                ......
-                &quot;routes&quot;: [
+                &quot;filters&quot;: [
                     {
-                        &quot;match&quot;: {
-                            &quot;prefix&quot;: &quot;/&quot;,
-                            &quot;caseSensitive&quot;: true,
-                            &quot;headers&quot;: [
-                                {
-                                    &quot;name&quot;: &quot;end-user&quot;,
-                                    &quot;exactMatch&quot;: &quot;jason&quot;
+                        &quot;name&quot;: &quot;envoy.filters.network.metadata_exchange&quot;,
+                        &quot;config&quot;: {
+                            &quot;protocol&quot;: &quot;istio-peer-exchange&quot;
+                        }
+                    },
+                    {
+                        &quot;name&quot;: &quot;envoy.http_connection_manager&quot;,
+                        &quot;typedConfig&quot;: {
+                            &quot;@type&quot;: &quot;type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager&quot;,
+                            &quot;statPrefix&quot;: &quot;inbound_10.1.0.199_9080&quot;,
+                            &quot;routeConfig&quot;: {
+                                &quot;name&quot;: &quot;inbound|9080|http|productpage.book.svc.cluster.local&quot;,
+                                &quot;virtualHosts&quot;: [
+                                    {
+                                        &quot;name&quot;: &quot;inbound|http|9080&quot;,
+                                        &quot;domains&quot;: [
+                                            &quot;*&quot;
+                                        ],
+                                        &quot;routes&quot;: [
+                                            {
+                                                &quot;name&quot;: &quot;default&quot;,
+                                                &quot;match&quot;: {
+                                                    &quot;prefix&quot;: &quot;/&quot;
+                                                },
+                                                &quot;route&quot;: {
+                                                    &quot;cluster&quot;: &quot;inbound|9080|http|productpage.book.svc.cluster.local&quot;,
+                                                    &quot;timeout&quot;: &quot;0s&quot;,
+                                                    &quot;maxGrpcTimeout&quot;: &quot;0s&quot;
+                                                },
+                                                &quot;decorator&quot;: {
+                                                    &quot;operation&quot;: &quot;productpage.book.svc.cluster.local:9080/*&quot;
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ],
+                                &quot;validateClusters&quot;: false
+                            },
+......
+</code></pre><p>到9080端口（业务端口），采用路由配置&quot;inbound|9080|http|productpage.book.svc.cluster.local&rdquo;，路由到集群&quot;inbound|9080|http|productpage.book.svc.cluster.local&rdquo;</p>
+<p>Cluster：</p>
+<pre><code>$ istioctl pc cluster productpage-v1-76589d9fdc-4krcv -n book -o json --fqdn productpage.book.svc.cluster.local --port 9080 --direction inbound
+[
+    {
+        &quot;name&quot;: &quot;inbound|9080|http|productpage.book.svc.cluster.local&quot;,
+        &quot;type&quot;: &quot;STATIC&quot;,
+        &quot;connectTimeout&quot;: &quot;1s&quot;,
+        &quot;loadAssignment&quot;: {
+            &quot;clusterName&quot;: &quot;inbound|9080|http|productpage.book.svc.cluster.local&quot;,
+            &quot;endpoints&quot;: [
+                {
+                    &quot;lbEndpoints&quot;: [
+                        {
+                            &quot;endpoint&quot;: {
+                                &quot;address&quot;: {
+                                    &quot;socketAddress&quot;: {
+                                        &quot;address&quot;: &quot;127.0.0.1&quot;,
+                                        &quot;portValue&quot;: 9080
+                                    }
                                 }
-                            ]
-                        },
-                        &quot;route&quot;: {
-                            &quot;cluster&quot;: &quot;outbound|9080|v2|reviews.book.svc.cluster.local&quot;,
-                            ......
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+......
+]
+</code></pre><p>后端服务节点地址为127.0.0.1，即Productpage业务地址</p>
+<p>流程总结：</p>
+<ul>
+<li>入口流量被iptables规则拦截至15006的Envoy代理监听端口</li>
+<li>Envoy监听15006端口入口流量，关联路由配置&quot;inbound|9080|http|productpage.book.svc.cluster.local&rdquo;</li>
+<li>路由配置定义服务集群&quot;inbound|9080|http|productpage.book.svc.cluster.local&rdquo;</li>
+<li>服务集群提供后端节点&quot;127.0.0.1&rdquo;</li>
+<li>Pod内部通过本机地址和服务端口和业务容器进行交互</li>
+</ul>
+<h2 id="出口流量">出口流量</h2>
+<blockquote>
+<p>所有出口流量都转发到Envoy的15001端口</p>
+</blockquote>
+<p>Productpage需要访问Reviews子服务内容</p>
+<p>Listener:</p>
+<pre><code>$ istioctl pc listener productpage-v1-76589d9fdc-4krcv -n book -o json --port 15001
+[
+    {
+        &quot;name&quot;: &quot;virtualOutbound&quot;,
+        &quot;address&quot;: {
+            &quot;socketAddress&quot;: {
+                &quot;address&quot;: &quot;0.0.0.0&quot;,
+                &quot;portValue&quot;: 15001
+            }
+        },
+......
+        &quot;useOriginalDst&quot;: true,
+        &quot;trafficDirection&quot;: &quot;OUTBOUND&quot;
+    }
+]
+</code></pre><p>进入15001的流量，Envoy没有做过多处理，&ldquo;useOriginalDst&rdquo;: true表示转发给其他Listener处理，当前review服务端口为9080</p>
+<pre><code>$ istioctl pc listener productpage-v1-76589d9fdc-4krcv -n book -o json --port 9080
+......
+    {
+        &quot;name&quot;: &quot;0.0.0.0_9080&quot;,
+        &quot;address&quot;: {
+            &quot;socketAddress&quot;: {
+                &quot;address&quot;: &quot;0.0.0.0&quot;,
+                &quot;portValue&quot;: 9080
+            }
+        },
+......
+                &quot;filters&quot;: [
+                    {
+                        &quot;name&quot;: &quot;envoy.http_connection_manager&quot;,
+                        &quot;typedConfig&quot;: {
+                            &quot;@type&quot;: &quot;type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager&quot;,
+                            &quot;statPrefix&quot;: &quot;outbound_0.0.0.0_9080&quot;,
+                            &quot;rds&quot;: {
+                                &quot;configSource&quot;: {
+                                    &quot;ads&quot;: {}
+                                },
+                                &quot;routeConfigName&quot;: &quot;9080&quot;
+                            },
+......
+        &quot;trafficDirection&quot;: &quot;OUTBOUND&quot;
+    }
+]
+</code></pre><p>转发至9080的流量，关联至路由配置&quot;9080&rdquo;，rds为动态路由配置，即通过Istio获取的配置</p>
+<p>Route：</p>
+<pre><code>$ istioctl pc route productpage-v1-76589d9fdc-4krcv -n book -o json --name 9080
+[
+    {
+        &quot;name&quot;: &quot;9080&quot;,
+......
+            {
+                &quot;name&quot;: &quot;reviews.book.svc.cluster.local:9080&quot;,
+                &quot;domains&quot;: [
+                    &quot;reviews.book.svc.cluster.local&quot;,
+                    &quot;reviews.book.svc.cluster.local:9080&quot;,
+                    &quot;reviews&quot;,
+                    &quot;reviews:9080&quot;,
+                    &quot;reviews.book.svc.cluster&quot;,
+                    &quot;reviews.book.svc.cluster:9080&quot;,
+                    &quot;reviews.book.svc&quot;,
+                    &quot;reviews.book.svc:9080&quot;,
+                    &quot;reviews.book&quot;,
+                    &quot;reviews.book:9080&quot;,
+                    &quot;10.101.136.221&quot;,
+                    &quot;10.101.136.221:9080&quot;
+                ],
+                &quot;routes&quot;: [
                     {
                         &quot;match&quot;: {
                             &quot;prefix&quot;: &quot;/&quot;
                         },
                         &quot;route&quot;: {
                             &quot;cluster&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+                            &quot;timeout&quot;: &quot;0s&quot;,
+                            &quot;retryPolicy&quot;: {
+                                &quot;retryOn&quot;: &quot;connect-failure,refused-stream,unavailable,cancelled,resource-exhausted,retriable-status-codes&quot;,
+                                &quot;numRetries&quot;: 2,
+                                &quot;retryHostPredicate&quot;: [
+                                    {
+                                        &quot;name&quot;: &quot;envoy.retry_host_predicates.previous_hosts&quot;
+                                    }
+                                ],
+                                &quot;hostSelectionRetryMaxAttempts&quot;: &quot;5&quot;,
+                                &quot;retriableStatusCodes&quot;: [
+                                    503
+                                ]
+                            },
+                            &quot;maxGrpcTimeout&quot;: &quot;0s&quot;
+                        },
 ......
-</code></pre><p>转换Envoy代理配置后</p>
-<p>效果：用户为jason的用户将看到v2版本的reviews，其他请求将路由至v1版本的reviews服务</p>
+</code></pre><p>访问reviews的请求，被路由至集群&quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;中</p>
+<p>Cluster：</p>
+<pre><code>$ istioctl pc cluster productpage-v1-76589d9fdc-4krcv -n book -o json --fqdn reviews.book.svc.cluster.local --port 9080 --direction outbound
+......
+        &quot;name&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+        &quot;type&quot;: &quot;EDS&quot;,
+        &quot;edsClusterConfig&quot;: {
+            &quot;edsConfig&quot;: {
+                &quot;ads&quot;: {}
+            },
+            &quot;serviceName&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;
+        },
+        &quot;connectTimeout&quot;: &quot;1s&quot;,
+        &quot;circuitBreakers&quot;: {
+            &quot;thresholds&quot;: [
+                {
+                    &quot;maxConnections&quot;: 4294967295,
+                    &quot;maxPendingRequests&quot;: 4294967295,
+                    &quot;maxRequests&quot;: 4294967295,
+                    &quot;maxRetries&quot;: 4294967295
+                }
+            ]
+        },
+......
+</code></pre><p>集群定义后端节点列表&quot;outbound|9080|v1|reviews.book.svc.cluster.local&rdquo;，eds为动态节点配置，即通过Istio获取的配置</p>
+<p>Endpoint：</p>
+<pre><code>$ istioctl pc endpoint productpage-v1-76589d9fdc-4krcv -n book -o json --cluster &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;
+[
+    {
+        &quot;name&quot;: &quot;outbound|9080|v1|reviews.book.svc.cluster.local&quot;,
+        &quot;addedViaApi&quot;: true,
+        &quot;hostStatuses&quot;: [
+            {
+                &quot;address&quot;: {
+                    &quot;socketAddress&quot;: {
+                        &quot;address&quot;: &quot;10.1.0.196&quot;,
+                        &quot;portValue&quot;: 9080
+                    }
+                },
+                &quot;stats&quot;: [
+                    {
+                        &quot;name&quot;: &quot;cx_connect_fail&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;cx_total&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_error&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_success&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_timeout&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_total&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;GAUGE&quot;,
+                        &quot;name&quot;: &quot;cx_active&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;GAUGE&quot;,
+                        &quot;name&quot;: &quot;rq_active&quot;
+                    }
+                ],
+                &quot;healthStatus&quot;: {
+                    &quot;edsHealthStatus&quot;: &quot;HEALTHY&quot;
+                },
+                &quot;weight&quot;: 1
+            }
+        ]
+    }
+]
+</code></pre><p>获取后端节点列表信息，即reviews服务v1版本的实例列表信息，完成出口流量的转发</p>
+<pre><code>$ kubectl get pod -n book -o wide
+NAME                              READY   STATUS    RESTARTS   AGE   IP           NODE             NOMINATED NODE   READINESS GATES
+details-v1-74f858558f-fh72x       2/2     Running   0          29h   10.1.0.194   docker-desktop   &lt;none&gt;           &lt;none&gt;
+productpage-v1-76589d9fdc-4krcv   2/2     Running   0          29h   10.1.0.199   docker-desktop   &lt;none&gt;           &lt;none&gt;
+ratings-v1-7855f5bcb9-kc6zg       2/2     Running   0          29h   10.1.0.195   docker-desktop   &lt;none&gt;           &lt;none&gt;
+reviews-v1-64bc5454b9-wk9vg       2/2     Running   0          29h   10.1.0.196   docker-desktop   &lt;none&gt;           &lt;none&gt;
+reviews-v2-76c64d4bdf-q4js5       2/2     Running   0          29h   10.1.0.197   docker-desktop   &lt;none&gt;           &lt;none&gt;
+reviews-v3-5545c7c78f-9r9lc       2/2     Running   0          29h   10.1.0.198   docker-desktop   &lt;none&gt;           &lt;none&gt;
+</code></pre><p>流程总结：</p>
+<ul>
+<li>出口流量被iptables规则拦截至15001的Envoy代理监听端口</li>
+<li>Envoy将15001监听转发给目标监听器，即9080</li>
+<li>Envoy监听9080端口出口流量，关联路由配置&quot;outbound|9080|v1|reviews.book.svc.cluster.local&rdquo;</li>
+<li>路由配置定义服务集群&quot;outbound|9080|v1|reviews.book.svc.cluster.local&rdquo;</li>
+<li>服务集群提供后端节点&quot;10.1.0.196&rdquo;，即远端reviews服务节点</li>
+</ul>
 <h2 id="通用规则">通用规则</h2>
 <table>
 <thead>
@@ -420,11 +651,9 @@ spec:
   <ul>
     <li><a href="#理解istio流量管理">理解Istio流量管理</a>
       <ul>
-        <li><a href="#配置请求路由">配置请求路由</a>
-          <ul>
-            <li><a href="#基于用户身份的路由">基于用户身份的路由</a></li>
-          </ul>
-        </li>
+        <li><a href="#网关">网关</a></li>
+        <li><a href="#入口流量">入口流量</a></li>
+        <li><a href="#出口流量">出口流量</a></li>
         <li><a href="#通用规则">通用规则</a></li>
       </ul>
     </li>

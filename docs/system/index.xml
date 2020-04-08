@@ -71,7 +71,7 @@ $ kubectl describe pod productpage-v1-76589d9fdc-8wtsk -n book2Name: productpag
  Istio核心概念：
  Gateway定义服务出入口 Virtual Service定义服务路由策略 Destination Rule定义服务子集、负载均衡、连接池等信息  Envoy核心概念：
  Listener，监听器，命名网地址可以被下游客户端连接，由LDS提供动态配置接口 Router，路由，一组将虚拟主机(virtual hosts)与群集(cluster)匹配的规则(rule)，允许创建流量转移规则，由RDS提供动态配置接口 Cluster，集群，指Envoy连接到的逻辑上相同的一组上游主机，由CDS提供动态配置接口 Endpoint，端点，群集(Cluster)中可用的IP和端口，由EDS提供动态配置接口  原理：Istio配置下发后，转换为Envoy配置后在proxy上生效，实现Istio策略下发，Envoy流量控制，完成整体服务网格流量管理
-配置请求路由 设置服务集、路由
+网关 设置服务集、路由
 $ kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml -n bookdestinationrule.networking.istio.io/productpage createddestinationrule.networking.istio.io/reviews createddestinationrule.networking.istio.io/ratings createddestinationrule.networking.istio.io/details created$ kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml -n bookvirtualservice.networking.istio.io/productpage createdvirtualservice.networking.istio.io/reviews createdvirtualservice.networking.istio.io/ratings createdvirtualservice.networking.istio.io/details created destination-rule-all.yaml，根据pod的标签version值划分服务子集 virtual-service-all-v1.yaml，定义路径策略，将各服务请求默认路由至v1版本  Virtual Service如果关联了Gateway则同时在具体ingressgateway的proxy上生效，用于服务入口控制，例如productpage
 apiVersion: networking.istio.io/v1alpha3kind: VirtualServicemetadata:name: productpage...spec:gateways:- bookinfo-gateway- meshhosts:- productpagehttp:- route:- destination:host: productpagesubset: v1$ istioctl proxy-config route reviews-v1-64bc5454b9-6d96p -n book -o json --name 9080.</description>
     </item>

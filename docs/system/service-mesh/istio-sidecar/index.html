@@ -449,7 +449,8 @@ Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
 <p><img src="/images/system/service-mesh/istio-envoy-sidecar-traffic-injection.jpg" alt="alt" />
 </p>
 <ul>
-<li>将应用容器的所有流量都转发到Envoy的15001端口。</li>
+<li>将应用容器的所有入口流量都转发到Envoy的15006端口。</li>
+<li>将应用容器的所有出口流量都转发到Envoy的15001端口。</li>
 <li>使用istio-proxy默认用户身份运行，UID为1337。</li>
 <li>使用默认的REDIRECT模式来重定向流量。</li>
 <li>将所有出站流量都重定向到Envoy代理。</li>
