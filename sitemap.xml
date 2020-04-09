@@ -190,6 +190,10 @@
   </url>
   
   <url>
+    <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-envoy-config/</loc>
+  </url>
+  
+  <url>
     <loc>https://luckywinds.github.io/docs/system/service-mesh/istio-observability/</loc>
   </url>
   

@@ -302,6 +302,21 @@ appletviewer	Run and debug applets without a web browser.extcheck	Utility to de
     
     <item>
       <title></title>
+      <link>https://luckywinds.github.io/docs/system/service-mesh/istio-envoy-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://luckywinds.github.io/docs/system/service-mesh/istio-envoy-config/</guid>
+      <description>理解Envoy配置文件 Istio核心功能都是通过渲染Envoy配置文件实现的，所以很有必要看下Envoy配置文件具体含义
+Envoy数据流向：Downstream -&amp;gt; Listener -&amp;gt; Route -&amp;gt; Cluster -&amp;gt; Endpoint -&amp;gt; Upstream
+Envoy配置文件主要包括以下几部分：
+ bootstrap，启动时配置 listener，监听器配置 route，路由规则配置 cluster，服务集群配置 endpoint，后端节点配置  所有配置都包括静态配置和动态配置2大部分
+ 除boostrap外，其他配置对应Envoy数据流的每个阶段，前一阶段关联至后一阶段，完成整个数据流配置
+ bootstrap  Envoy启动时加载的配置的信息，通过 sidecar 启动参数注入的
+ $ istioctl pc bootstrap productpage-v1-76589d9fdc-4krcv -n book -o json{&amp;quot;bootstrap&amp;quot;: {&amp;quot;node&amp;quot;: {&amp;quot;id&amp;quot;: &amp;quot;sidecar~10.1.0.199~productpage-v1-76589d9fdc-4krcv.book~book.svc.cluster.local&amp;quot;,&amp;quot;cluster&amp;quot;: &amp;quot;productpage.book&amp;quot;,......运行节点信息&amp;quot;staticResources&amp;quot;: {&amp;quot;listeners&amp;quot;: [{&amp;quot;address&amp;quot;: {&amp;quot;socketAddress&amp;quot;: {&amp;quot;address&amp;quot;: &amp;quot;0.0.0.0&amp;quot;,&amp;quot;portValue&amp;quot;: 15090}},&amp;quot;filterChains&amp;quot;: [{&amp;quot;filters&amp;quot;: [{&amp;quot;name&amp;quot;: &amp;quot;envoy.</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://luckywinds.github.io/docs/system/service-mesh/istio-observability/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       

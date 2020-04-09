@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Istio Envoy Config"><meta property="og:title" content="" />
+<meta property="og:description" content="理解Envoy配置文件 Istio核心功能都是通过渲染Envoy配置文件实现的，所以很有必要看下Envoy配置文件具体含义
+Envoy数据流向：Downstream -&gt; Listener -&gt; Route -&gt; Cluster -&gt; Endpoint -&gt; Upstream
+Envoy配置文件主要包括以下几部分：
+ bootstrap，启动时配置 listener，监听器配置 route，路由规则配置 cluster，服务集群配置 endpoint，后端节点配置  所有配置都包括静态配置和动态配置2大部分
+ 除boostrap外，其他配置对应Envoy数据流的每个阶段，前一阶段关联至后一阶段，完成整个数据流配置
+ bootstrap  Envoy启动时加载的配置的信息，通过 sidecar 启动参数注入的
+ $ istioctl pc bootstrap productpage-v1-76589d9fdc-4krcv -n book -o json{&quot;bootstrap&quot;: {&quot;node&quot;: {&quot;id&quot;: &quot;sidecar~10.1.0.199~productpage-v1-76589d9fdc-4krcv.book~book.svc.cluster.local&quot;,&quot;cluster&quot;: &quot;productpage.book&quot;,......运行节点信息&quot;staticResources&quot;: {&quot;listeners&quot;: [{&quot;address&quot;: {&quot;socketAddress&quot;: {&quot;address&quot;: &quot;0.0.0.0&quot;,&quot;portValue&quot;: 15090}},&quot;filterChains&quot;: [{&quot;filters&quot;: [{&quot;name&quot;: &quot;envoy." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://luckywinds.github.io/docs/system/service-mesh/istio-envoy-config/" />
+
+<title>Istio Envoy Config | Luckywinds</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.7caec2b7215c11074e93359e7c5b62d3762e9721d2494a9b631305ed1238eda1.css" integrity="sha256-fK7CtyFcEQdOkzWefFti03YulyHSSUqbYxMF7RI47aE=">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-72065265-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><span>Luckywinds</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li>
+<p><a href="/docs/favorites/">收藏夹</a>
+<br/></p>
+</li>
+<li>
+<p><a href="/docs/system/">系统</a></p>
+</li>
+<li>
+<p><a href="/docs/algorithm/">算法</a></p>
+</li>
+<li>
+<p><a href="/docs/tool/">工具</a></p>
+</li>
+<li>
+<p><a href="/docs/language/">语言</a>
+<br/></p>
+</li>
+</ul>
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/" >
+        博客
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds/luckywinds.github.io/issues" target="_blank" rel="noopener">
+        Issues
+      </a>
+  </li>
+  
+  <li>
+    <a href="https://github.com/luckywinds" target="_blank" rel="noopener">
+        Github
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Istio Envoy Config</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+    <input type="checkbox" class="hidden" id="toc-control" />
+    <aside class="hidden clearfix">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#理解envoy配置文件">理解Envoy配置文件</a>
+      <ul>
+        <li><a href="#bootstrap">bootstrap</a></li>
+        <li><a href="#listener">Listener</a></li>
+        <li><a href="#route">Route</a></li>
+        <li><a href="#cluster">Cluster</a></li>
+        <li><a href="#endpoint">Endpoint</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+    </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown"><h1 id="理解envoy配置文件">理解Envoy配置文件</h1>
+<p>Istio核心功能都是通过渲染Envoy配置文件实现的，所以很有必要看下Envoy配置文件具体含义</p>
+<p><img src="/images/system/service-mesh/istio-envoy-xds.png" alt="alt" />
+</p>
+<p>Envoy数据流向：Downstream -&gt; Listener -&gt; Route -&gt; Cluster -&gt; Endpoint -&gt; Upstream</p>
+<p>Envoy配置文件主要包括以下几部分：</p>
+<ul>
+<li>bootstrap，启动时配置</li>
+<li>listener，监听器配置</li>
+<li>route，路由规则配置</li>
+<li>cluster，服务集群配置</li>
+<li>endpoint，后端节点配置</li>
+</ul>
+<p>所有配置都包括静态配置和动态配置2大部分</p>
+<blockquote>
+<p>除boostrap外，其他配置对应Envoy数据流的每个阶段，前一阶段关联至后一阶段，完成整个数据流配置</p>
+</blockquote>
+<h2 id="bootstrap">bootstrap</h2>
+<blockquote>
+<p>Envoy启动时加载的配置的信息，通过 sidecar 启动参数注入的</p>
+</blockquote>
+<pre><code>$ istioctl pc bootstrap productpage-v1-76589d9fdc-4krcv -n book -o json
+{
+    &quot;bootstrap&quot;: {
+        &quot;node&quot;: {
+            &quot;id&quot;: &quot;sidecar~10.1.0.199~productpage-v1-76589d9fdc-4krcv.book~book.svc.cluster.local&quot;,
+            &quot;cluster&quot;: &quot;productpage.book&quot;,
+......运行节点信息
+        &quot;staticResources&quot;: {
+            &quot;listeners&quot;: [
+                {
+                    &quot;address&quot;: {
+                        &quot;socketAddress&quot;: {
+                            &quot;address&quot;: &quot;0.0.0.0&quot;,
+                            &quot;portValue&quot;: 15090
+                        }
+                    },
+                    &quot;filterChains&quot;: [
+                        {
+                            &quot;filters&quot;: [
+                                {
+                                    &quot;name&quot;: &quot;envoy.http_connection_manager&quot;,
+......prometheus监控接口信息
+            &quot;clusters&quot;: [
+                {
+                    &quot;name&quot;: &quot;prometheus_stats&quot;,
+......对接prometheus监控系统信息
+                {
+                    &quot;name&quot;: &quot;sds-grpc&quot;,
+                    &quot;type&quot;: &quot;STATIC&quot;,
+                    &quot;connectTimeout&quot;: &quot;10s&quot;,
+......对接SDS密钥发现服务信息
+                {
+                    &quot;name&quot;: &quot;xds-grpc&quot;,
+                    &quot;type&quot;: &quot;STRICT_DNS&quot;,
+                    &quot;connectTimeout&quot;: &quot;10s&quot;,
+......对接XDS配置发现服务信息
+                {
+                    &quot;name&quot;: &quot;zipkin&quot;,
+                    &quot;type&quot;: &quot;STRICT_DNS&quot;,
+                    &quot;connectTimeout&quot;: &quot;1s&quot;,
+......对接zipkin调用跟踪系统信息
+        &quot;dynamicResources&quot;: {
+            &quot;ldsConfig&quot;: {
+                &quot;ads&quot;: {
+
+                }
+            },
+            &quot;cdsConfig&quot;: {
+                &quot;ads&quot;: {
+
+                }
+            },
+            &quot;adsConfig&quot;: {
+                &quot;apiType&quot;: &quot;GRPC&quot;,
+                &quot;grpcServices&quot;: [
+                    {
+                        &quot;envoyGrpc&quot;: {
+                            &quot;clusterName&quot;: &quot;xds-grpc&quot;
+                        }
+                    }
+                ]
+            }
+        },
+......对接动态配置发现服务信息
+        &quot;statsConfig&quot;: {
+......监控指标配置
+        &quot;tracing&quot;: {
+            &quot;http&quot;: {
+                &quot;name&quot;: &quot;envoy.zipkin&quot;,
+......zipkin调用跟踪信息
+        &quot;admin&quot;: {
+            &quot;accessLogPath&quot;: &quot;/dev/null&quot;,
+            &quot;address&quot;: {
+                &quot;socketAddress&quot;: {
+                    &quot;address&quot;: &quot;127.0.0.1&quot;,
+                    &quot;portValue&quot;: 15000
+                }
+            }
+        }
+......管理入口配置
+</code></pre><h2 id="listener">Listener</h2>
+<blockquote>
+<p>监听器配置，可以有多个监控IP和端口，根据关联的Route策略进行请求转发</p>
+</blockquote>
+<pre><code>$ kubectl get svc -n istio-system                                                                       
+NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                       
+book-service                LoadBalancer   10.105.160.227   localhost     5678:32762/TCP                
+grafana                     ClusterIP      10.101.202.54    &lt;none&gt;        3000/TCP                      
+istio-egressgateway         ClusterIP      10.107.80.98     &lt;none&gt;        80/TCP,443/TCP,15443/TCP      
+istio-ingressgateway        LoadBalancer   10.102.217.109   localhost     15020:30874/TCP,80:32114/TCP,4
+istio-pilot                 ClusterIP      10.97.130.47     &lt;none&gt;        15010/TCP,15011/TCP,15012/TCP,
+istiod                      ClusterIP      10.109.209.152   &lt;none&gt;        15012/TCP,443/TCP             
+jaeger-agent                ClusterIP      None             &lt;none&gt;        5775/UDP,6831/UDP,6832/UDP    
+jaeger-collector            ClusterIP      10.108.46.238    &lt;none&gt;        14267/TCP,14268/TCP,14250/TCP 
+jaeger-collector-headless   ClusterIP      None             &lt;none&gt;        14250/TCP                     
+jaeger-query                ClusterIP      10.106.235.0     &lt;none&gt;        16686/TCP                     
+kiali                       ClusterIP      10.108.137.51    &lt;none&gt;        20001/TCP                     
+prometheus                  ClusterIP      10.100.161.1     &lt;none&gt;        9090/TCP                      
+tracing                     ClusterIP      10.105.1.246     &lt;none&gt;        80/TCP                        
+zipkin                      ClusterIP      10.109.100.21    &lt;none&gt;        9411/TCP      
+$ kubectl get pod -o wide -n book
+NAME                              READY   STATUS    RESTARTS   AGE   IP           NODE             NOMINATED NODE   READINESS GATES
+details-v1-74f858558f-fh72x       2/2     Running   0          46h   10.1.0.194   docker-desktop   &lt;none&gt;           &lt;none&gt;
+productpage-v1-76589d9fdc-4krcv   2/2     Running   0          46h   10.1.0.199   docker-desktop   &lt;none&gt;           &lt;none&gt;
+ratings-v1-7855f5bcb9-kc6zg       2/2     Running   0          46h   10.1.0.195   docker-desktop   &lt;none&gt;           &lt;none&gt;
+reviews-v1-64bc5454b9-wk9vg       2/2     Running   0          46h   10.1.0.196   docker-desktop   &lt;none&gt;           &lt;none&gt;
+reviews-v2-76c64d4bdf-q4js5       2/2     Running   0          46h   10.1.0.197   docker-desktop   &lt;none&gt;           &lt;none&gt;
+reviews-v3-5545c7c78f-9r9lc       2/2     Running   0          46h   10.1.0.198   docker-desktop   &lt;none&gt;           &lt;none&gt;                
+$ istioctl pc listener productpage-v1-76589d9fdc-4krcv -n book
+ADDRESS            PORT      TYPE
+10.1.0.199         9080      HTTP  //Receives all inbound traffic on 9080 from listener 0.0.0.0_15006
+10.1.0.199         15020     TCP   //mgmtCluster
+10.97.130.47       15011     TCP   //istio-pilot
+10.97.130.47       443       TCP   //istio-pilot
+10.102.217.109     443       TCP   //istio-ingressgateway
+10.102.217.109     15443     TCP   //istio-ingressgateway
+10.107.80.98       15443     TCP   //istio-egressgateway
+10.97.130.47       15012     TCP   //istio-pilot
+10.96.0.10         53        TCP   //kube-dns
+10.109.209.152     15012     TCP   //istiod
+10.109.209.152     443       TCP   //istiod
+10.102.217.109     31400     TCP   //istio-ingressgateway
+10.96.0.1          443       TCP   //kubernetes
+10.107.80.98       443       TCP   //istio-egressgateway
+10.102.217.109     15031     TCP   //istio-ingressgateway
+0.0.0.0            3000      TCP
+10.96.0.10         9153      TCP   //kube-dns
+0.0.0.0            8080      TCP
+0.0.0.0            9090      TCP
+0.0.0.0            9411      TCP
+0.0.0.0            80        TCP
+0.0.0.0            20001     TCP
+10.102.217.109     15029     TCP   //istio-ingressgateway
+10.107.78.115      443       TCP
+10.102.217.109     15032     TCP   //istio-ingressgateway
+10.102.217.109     15020     TCP   //istio-ingressgateway
+0.0.0.0            9080      TCP
+0.0.0.0            15010     TCP
+0.0.0.0            15014     TCP
+10.102.217.109     15030     TCP   //istio-ingressgateway
+0.0.0.0            15001     TCP   //Receives all outbound traffic to the pod from IP tables and hands over to virtual listener
+0.0.0.0            15006     TCP   //Receives all inbound traffic to the pod from IP tables and hands over to virtual listener
+0.0.0.0            5678      TCP
+10.108.46.238      14268     TCP   //jaeger-collector
+10.108.46.238      14267     TCP   //jaeger-collector
+0.0.0.0            14250     TCP
+10.106.235.0       16686     TCP   //jaeger-query
+10.108.46.238      14250     TCP   //jaeger-collector
+0.0.0.0            15090     HTTP
+</code></pre><p>Listener分几大类：</p>
+<ul>
+<li>控制面服务Istio</li>
+<li>总入口15006</li>
+<li>总出口15001</li>
+<li>自身服务入口，9080/HTTP</li>
+<li>不带IP的出口</li>
+</ul>
+<p>以带IP的出口0.0.0.0/9080/TCP为例</p>
+<pre><code>$ istioctl pc listener productpage-v1-76589d9fdc-4krcv -n book -o json
+......
+    {
+        &quot;name&quot;: &quot;0.0.0.0_9080&quot;,  //名称，唯一限定名
+        &quot;address&quot;: {             //具体监听IP和端口
+            &quot;socketAddress&quot;: {
+                &quot;address&quot;: &quot;0.0.0.0&quot;,
+                &quot;portValue&quot;: 9080
+            }
+        },
+        &quot;filterChains&quot;: [              //顺序执行的过滤器，Envoy内置了一些通用的filter
+            {
+                &quot;filterChainMatch&quot;: {  //匹配条件，匹配成功的请求，走下面filters，默认丢弃本机IP请求，防止请求死循环
+......
+                },
+                &quot;filters&quot;: [           //filter列表
+......
+            {
+                &quot;filters&quot;: [
+                    {
+                        &quot;name&quot;: &quot;envoy.http_connection_manager&quot;,  //关键filter，http连接管理
+                        &quot;typedConfig&quot;: {
+                            &quot;@type&quot;: &quot;type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager&quot;,
+                            &quot;statPrefix&quot;: &quot;outbound_0.0.0.0_9080&quot;,
+                            &quot;rds&quot;: {                       //RDS动态路由信息配置
+                                &quot;configSource&quot;: {
+                                    &quot;ads&quot;: {}
+                                },
+                                &quot;routeConfigName&quot;: &quot;9080&quot;  //关联的具体路由策略
+                            },
+                            &quot;httpFilters&quot;: [                //http filter列表，主要扩展点，采集请求属性信息
+......
+                            ],
+                            &quot;tracing&quot;: {                    //请求跟踪采样率配置
+                                &quot;clientSampling&quot;: {
+                                    &quot;value&quot;: 100
+                                },
+                                &quot;randomSampling&quot;: {
+                                    &quot;value&quot;: 100
+                                },
+                                &quot;overallSampling&quot;: {
+                                    &quot;value&quot;: 100
+                                }
+                            },
+                            &quot;streamIdleTimeout&quot;: &quot;0s&quot;,
+                            &quot;accessLog&quot;: [                   //请求访问日志配置
+                                {
+                                    &quot;name&quot;: &quot;envoy.file_access_log&quot;,
+                                    &quot;typedConfig&quot;: {
+                                        &quot;@type&quot;: &quot;type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog&quot;,
+                                        &quot;path&quot;: &quot;/dev/stdout&quot;,
+                                        &quot;format&quot;: &quot;[%START_TIME%] \&quot;%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\&quot; %RESPONSE_CODE% %RESPONSE_FLAGS% \&quot;%DYNAMIC_METADATA(istio.mixer:status)%\&quot; \&quot;%UPSTREAM_TRANSPORT_FAILURE_REASON%\&quot; %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \&quot;%REQ(X-FORWARDED-FOR)%\&quot; \&quot;%REQ(USER-AGENT)%\&quot; \&quot;%REQ(X-REQUEST-ID)%\&quot; \&quot;%REQ(:AUTHORITY)%\&quot; \&quot;%UPSTREAM_HOST%\&quot; %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n&quot;
+                                    }
+                                }
+                            ],
+                            &quot;useRemoteAddress&quot;: false,
+                            &quot;generateRequestId&quot;: true,
+                            &quot;upgradeConfigs&quot;: [
+                                {
+                                    &quot;upgradeType&quot;: &quot;websocket&quot;
+                                }
+                            ],
+                            &quot;normalizePath&quot;: true
+                        }
+                    }
+                ]
+            },
+......
+        &quot;trafficDirection&quot;: &quot;OUTBOUND&quot; //请求的流向
+    },
+</code></pre><p>Listen根据RDS的routeConfigName，&ldquo;9080&quot;关联到具体的路由策略</p>
+<h2 id="route">Route</h2>
+<blockquote>
+<p>路由策略配置信息</p>
+</blockquote>
+<pre><code>$ istioctl pc route productpage-v1-76589d9fdc-4krcv -n book -o json
+......
+    {
+        &quot;name&quot;: &quot;9080&quot;,  //名称
+        &quot;virtualHosts&quot;: [
+            {
+                &quot;name&quot;: &quot;allow_any&quot;,
+                &quot;domains&quot;: [
+                    &quot;*&quot;
+                ],
+                &quot;routes&quot;: [
+                    {
+                        &quot;match&quot;: {
+                            &quot;prefix&quot;: &quot;/&quot;
+                        },
+                        &quot;route&quot;: {
+                            &quot;cluster&quot;: &quot;PassthroughCluster&quot;,  //定义默认策略，透传到具体服务集群
+                            &quot;timeout&quot;: &quot;0s&quot;
+                        }
+                    }
+                ]
+            },
+......
+            {
+                &quot;name&quot;: &quot;details.book.svc.cluster.local:9080&quot;,  //具体服务集群路由配置，默认Envoy在当前节点上包括所有服务集群的配置信息
+                &quot;domains&quot;: [                                    //具体域名匹配规则
+                    &quot;details.book.svc.cluster.local&quot;,
+                    &quot;details.book.svc.cluster.local:9080&quot;,
+                    &quot;details&quot;,
+                    &quot;details:9080&quot;,
+                    &quot;details.book.svc.cluster&quot;,
+                    &quot;details.book.svc.cluster:9080&quot;,
+                    &quot;details.book.svc&quot;,
+                    &quot;details.book.svc:9080&quot;,
+                    &quot;details.book&quot;,
+                    &quot;details.book:9080&quot;,
+                    &quot;10.107.66.150&quot;,
+                    &quot;10.107.66.150:9080&quot;
+                ],
+                &quot;routes&quot;: [     //具体路由策略
+                    {
+                        &quot;match&quot;: {  //url路径匹配
+                            &quot;prefix&quot;: &quot;/&quot;
+                        },
+                        &quot;route&quot;: {  //路由配置
+                            &quot;cluster&quot;: &quot;outbound|9080|v1|details.book.svc.cluster.local&quot;,   //地址
+                            &quot;timeout&quot;: &quot;0s&quot;,   //超时
+                            &quot;retryPolicy&quot;: {   //重试
+                                &quot;retryOn&quot;: &quot;connect-failure,refused-stream,unavailable,cancelled,resource-exhausted,retriable-status-codes&quot;,
+                                &quot;numRetries&quot;: 2,
+                                &quot;retryHostPredicate&quot;: [
+                                    {
+                                        &quot;name&quot;: &quot;envoy.retry_host_predicates.previous_hosts&quot;
+                                    }
+                                ],
+                                &quot;hostSelectionRetryMaxAttempts&quot;: &quot;5&quot;,
+                                &quot;retriableStatusCodes&quot;: [
+                                    503
+                                ]
+                            },
+                            &quot;maxGrpcTimeout&quot;: &quot;0s&quot;
+                        },
+                        &quot;metadata&quot;: {
+                            &quot;filterMetadata&quot;: {
+                                &quot;istio&quot;: {
+                                    &quot;config&quot;: &quot;/apis/networking.istio.io/v1alpha3/namespaces/book/virtual-service/details&quot;
+                                }
+                            }
+                        },
+                        &quot;decorator&quot;: {
+                            &quot;operation&quot;: &quot;details.book.svc.cluster.local:9080/*&quot;
+                        }
+                    }
+                ]
+            },
+......
+</code></pre><p>Route根据cluster指定服务集群，outbound|9080|v1|details.book.svc.cluster.local</p>
+<h2 id="cluster">Cluster</h2>
+<blockquote>
+<p>具体服务集群配置信息</p>
+</blockquote>
+<pre><code>$ istioctl pc cluster productpage-v1-76589d9fdc-4krcv -n book -o json
+......
+    {
+        &quot;transportSocketMatches&quot;: [
+            {
+                &quot;name&quot;: &quot;tlsMode-istio&quot;, //TLS配置
+                &quot;match&quot;: {
+                    &quot;tlsMode&quot;: &quot;istio&quot;
+                },
+                &quot;transportSocket&quot;: {
+                    &quot;name&quot;: &quot;envoy.transport_sockets.tls&quot;,
+                    &quot;typedConfig&quot;: {
+                        &quot;@type&quot;: &quot;type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext&quot;,
+                        &quot;commonTlsContext&quot;: {
+                            &quot;tlsCertificateSdsSecretConfigs&quot;: [  //从SDS获取证书密钥等信息
+                                {
+                                    &quot;name&quot;: &quot;default&quot;,
+                                    &quot;sdsConfig&quot;: {
+                                        &quot;apiConfigSource&quot;: {
+                                            &quot;apiType&quot;: &quot;GRPC&quot;,
+                                            &quot;grpcServices&quot;: [
+                                                {
+                                                    &quot;envoyGrpc&quot;: {
+                                                        &quot;clusterName&quot;: &quot;sds-grpc&quot;
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            &quot;combinedValidationContext&quot;: {
+                                &quot;defaultValidationContext&quot;: {
+                                    &quot;verifySubjectAltName&quot;: [
+                                        &quot;spiffe://cluster.local/ns/book/sa/bookinfo-details&quot;  //通过SPIFFE证书校验信息
+                                    ]
+                                },
+                                &quot;validationContextSdsSecretConfig&quot;: {
+                                    &quot;name&quot;: &quot;ROOTCA&quot;,
+                                    &quot;sdsConfig&quot;: {
+                                        &quot;apiConfigSource&quot;: {
+                                            &quot;apiType&quot;: &quot;GRPC&quot;,
+                                            &quot;grpcServices&quot;: [
+                                                {
+                                                    &quot;envoyGrpc&quot;: {
+                                                        &quot;clusterName&quot;: &quot;sds-grpc&quot;
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            &quot;alpnProtocols&quot;: [
+                                &quot;istio-peer-exchange&quot;,
+                                &quot;istio&quot;
+                            ]
+                        },
+                        &quot;sni&quot;: &quot;outbound_.9080_.v1_.details.book.svc.cluster.local&quot;
+                    }
+                }
+            },
+            {
+                &quot;name&quot;: &quot;tlsMode-disabled&quot;,
+                &quot;match&quot;: {},
+                &quot;transportSocket&quot;: {
+                    &quot;name&quot;: &quot;envoy.transport_sockets.raw_buffer&quot;
+                }
+            }
+        ],
+        &quot;name&quot;: &quot;outbound|9080|v1|details.book.svc.cluster.local&quot;,  //名称
+        &quot;type&quot;: &quot;EDS&quot;,  //类型，EDS为后端节点动态配置
+        &quot;edsClusterConfig&quot;: {
+            &quot;edsConfig&quot;: {
+                &quot;ads&quot;: {}
+            },
+            &quot;serviceName&quot;: &quot;outbound|9080|v1|details.book.svc.cluster.local&quot;  //关联至具体后端集群
+        },
+        &quot;connectTimeout&quot;: &quot;1s&quot;,
+        &quot;circuitBreakers&quot;: {  //熔断配置
+            &quot;thresholds&quot;: [
+                {
+                    &quot;maxConnections&quot;: 4294967295,
+                    &quot;maxPendingRequests&quot;: 4294967295,
+                    &quot;maxRequests&quot;: 4294967295,
+                    &quot;maxRetries&quot;: 4294967295
+                }
+            ]
+        },
+        &quot;metadata&quot;: {
+            &quot;filterMetadata&quot;: {
+                &quot;istio&quot;: {
+                    &quot;config&quot;: &quot;/apis/networking.istio.io/v1alpha3/namespaces/book/destination-rule/details&quot;,
+                    &quot;subset&quot;: &quot;v1&quot;
+                }
+            }
+        },
+        &quot;filters&quot;: [
+            {
+                &quot;name&quot;: &quot;envoy.filters.network.upstream.metadata_exchange&quot;,
+                &quot;typedConfig&quot;: {
+                    &quot;@type&quot;: &quot;type.googleapis.com/udpa.type.v1.TypedStruct&quot;,
+                    &quot;typeUrl&quot;: &quot;type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange&quot;,
+                    &quot;value&quot;: {
+                        &quot;protocol&quot;: &quot;istio-peer-exchange&quot;
+                    }
+                }
+            }
+        ]
+    },
+</code></pre><p>Cluster根据serviceName获取后端节点列表信息，outbound|9080|v1|details.book.svc.cluster.local</p>
+<h2 id="endpoint">Endpoint</h2>
+<blockquote>
+<p>具体提供服务的后端实例节点列表信息</p>
+</blockquote>
+<pre><code>$ istioctl pc endpoint productpage-v1-76589d9fdc-4krcv -n book -o json
+......
+    {
+        &quot;name&quot;: &quot;outbound|9080|v1|details.book.svc.cluster.local&quot;,  //名称
+        &quot;addedViaApi&quot;: true,
+        &quot;hostStatuses&quot;: [  //主机列表和状态
+            {
+                &quot;address&quot;: {  //具体IP地址和端口
+                    &quot;socketAddress&quot;: {
+                        &quot;address&quot;: &quot;10.1.0.194&quot;,
+                        &quot;portValue&quot;: 9080
+                    }
+                },
+                &quot;stats&quot;: [   //状态统计信息
+                    {
+                        &quot;name&quot;: &quot;cx_connect_fail&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;cx_total&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_error&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_success&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_timeout&quot;
+                    },
+                    {
+                        &quot;name&quot;: &quot;rq_total&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;GAUGE&quot;,
+                        &quot;name&quot;: &quot;cx_active&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;GAUGE&quot;,
+                        &quot;name&quot;: &quot;rq_active&quot;
+                    }
+                ],
+                &quot;healthStatus&quot;: {  //监控状态
+                    &quot;edsHealthStatus&quot;: &quot;HEALTHY&quot;
+                },
+                &quot;weight&quot;: 1   //具体权重
+            }
+        ]
+    },
+......
+</code></pre><p>具体详细配置项，参考Envoy v2 API reference</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://jimmysong.io/istio-handbook/data-plane/envoy-proxy-config-deep-dive.html">Envoy proxy 配置详解</a></li>
+<li><a href="https://github.com/istio/istio/wiki/Control-and-Data-flow-through-Envoy">Control and Data flow through Envoy</a></li>
+<li><a href="https://www.envoyproxy.io/docs/envoy/latest/configuration/configuration">Envoy Configuration reference</a></li>
+<li><a href="https://www.envoyproxy.io/docs/envoy/latest/api-v2/api">Envoy v2 API reference</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+  
+ 
+      </footer>
+      
+    </div>
+
+    
+    <aside class="book-toc">
+      
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#理解envoy配置文件">理解Envoy配置文件</a>
+      <ul>
+        <li><a href="#bootstrap">bootstrap</a></li>
+        <li><a href="#listener">Listener</a></li>
+        <li><a href="#route">Route</a></li>
+        <li><a href="#cluster">Cluster</a></li>
+        <li><a href="#endpoint">Endpoint</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+ 
+    </aside>
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
